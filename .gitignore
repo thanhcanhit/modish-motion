@@ -34,4 +34,4 @@ build/
 
 ### Frontend ###
 
-/src/main/frontend/node_modules/
+/src/main/temp_front_end_for_trigger_tailwind_plugin/node_modules/
