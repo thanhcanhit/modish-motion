@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="components/head :: head"></div>
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+
+</head>
+<body>
+<header th:replace="components/header"></header>
+
+<div th:fragment="content" class="bg-white">
+    <div class="px-10">
+        <!-- Banner Slider -->
+        <div class="relative w-full  mx-auto mt-10 overflow-hidden">
+            <!-- Slide Wrapper -->
+            <div id="slider" class="flex transition-transform duration-500 ease-in-out">
+                <!-- Sử dụng Thymeleaf để lặp qua từng banner -->
+                <div th:each="banner, iterStat : ${banners}"
+                     class="w-full flex-shrink-0"
+                     th:classappend="${iterStat.index == 0} ? 'block' : 'hidden'">
+                    <a th:href="${banner.link}">
+                        <img th:src="${banner.imageUrl}" alt="Banner" class="w-full h-full object-cover">
+                    </a>
+                </div>
+            </div>
+
+            <!-- Left and Right Control Buttons -->
+            <button id="prev"
+                    class="text-xs absolute top-1/2 left-2 transform -translate-y-1/2 bg-white bg-opacity text-grey px-3 py-2 rounded-full hover:bg-opacity-75">
+                &#10094; <!-- Left Arrow -->
+            </button>
+            <button id="next"
+                    class="text-xs absolute top-1/2 right-2 transform -translate-y-1/2 bg-white bg-opacity text-grey px-3 py-2 rounded-full hover:bg-opacity-75">
+                &#10095; <!-- Right Arrow -->
+            </button>
+
+            <!-- Dot Indicators -->
+            <!-- Dot Indicators -->
+            <div class="absolute bottom-4 w-full flex justify-center">
+            <span th:each="banner, iterStat : ${banners}"
+                  class="dot h-1.5 w-1.5 mx-1 bg-white bg-opacity rounded-full cursor-pointer transform transition-all duration-300"
+                  th:classappend="${iterStat.index == 0} ? 'bg-opacity scale-200'"
+                  th:attr="data-slide=${iterStat.index}">
+            </span>
+            </div>
+        </div>
+    </div>
+    <div class="px-10">
+        <div class=" mx-auto mt-8 px-4">
+            <!-- Tiêu đề -->
+            <h2 class="text-3xl font-semibold text-center mb-4 text-black">Sản phẩm ưa chuộng</h2>
+
+            <!-- Tab selection -->
+            <div class="flex justify-center mb-8 overflow-x-visible whitespace-nowrap" id="category-buttons">
+                <button class="btn mx-2 border-0 rounded-full bg-gray-100 hover:bg-gray-100"
+                        onclick="selectCategory(this)">
+                    Áo Gió
+                </button>
+                <button class="btn mx-2 border-0 rounded-full bg-gray-100 hover:bg-gray-100"
+                        onclick="selectCategory(this)">
+                    Jeans Flex
+                </button>
+                <button class="btn mx-2 border-0 rounded-full bg-gray-100 hover:bg-gray-100"
+                        onclick="selectCategory(this)">
+                    Áo Polo
+                </button>
+                <button class="btn mx-2 border-0 rounded-full bg-gray-100 hover:bg-gray-100"
+                        onclick="selectCategory(this)">
+                    Quần Âu
+                </button>
+                <button class="btn mx-2 border-0 rounded-full bg-gray-100 hover:bg-gray-100"
+                        onclick="selectCategory(this)">
+                    Sơ Mi
+                </button>
+            </div>
+        </div>
+
+        <!-- Danh sách sản phẩm -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div th:replace="/components/item"></div>
+            <div th:replace="/components/item"></div>
+            <div th:replace="/components/item"></div>
+            <div th:replace="/components/item"></div>
+
+
+        </div>
+        <!-- Load more button -->
+        <div class="flex justify-center mt-8">
+            <button class="btn btn-outline border-black h-10 w-80 text-black text-lg rounded-xl hover:bg-gray-200">
+                Xem
+                thêm
+            </button>
+        </div>
+
+    </div>
+    <div class="px-10 py-5">
+        <a href="">
+            <img th:src="@{/images/home/imageSubBanner.png}"
+                 alt="image" class="w-full object-cover">
+        </a>
+    </div>
+    <div class="px-10 ">
+        <div class="mx-auto mt-8">
+            <div class="navbar bg-white justify-center py-5">
+                <div class="navbar-center hidden lg:flex">
+                    <h2 class="text-2xl text-gray-600 pr-5">Gợi ý sản phẩm</h2>
+                    <ul class="menu menu-horizontal px-1 text-black border-b-2">
+                        <li>
+                            <details>
+                                <summary class="text-xl">Áo giữ nhiệt</summary>
+                                <ul class="p-2 bg-white w-full text-sm">
+                                    <li><a>Áo thun</a></li>
+                                    <li><a>Áo polo</a></li>
+                                    <li><a>Đồ lót</a></li>
+                                </ul>
+                            </details>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Grid hiển thị sản phẩm -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <!-- Giả sử component của mỗi sản phẩm đã có sẵn -->
+                <div th:replace="/components/item"></div>
+                <div th:replace="/components/item"></div>
+                <div th:replace="/components/item"></div>
+                <div th:replace="/components/item"></div>
+                <div th:replace="/components/item"></div>
+                <div th:replace="/components/item"></div>
+                <div th:replace="/components/item"></div>
+                <div th:replace="/components/item"></div>
+                <div th:replace="/components/item"></div>
+                <div th:replace="/components/item"></div>
+            </div>
+            <div class="flex justify-center mt-8">
+                <button class="btn btn-outline border-black h-10 w-80 text-black text-lg rounded-xl hover:bg-gray-200">
+                    Xem
+                    thêm
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="px-10 py-5">
+        <div class="grid grid-rows-2 sm:grid-cols-2 md:grid-cols-2 ">
+            <a href=""><img th:src="@{/images/home/imageContent1.png}"
+                    alt="image" class="w-full object-cover p-1"></a>
+            <a href=""><img th:src="@{/images/home/imageContent2.png}"
+                    alt="image" class="w-full object-cover p-1 "></a>
+            <a href=""><img th:src="@{/images/home/imageContent3.png}"
+                    alt="image" class="w-full object-cover p-1"></a>
+            <a href=""><img th:src="@{/images/home/imageContent4.png}"
+                    alt="image" class="w-full object-cover p-1"></a>
+        </div>
+    </div>
+    <div class="flex justify-center h-16 w-full bg-black items-center">
+        <h1 class="text-white text-3xl font-semibold ">#Yody tự hào thương hiệu Việt</h1>
+    </div>
+    <div class="px-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ">
+            <a href=""><img th:src="@{/images/home/imageBlog1.jpeg}"
+                            alt="image" class="w-full object-cover p-1"></a>
+            <a href=""><img th:src="@{/images/home/imageBlog2.webp}"
+                            alt="image" class="w-full object-cover p-1 "></a>
+        </div>
+    </div>
+</div>
+
+
+<footer th:replace="components/footer"></footer>
+
+<div th:replace="/components/lucide_icons :: lucide_icon"></div>
+<script src="/js/home.js"></script>
+</body>
+</html>
