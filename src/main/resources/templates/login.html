@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <div th:replace="components/head :: head"></div>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        [data-lucide] {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            fill: currentColor;
+            vertical-align: middle;
+            overflow: hidden;
+        }
+
+        [data-lucide] > svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <title>Đăng nhập</title>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen" style="background-color: #fcaf17;">
+<div class="flex w-full max-w-5xl bg-white shadow-lg rounded-lg overflow-hidden" style="height: 600px;">
+    <div class="w-1/2 bg-center bg-no-repeat" style="background-image: url('./img/Logo-Yody-Slogan.png'); background-size: contain;">
+    </div>
+    <div class="w-1/2 p-8 overflow-y-auto">
+        <div class="text-center mb-4">
+            <div class="flex justify-center">
+                <button id="login-tab" onclick="showLogin()" class="px-4 py-2 font-semi bold text-gray-800 border-b-4 border-blue-500">Login</button>
+                <button id="signup-tab" onclick="showSignUp()" class="px-4 py-2 font-semi bold text-gray-500">Sign Up</button>
+            </div>
+        </div>
+        <div id="login-form">
+            <form>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-semi bold mb-2" for="email">
+                        Email address
+                    </label>
+                    <input type="email" id="email" placeholder="Email address"
+                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
+                </div>
+                <div class="mb-4 relative">
+                    <label class="block text-gray-700 text-sm font-semi bold mb-2" for="password">
+                        Password
+                    </label>
+                    <input type="password" id="password" placeholder="Password"
+                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
+                    <!--                <button type="button" class="absolute right-3 top-3 text-gray-500">Hide</button>-->
+                </div>
+                <div class="text-right mb-4">
+                    <a href="#" class="text-sm text-blue-500 hover:underline">I forgot my password</a>
+                </div>
+                <button type="submit"
+                        class="w-full bg-gray-300 text-gray-600 font-semi bold py-2 px-4 rounded-lg mt-4 hover:bg-gray-400">
+                    Log in
+                </button>
+            </form>
+            <div class="text-center mt-2">
+                <div class="flex items-center my-4">
+                    <div class="flex-grow border-t border-gray-300"></div>
+                    <span class="text-gray-500 text-sm px-4">Or by</span>
+                    <div class="flex-grow border-t border-gray-300"></div>
+                </div>
+                <div class="flex justify-center mt-4 space-x-4">
+                    <button class="bg-blue-800 text-white py-2 px-4 rounded-lg hover:bg-blue-900">
+                        <i data-lucide="facebook" class="w-6 h-6 mr-2"></i>
+                    </button>
+                    <button class="bg-red-600 text-white font-semi bold py-2 px-4 rounded-lg hover:bg-red-700">
+                        <i data-lucide="google" class="w-6 h-6 mr-2"></i>
+                    </button>
+                    <button class="bg-blue-500 text-white font-semi bold py-2 px-4 rounded-lg hover:bg-blue-600">
+                        <i data-lucide="twitter" class="w-6 h-6 mr-2"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="text-center mt-6">
+                <p class="text-gray-500 text-sm">Don't have an account?</p>
+                <button class="mt-2 bg-black text-white font-semi bold py-2 px-4 rounded-lg hover:bg-gray-800"
+                        onclick="showSignUp()">
+                    Create an account
+                </button>
+            </div>
+        </div>
+
+        <div id="signup-form" class="hidden">
+            <form>
+                <div class="flex space-x-4 mb-4">
+                    <div class="w-1/2">
+                        <label class="block text-gray-700 text-sm font-semi bold mb-2" for="firstname">
+                            First name
+                        </label>
+                        <input type="text" id="firstname" placeholder="First name"
+                               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
+                    </div>
+                    <div class="w-1/2">
+                        <label class="block text-gray-700 text-sm font-semi bold mb-2" for="lastname">
+                            Last name
+                        </label>
+                        <input type="text" id="lastname" placeholder="Last name"
+                               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-semi bold mb-2" for="dob">
+                        Day of birth
+                    </label>
+                    <input type="date" id="dob" placeholder="Day of birth"
+                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-semi bold mb-2" for="phone">
+                        Phone number
+                    </label>
+                    <input type="text" id="phone" placeholder="Phone number"
+                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-semi bold mb-2" for="email-signup">
+                        Email address
+                    </label>
+                    <input type="email" id="email-signup" placeholder="Email address"
+                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
+                </div>
+                <div class="mb-4 relative">
+                    <label class="block text-gray-700 text-sm font-semi bold mb-2" for="password-signup">
+                        Password
+                    </label>
+                    <input type="password" id="password-signup" placeholder="Password"
+                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
+                    <!--                <button type="button" class="absolute right-3 top-3 text-gray-500">Hide</button>-->
+                </div>
+                <button type="submit"
+                        class="w-full bg-gray-300 text-gray-600 font-semi bold py-2 px-4 rounded-lg mt-4 hover:bg-gray-400">
+                    Sign up
+                </button>
+            </form>
+            <div class="text-center mt-2">
+                <div class="flex items-center my-4">
+                    <div class="flex-grow border-t border-gray-300"></div>
+                    <span class="text-gray-500 text-sm px-4">Or by</span>
+                    <div class="flex-grow border-t border-gray-300"></div>
+                </div>
+                <div class="flex justify-center mt-4 space-x-4">
+                    <button class="bg-blue-800 text-white py-2 px-4 rounded-lg hover:bg-blue-900">
+                        <i data-lucide="facebook" class="w-6 h-6 mr-2"></i>
+                    </button>
+                    <button class="bg-red-600 text-white font-semi bold py-2 px-4 rounded-lg hover:bg-red-700">
+                        <i data-lucide="google" class="w-6 h-6 mr-2"></i>
+                    </button>
+                    <button class="bg-blue-500 text-white font-semi bold py-2 px-4 rounded-lg hover:bg-blue-600">
+                        <i data-lucide="twitter" class="w-6 h-6 mr-2"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="text-center mt-6">
+                <p class="text-gray-500 text-sm">Have an account?</p>
+                <button class="mt-2 bg-black text-white font-semi bold py-2 px-4 rounded-lg hover:bg-gray-800"
+                        onclick="showLogin()">
+                    Log in
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="/components/lucide_icons :: lucide_icon"></div>
+<script>
+    function showLogin() {
+        document.getElementById('login-form').classList.remove('hidden');
+        document.getElementById('signup-form').classList.add('hidden');
+        document.getElementById('login-tab').classList.add('text-gray-800', 'border-b-4', 'border-blue-500');
+        document.getElementById('login-tab').classList.remove('text-gray-500');
+        document.getElementById('signup-tab').classList.remove('text-gray-800', 'border-b-4', 'border-blue-500');
+        document.getElementById('signup-tab').classList.add('text-gray-500');
+        document.title = "Đăng nhập";
+    }
+
+    function showSignUp() {
+        document.getElementById('signup-form').classList.remove('hidden');
+        document.getElementById('login-form').classList.add('hidden');
+        document.getElementById('signup-tab').classList.add('text-gray-800', 'border-b-4', 'border-blue-500');
+        document.getElementById('signup-tab').classList.remove('text-gray-500');
+        document.getElementById('login-tab').classList.remove('text-gray-800', 'border-b-4', 'border-blue-500');
+        document.getElementById('login-tab').classList.add('text-gray-500');
+        document.title = "Đăng ký tài khoản";
+    }
+</script>
+</body>
+</html>
