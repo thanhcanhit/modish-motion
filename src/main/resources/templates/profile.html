@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div th:replace="components/head :: head"></div>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Hồ Sơ Của Tôi</title>
+</head>
+<body class="bg-gray-100">
+<header th:replace="components/header"></header>
+<div class="container mx-auto my-10">
+    <div class="flex space-x-6">
+        <div class="w-1/4 bg-white rounded-lg shadow-lg p-4">
+            <div class="flex items-center space-x-4 mb-6">
+                <img src="./img/hamburmeo.jfif" alt="avatar" class="rounded-full w-14 h-14">
+                <div>
+                    <p class="text-gray-800 font-bold">nhutam.03</p>
+                    <a href="#" class="text-blue-500 text-sm hover:underline">Sửa Hồ Sơ</a>
+                </div>
+            </div>
+            <ul class="text-sm text-gray-600">
+                <li class="py-2 border-b border-gray-200"><a href="#" class="flex items-center text-red-500">Hồ Sơ</a></li>
+                <li class="py-2 border-b border-gray-200"><a href="#">Ngân Hàng</a></li>
+                <li class="py-2 border-b border-gray-200"><a href="#">Địa Chỉ</a></li>
+                <li class="py-2 border-b border-gray-200"><a href="#">Đổi Mật Khẩu</a></li>
+                <li class="py-2 border-b border-gray-200"><a href="#">Cài Đặt Thông Báo</a></li>
+                <li class="py-2 border-b border-gray-200"><a href="#">Những Thiết Lập Riêng Tư</a></li>
+                <li class="py-2 border-b border-gray-200"><a href="#">Đơn Mua</a></li>
+                <li class="py-2 border-b border-gray-200"><a href="#">Thông Báo</a></li>
+            </ul>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="w-3/4 bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Hồ Sơ Của Tôi</h2>
+            <p class="text-gray-500 mb-6">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Profile Form -->
+                <div>
+                    <form>
+                        <div class="mb-4">
+                            <label for="username" class="block text-sm font-semi bold text-gray-600">Tên đăng nhập</label>
+                            <p id="username" class="text-gray-800">nhutam.03</p>
+                        </div>
+                        <div class="mb-4">
+                            <label for="name" class="block text-sm font-semi bold text-gray-600">Tên</label>
+                            <input type="text" id="name" placeholder="Tên" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" value="Tâm">
+                        </div>
+                        <div class="mb-4">
+                            <label for="email" class="block text-sm font-semi bold text-gray-600">Email</label>
+                            <p id="email" class="text-gray-800">nh*******@gmail.com <a href="#" class="text-blue-500 text-sm hover:underline">Thay Đổi</a></p>
+                        </div>
+                        <div class="mb-4">
+                            <label for="phone" class="block text-sm font-semi bold text-gray-600">Số điện thoại</label>
+                            <p id="phone" class="text-gray-800">********33 <a href="#" class="text-blue-500 text-sm hover:underline">Thay Đổi</a></p>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-semi bold text-gray-600">Giới tính</label>
+                            <div class="flex items-center space-x-4">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="gender" class="form-radio text-blue-500" checked>
+                                    <span class="ml-2">Nam</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="gender" class="form-radio text-blue-500">
+                                    <span class="ml-2">Nữ</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="gender" class="form-radio text-blue-500">
+                                    <span class="ml-2">Khác</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="dob" class="block text-sm font-semi bold text-gray-600">Ngày sinh</label>
+                            <p id="dob" class="text-gray-800">**/11/20** <a href="#" class="text-blue-500 text-sm hover:underline">Thay Đổi</a></p>
+                        </div>
+                        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Lưu</button>
+                    </form>
+                </div>
+
+                <!-- Profile Picture -->
+                <div class="flex flex-col items-center">
+                    <img src="./img/hamburmeo.jfif" alt="avatar" class="rounded-full w-32 h-32 mb-4">
+                    <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg">Chọn Ảnh</button>
+                    <p class="text-gray-500 text-sm mt-4">Dung lượng file tối đa 1 MB</p>
+                    <p class="text-gray-500 text-sm">Định dạng: .JPEG, .PNG</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="components/footer"></footer>
+</body>
+</html>
