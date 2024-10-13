@@ -13,7 +13,7 @@ import lombok.*;
 public class Account {
     @Id
     @OneToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "user_id")  // Use a proper foreign key reference
     private User user;
     private String password;
     @Column(name = "is_admin")

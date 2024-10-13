@@ -17,8 +17,6 @@ public class OrderDetail {
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
-    @Column(name = "order_id")
-    private int order_id;
     @ManyToOne
     @JoinColumn(name = "variant_id")
     private Variant variant;

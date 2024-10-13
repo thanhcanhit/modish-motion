@@ -1,9 +1,9 @@
 package fit.iuh.modish_motion.entities;
 
-import java.util.Date;
-
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Date;
 @Getter
 @Setter
 @AllArgsConstructor
@@ -13,7 +13,7 @@ import lombok.*;
 @Table(name = "users")
 public class User {
     @Id
-    @OneToOne
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     @Column(name = "phone_number")
@@ -21,5 +21,7 @@ public class User {
     private String email;
     private boolean gender;
     private String address;
+
+    @Temporal(TemporalType.DATE)
     private Date dob;
 }
