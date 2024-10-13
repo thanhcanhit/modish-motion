@@ -1,7 +1,6 @@
 package fit.iuh.modish_motion.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
@@ -12,14 +11,22 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@
+@Table(name = "orders")
 public class Order {
-    @Column
+    @Column(name = "id")
+    @Id
     private int id;
+    @Column(name = "status")
     private int status;
+    @Column(name = "order_at")
     private Date order_at;
+    @Column(name = "cancelled_at")
     private Date cancelled_at;
+    @Column(name = "total_due")
     private double total_due;
-    private int customer_id;
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private User customer;
+    @Column(name = "payment_confirm")
     private boolean payment_confirm;
 }
