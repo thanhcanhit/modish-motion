@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<article th:fragment="item" class="w-full space-y-1 p-2" id="item-id">
+    <a href="/product/id"><img id="product-image" alt="Product img"
+                               src="https://m.yodycdn.com/fit-in/filters:format(webp)/products/akm5041-xth-9-ca20413b-e1a7-4b38-a5a7-e11855c72503.jpg"/>
+        <p class="lg:text-md line-clamp-1 text-sm">Áo Khoác Gió Nam Thông Minh Trượt Nước</p>
+        <p class="font-semibold">149.000đ</p></a>
+    <div class="flex gap-2 overscroll-x-auto">
+        <button class="h-4 w-4 rounded-full bg-red-800"
+                onclick="changeImage('https://m.yodycdn.com/fit-in/filters:format(webp)/products/akm5041-cam-12.jpg')"></button>
+        <button class="h-4 w-4 rounded-full bg-green-950"
+                onclick="changeImage('https://m.yodycdn.com/fit-in/filters:format(webp)/products/akm5041-nav-5.jpg')"></button>
+        <button onclick="changeImage('https://m.yodycdn.com/fit-in/filters:format(webp)/products/akm5041-den-5.jpg')"
+                class="h-4 w-4 rounded-full bg-black"></button>
+        <button onclick="changeImage('https://m.yodycdn.com/fit-in/filters:format(webp)/products/akm5041-xth-9-ca20413b-e1a7-4b38-a5a7-e11855c72503.jpg')"
+                class="h-4 w-4 rounded-full bg-blue-500"></button>
+    </div>
+
+    <script>
+        function changeImage(imagePath) {
+            // Target the img element by its id 'product-image'
+            document.getElementById('product-image').src = imagePath;
+        }
+    </script>
+</article>
+</html>
