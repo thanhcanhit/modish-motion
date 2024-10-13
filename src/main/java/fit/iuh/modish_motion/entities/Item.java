@@ -1,33 +1,46 @@
 package fit.iuh.modish_motion.entities;
 
 
-public class Item {
+import jakarta.persistence.*;
 
+import java.util.List;
+
+@Entity(name = "items")
+public class Item {
+    @Id
     private String id;
     private String name;
     private String characteristic;
     private double promotion_price;
     private String tags;
-    private int category_id;
+    @ManyToOne
+    @JoinColumn(name = "id")
+    private Category category;
     private String gender;
     private int quantity_sold;
+
+    @OneToMany(mappedBy = "item")
+    private List<Variant> variants;
+
+    public Item() {
+
+    }
 
     public Item(String id) {
         this.id = id;
     }
 
-    public Item() {
-    }
+    public Item(String id, String name, String characteristic, double promotion_price, String tags, Category category, String gender, int quantity_sold, List<Variant> variants) {
 
-    public Item(String id, String name, String characteristic, double promotion_price, String tags, int category_id, String gender, int quantity_sold) {
         this.id = id;
         this.name = name;
         this.characteristic = characteristic;
         this.promotion_price = promotion_price;
         this.tags = tags;
-        this.category_id = category_id;
+        this.category = category;
         this.gender = gender;
         this.quantity_sold = quantity_sold;
+        this.variants = variants;
     }
 
     public String getId() {
@@ -70,12 +83,12 @@ public class Item {
         this.tags = tags;
     }
 
-    public int getCategory_id() {
-        return category_id;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setCategory_id(int category_id) {
-        this.category_id = category_id;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public String getGender() {
@@ -94,6 +107,14 @@ public class Item {
         this.quantity_sold = quantity_sold;
     }
 
+    public List<Variant> getVariants() {
+        return variants;
+    }
+
+    public void setVariants(List<Variant> variants) {
+        this.variants = variants;
+    }
+
     @Override
     public String toString() {
         return "Item{" +
@@ -102,9 +123,10 @@ public class Item {
                 ", characteristic='" + characteristic + '\'' +
                 ", promotion_price=" + promotion_price +
                 ", tags='" + tags + '\'' +
-                ", category_id=" + category_id +
+                ", category=" + category +
                 ", gender='" + gender + '\'' +
                 ", quantity_sold=" + quantity_sold +
+                ", variants=" + variants +
                 '}';
     }
 }

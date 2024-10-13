@@ -1,43 +1,40 @@
 package fit.iuh.modish_motion.entities;
 
-public class Variant {
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
+@Entity(name = "variants")
+public class Variant {
+    @Id
     private String id;
     private String name;
     private String imageUrl;
     private double price;
-    private int color_id;
-    private int product_id;;
+    @ManyToOne
+    @JoinColumn(name = "id")
+    private Color color;
+    @ManyToOne
+    @JoinColumn(name = "id")
+    private Item item;;
     private int availble_quantity;
-
-    public Variant(String id, String name, String imageUrl, double price, int color_id, int product_id, int availble_quantity) {
-        this.id = id;
-        this.name = name;
-        this.imageUrl = imageUrl;
-        this.price = price;
-        this.color_id = color_id;
-        this.product_id = product_id;
-        this.availble_quantity = availble_quantity;
-    }
-
-    public Variant() {
-    }
 
     public Variant(String id) {
         this.id = id;
     }
 
-    @Override
-    public String toString() {
-        return "Variant{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", imageUrl='" + imageUrl + '\'' +
-                ", price=" + price +
-                ", color_id=" + color_id +
-                ", product_id=" + product_id +
-                ", availble_quantity=" + availble_quantity +
-                '}';
+    public Variant(String id, String name, String imageUrl, double price, Color color, Item item, int availble_quantity) {
+        this.id = id;
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.price = price;
+        this.color = color;
+        this.item = item;
+        this.availble_quantity = availble_quantity;
+    }
+
+    public Variant() {
     }
 
     public String getId() {
@@ -72,20 +69,20 @@ public class Variant {
         this.price = price;
     }
 
-    public int getColor_id() {
-        return color_id;
+    public Color getColor() {
+        return color;
     }
 
-    public void setColor_id(int color_id) {
-        this.color_id = color_id;
+    public void setColor(Color color) {
+        this.color = color;
     }
 
-    public int getProduct_id() {
-        return product_id;
+    public Item getItem() {
+        return item;
     }
 
-    public void setProduct_id(int product_id) {
-        this.product_id = product_id;
+    public void setItem(Item item) {
+        this.item = item;
     }
 
     public int getAvailble_quantity() {
@@ -94,5 +91,18 @@ public class Variant {
 
     public void setAvailble_quantity(int availble_quantity) {
         this.availble_quantity = availble_quantity;
+    }
+
+    @Override
+    public String toString() {
+        return "Variant{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", price=" + price +
+                ", color=" + color +
+                ", item=" + item +
+                ", availble_quantity=" + availble_quantity +
+                '}';
     }
 }
