@@ -17,6 +17,7 @@ public class Item {
     @Id
     private String id;
     private String name;
+    @Column(length = 500)
     private String characteristic;
     private double promotionPrice;
     private String tags;

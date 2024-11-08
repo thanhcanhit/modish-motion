@@ -2,8 +2,9 @@ package fit.iuh.modish_motion.controllers;
 
 import fit.iuh.modish_motion.dto.AccountDTO;
 import fit.iuh.modish_motion.dto.UserDTO;
-import fit.iuh.modish_motion.servicesImpl.AccountServiceImpl;
-import fit.iuh.modish_motion.servicesImpl.UserServiceImpl;
+import fit.iuh.modish_motion.services.AccountService;
+import fit.iuh.modish_motion.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -17,15 +18,14 @@ import java.util.List;
 
 @Controller
 public class HomeController {
-    /* Cách làm không đúng, đúng ra là phải sử dụng
-        interface UserService với Autowired, xem file CategoryController
-    * */
-    private final UserServiceImpl userServiceImpl;
-    private final AccountServiceImpl accountServiceImpl;
+    private final UserService userService;
+    private final AccountService accountService;
 
-    public HomeController(UserServiceImpl userServiceImpl, AccountServiceImpl accountServiceImpl) {
-        this.userServiceImpl = userServiceImpl;
-        this.accountServiceImpl = accountServiceImpl;
+    @Autowired
+    public HomeController(UserService userService,
+                          AccountService accountService) {
+        this.userService = userService;
+        this.accountService = accountService;
     }
 
     @GetMapping("/")
@@ -33,10 +33,9 @@ public class HomeController {
         return "home";
     }
 
-
     @GetMapping("/data")
     public ResponseEntity<String> getData(Model model) {
-        List<UserDTO> users = userServiceImpl.findAll(); // Gọi service để lấy dữ liệu người dùng dưới dạng DTO
+        List<UserDTO> users = userService.findAll(); // Gọi service để lấy dữ liệu người dùng dưới dạng DTO
         StringBuilder responseBuilder = new StringBuilder("<h1>User List</h1><ul>");
 
         for (UserDTO user : users) {
@@ -53,7 +52,7 @@ public class HomeController {
 
     @GetMapping("/datapage")
     public ResponseEntity<String> getPage(@PageableDefault(size = 10) Pageable pageable) {
-        Page<UserDTO> users = userServiceImpl.findByPage(pageable); // Gọi service để lấy dữ liệu người dùng dưới dạng DTO
+        Page<UserDTO> users = userService.findByPage(pageable); // Gọi service để lấy dữ liệu người dùng dưới dạng DTO
         StringBuilder responseBuilder = new StringBuilder("<h1>User List</h1><ul>");
 
         for (UserDTO user : users) {
@@ -70,7 +69,7 @@ public class HomeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AccountDTO> getAccountById(@PathVariable Integer id) {
-        return accountServiceImpl.findById(id)
+        return accountService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

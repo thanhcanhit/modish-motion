@@ -18,13 +18,15 @@ import java.util.List;
 @Controller
 @RequestMapping("/categories")
 public class CategoryController {
-
     // Sử dụng interface với Autowired thay vì Impl
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
+    private final ItemService itemService;
 
     @Autowired
-    private ItemService itemService;
+    public CategoryController(CategoryService categoryService, ItemService itemService) {
+        this.categoryService = categoryService;
+        this.itemService = itemService;
+    }
 
     @GetMapping("/cat")
     public ResponseEntity<String> getData(Model model) {
