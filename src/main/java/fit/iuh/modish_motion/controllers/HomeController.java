@@ -17,6 +17,9 @@ import java.util.List;
 
 @Controller
 public class HomeController {
+    /* Cách làm không đúng, đúng ra là phải sử dụng
+        interface UserService với Autowired, xem file CategoryController
+    * */
     private final UserServiceImpl userServiceImpl;
     private final AccountServiceImpl accountServiceImpl;
 

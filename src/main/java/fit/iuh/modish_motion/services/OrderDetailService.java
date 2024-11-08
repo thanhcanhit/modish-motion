@@ -13,4 +13,5 @@ public interface OrderDetailService {
     OrderDetailDTO save(OrderDetailDTO orderDetail);
     void deleteById(Integer id);
     Page<OrderDetailDTO> findByPage(Pageable pageable);
+    public List<OrderDetailDTO> findByOrderId(Integer orderId);
 }
