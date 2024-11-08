@@ -18,13 +18,13 @@ public class Item {
     private String id;
     private String name;
     private String characteristic;
-    private double promotion_price;
+    private double promotionPrice;
     private String tags;
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
     private String gender;
-    private int quantity_sold;
+    private int quantitySold;
 
     @OneToMany(mappedBy = "item")
     private List<Variant> variants;
