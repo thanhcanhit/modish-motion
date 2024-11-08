@@ -1,4 +1,3 @@
-
 package fit.iuh.modish_motion.servicesImpl;
 
 import fit.iuh.modish_motion.entities.Item;
@@ -8,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import fit.iuh.modish_motion.repositories.ItemRepository;
+import fit.iuh.modish_motion.dto.ItemDTO;
+import java.util.stream.Collectors;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,18 +20,24 @@ public class ItemServiceImpl implements ItemService {
     private ItemRepository itemRepository;
 
     @Override
-    public List<Item> findAll() {
-        return itemRepository.findAll();
+    public List<ItemDTO> findAll() {
+        List<Item> items = itemRepository.findAll();
+        return items.stream()
+                .map(ItemDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Item> findById(String id) {
-        return itemRepository.findById(id);
+    public Optional<ItemDTO> findById(String id) {
+        return itemRepository.findById(id)
+                .map(ItemDTO::fromEntity);
     }
 
     @Override
-    public Item save(Item item) {
-        return itemRepository.save(item);
+    public ItemDTO save(ItemDTO itemDTO) {
+        Item item = itemDTO.toEntity();
+        Item savedItem = itemRepository.save(item);
+        return ItemDTO.fromEntity(savedItem);
     }
 
     @Override
@@ -39,7 +46,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Page<Item> findByPage(Pageable pageable) {
-        return itemRepository.findAll(pageable);
+    public Page<ItemDTO> findByPage(Pageable pageable) {
+        return itemRepository.findAll(pageable)
+                .map(ItemDTO::fromEntity);
     }
 }

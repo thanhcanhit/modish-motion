@@ -8,6 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import fit.iuh.modish_motion.dto.SizeDTO;
+import java.util.stream.Collectors;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -18,18 +21,24 @@ public class SizeServiceImpl implements SizeService {
     private SizeRepository sizeRepository;
 
     @Override
-    public List<Size> findAll() {
-        return sizeRepository.findAll();
+    public List<SizeDTO> findAll() {
+        List<Size> sizes = sizeRepository.findAll();
+        return sizes.stream()
+                .map(SizeDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Size> findById(Integer id) {
-        return sizeRepository.findById(id);
+    public Optional<SizeDTO> findById(Integer id) {
+        return sizeRepository.findById(id)
+                .map(SizeDTO::fromEntity);
     }
 
     @Override
-    public Size save(Size size) {
-        return sizeRepository.save(size);
+    public SizeDTO save(SizeDTO sizeDTO) {
+        Size size = sizeDTO.toEntity();
+        Size savedSize = sizeRepository.save(size);
+        return SizeDTO.fromEntity(savedSize);
     }
 
     @Override
@@ -38,7 +47,8 @@ public class SizeServiceImpl implements SizeService {
     }
 
     @Override
-    public Page<Size> findByPage(Pageable pageable) {
-        return sizeRepository.findAll(pageable);
+    public Page<SizeDTO> findByPage(Pageable pageable) {
+        return sizeRepository.findAll(pageable)
+                .map(SizeDTO::fromEntity);
     }
 }

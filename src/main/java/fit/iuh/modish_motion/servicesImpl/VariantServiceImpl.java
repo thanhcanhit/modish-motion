@@ -1,5 +1,6 @@
 package fit.iuh.modish_motion.servicesImpl;
 
+import fit.iuh.modish_motion.dto.VariantDTO;
 import fit.iuh.modish_motion.entities.Variant;
 import fit.iuh.modish_motion.repositories.VariantRepository;
 import fit.iuh.modish_motion.services.VariantService;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class VariantServiceImpl implements VariantService {
@@ -18,18 +20,24 @@ public class VariantServiceImpl implements VariantService {
     private VariantRepository variantRepository;
 
     @Override
-    public List<Variant> findAll() {
-        return variantRepository.findAll();
+    public List<VariantDTO> findAll() {
+        List<Variant> variants = variantRepository.findAll();
+        return variants.stream()
+                .map(VariantDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Variant> findById(String id) {
-        return variantRepository.findById(id);
+    public Optional<VariantDTO> findById(String id) {
+        return variantRepository.findById(id)
+                .map(VariantDTO::fromEntity);
     }
 
     @Override
-    public Variant save(Variant variant) {
-        return variantRepository.save(variant);
+    public VariantDTO save(VariantDTO variantDTO) {
+        Variant variant = variantDTO.toEntity();
+        Variant savedVariant = variantRepository.save(variant);
+        return VariantDTO.fromEntity(savedVariant);
     }
 
     @Override
@@ -38,7 +46,8 @@ public class VariantServiceImpl implements VariantService {
     }
 
     @Override
-    public Page<Variant> findByPage(Pageable pageable) {
-        return variantRepository.findAll(pageable);
+    public Page<VariantDTO> findByPage(Pageable pageable) {
+        return variantRepository.findAll(pageable)
+                .map(VariantDTO::fromEntity);
     }
 }

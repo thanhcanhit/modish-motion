@@ -1,4 +1,3 @@
-
 package fit.iuh.modish_motion.servicesImpl;
 
 import fit.iuh.modish_motion.entities.Color;
@@ -8,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import fit.iuh.modish_motion.repositories.ColorRepository;
+import fit.iuh.modish_motion.dto.ColorDTO;
+import java.util.stream.Collectors;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,18 +20,24 @@ public class ColorServiceImpl implements ColorService {
     private ColorRepository colorRepository;
 
     @Override
-    public List<Color> findAll() {
-        return colorRepository.findAll();
+    public List<ColorDTO> findAll() {
+        List<Color> colors = colorRepository.findAll();
+        return colors.stream()
+                .map(ColorDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Color> findById(Integer id) {
-        return colorRepository.findById(id);
+    public Optional<ColorDTO> findById(Integer id) {
+        return colorRepository.findById(id)
+                .map(ColorDTO::fromEntity);
     }
 
     @Override
-    public Color save(Color color) {
-        return colorRepository.save(color);
+    public ColorDTO save(ColorDTO colorDTO) {
+        Color color = colorDTO.toEntity();
+        Color savedColor = colorRepository.save(color);
+        return ColorDTO.fromEntity(savedColor);
     }
 
     @Override
@@ -39,7 +46,8 @@ public class ColorServiceImpl implements ColorService {
     }
 
     @Override
-    public Page<Color> findByPage(Pageable pageable) {
-        return colorRepository.findAll(pageable);
+    public Page<ColorDTO> findByPage(Pageable pageable) {
+        return colorRepository.findAll(pageable)
+                .map(ColorDTO::fromEntity);
     }
 }

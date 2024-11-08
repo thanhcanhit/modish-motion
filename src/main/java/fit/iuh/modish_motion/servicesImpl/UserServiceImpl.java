@@ -8,6 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import fit.iuh.modish_motion.dto.UserDTO;
+import java.util.stream.Collectors;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -18,18 +21,24 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserDTO> findAll() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(UserDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<User> findById(Integer id) {
-        return userRepository.findById(id);
+    public Optional<UserDTO> findById(Integer id) {
+        return userRepository.findById(id)
+                .map(UserDTO::fromEntity);
     }
 
     @Override
-    public User save(User user) {
-        return userRepository.save(user);
+    public UserDTO save(UserDTO userDTO) {
+        User user = userDTO.toEntity();
+        User savedUser = userRepository.save(user);
+        return UserDTO.fromEntity(savedUser);
     }
 
     @Override
@@ -38,7 +47,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> findByPage(Pageable pageable) {
-        return userRepository.findAll(pageable);
+    public Page<UserDTO> findByPage(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(UserDTO::fromEntity);
     }
 }
