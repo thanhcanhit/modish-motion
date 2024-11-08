@@ -1,4 +1,4 @@
-package fit.iuh.modish_motion.services.impl;
+package fit.iuh.modish_motion.servicesImpl;
 
 import fit.iuh.modish_motion.entities.Variant;
 import fit.iuh.modish_motion.repositories.VariantRepository;
