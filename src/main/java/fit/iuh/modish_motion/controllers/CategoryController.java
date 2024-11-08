@@ -19,6 +19,7 @@ import java.util.List;
 @RequestMapping("/categories")
 public class CategoryController {
 
+    // Sử dụng interface với Autowired thay vì Impl
     @Autowired
     private CategoryService categoryService;
 
