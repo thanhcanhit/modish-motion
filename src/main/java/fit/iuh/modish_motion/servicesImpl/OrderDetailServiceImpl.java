@@ -50,4 +50,12 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         return orderDetailRepository.findAll(pageable)
                 .map(OrderDetailDTO::fromEntity);
     }
+
+    @Override
+    public List<OrderDetailDTO> findByOrderId(Integer orderId) {
+        List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(orderId);
+        return orderDetails.stream()
+                .map(OrderDetailDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
 }
