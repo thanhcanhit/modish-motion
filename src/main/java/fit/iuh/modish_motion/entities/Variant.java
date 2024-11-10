@@ -25,4 +25,10 @@ public class Variant {
     private Item item;
     @Column(name = "available_quantity")
     private int availableQuantity;
+    @Column(name = "name")
+    private String name;
+    @ManyToOne
+    @JoinColumn(name = "size_id")
+    private Size size;
+
 }

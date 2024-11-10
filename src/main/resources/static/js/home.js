@@ -43,8 +43,8 @@ for (let i = 0; i < dots.length; i++) {
 setInterval(nextSlide, 4000);
 showSlide(currentIndex);
 
-function selectCategory(button) {
-    // Bỏ trạng thái active của các nút khác
+
+function loadPopularItems(button) {
     document.querySelectorAll('#category-buttons .btn').forEach(btn => {
         btn.classList.remove('btn-warning'); // Xóa màu hiện tại
         btn.classList.add('bg-gray-100'); // Đổi lại màu mặc định
@@ -53,4 +53,43 @@ function selectCategory(button) {
     // Thêm trạng thái active cho nút được chọn
     button.classList.remove('bg-gray-100');
     button.classList.add('btn-warning');
+    const categoryId = button.getAttribute('data-category-id');
+    fetch(`/homeFake/products?categoryId=${categoryId}&limit=4`)
+        .then(response => response.json())
+        .then(items => {
+            const popularGrid = document.getElementById("popular-grid");
+            popularGrid.innerHTML = '';
+            items.forEach(item => {
+                const itemHtml = `
+                        <div class="border rounded-lg p-4">
+                            <img src="${item.imageUrl}" alt="${item.name}" class="w-full h-40 object-cover rounded-md">
+                            <h3 class="text-lg font-semibold mt-2">${item.name}</h3>
+                            <p class="text-gray-600">${item.price} đ</p>
+                        </div>
+                    `;
+                popularGrid.insertAdjacentHTML('beforeend', itemHtml);
+            });
+        })
+        .catch(error => console.error('Lỗi khi tải sản phẩm ưa chuộng:', error));
+}
+
+function loadSuggestedItems() {
+    const categoryId = document.getElementById("category-select").value;
+    fetch(`/homeFake/products?categoryId=${categoryId}`)
+        .then(response => response.json())
+        .then(items => {
+            const productGrid = document.getElementById("product-grid");
+            productGrid.innerHTML = '';
+            items.forEach(item => {
+                const itemHtml = `
+                        <div class="border rounded-lg p-4">
+                            <img src="${item.imageUrl}" alt="${item.name}" class="w-full h-40 object-cover rounded-md">
+                            <h3 class="text-lg font-semibold mt-2">${item.name}</h3>
+                            <p class="text-gray-600">${item.price} đ</p>
+                        </div>
+                    `;
+                productGrid.insertAdjacentHTML('beforeend', itemHtml);
+            });
+        })
+        .catch(error => console.error('Lỗi khi tải sản phẩm gợi ý:', error));
 }

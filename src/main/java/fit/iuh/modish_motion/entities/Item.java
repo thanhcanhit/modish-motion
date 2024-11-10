@@ -17,14 +17,15 @@ public class Item {
     @Id
     private String id;
     private String name;
+    @Column(length = 500)
     private String characteristic;
-    private double promotion_price;
+    private double promotionPrice;
     private String tags;
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
     private String gender;
-    private int quantity_sold;
+    private int quantitySold;
 
     @OneToMany(mappedBy = "item")
     private List<Variant> variants;

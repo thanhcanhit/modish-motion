@@ -19,14 +19,14 @@ public class Order {
     @Column(name = "status")
     private int status;
     @Column(name = "order_at")
-    private Date order_at;
+    private Date orderAt;
     @Column(name = "cancelled_at")
-    private Date cancelled_at;
+    private Date cancelledAt;
     @Column(name = "total_due")
-    private double total_due;
+    private double totalDue;
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private User customer;
     @Column(name = "payment_confirm")
-    private boolean payment_confirm;
+    private boolean paymentConfirm;
 }
