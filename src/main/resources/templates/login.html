@@ -23,7 +23,7 @@
     </style>
     <title>Đăng nhập</title>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen" style="background-color: #fcaf17;">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen" style="background-image: url('./img/bg.jpg')">
 <div class="flex w-full max-w-5xl bg-white shadow-lg rounded-lg overflow-hidden" style="height: 600px;">
     <div class="w-1/2 bg-center bg-no-repeat" style="background-image: url('./img/Logo-Yody-Slogan.png'); background-size: contain;">
     </div>
@@ -55,7 +55,7 @@
                     <a href="#" class="text-sm text-blue-500 hover:underline">I forgot my password</a>
                 </div>
                 <button type="submit"
-                        class="w-full bg-gray-300 text-gray-600 font-semi bold py-2 px-4 rounded-lg mt-4 hover:bg-gray-400">
+                        class="w-full bg-gray-300 text-gray-600 font-semi bold py-2 px-4 rounded-lg mt-4 hover:bg-gray-400"
                         onclick="checkLogin()">
                     Log in
                 </button>
@@ -142,7 +142,7 @@
                     <!--                <button type="button" class="absolute right-3 top-3 text-gray-500">Hide</button>-->
                 </div>
                 <button type="submit"
-                        class="w-full bg-gray-300 text-gray-600 font-semi bold py-2 px-4 rounded-lg mt-4 hover:bg-gray-400">
+                        class="w-full bg-gray-300 text-gray-600 font-semi bold py-2 px-4 rounded-lg mt-4 hover:bg-gray-400"
                         onclick="checkSignup()">
                     Sign up
                 </button>
@@ -168,7 +168,7 @@
             <div class="text-center mt-6">
                 <p class="text-gray-500 text-sm">Have an account?</p>
                 <button class="mt-2 bg-black text-white font-semi bold py-2 px-4 rounded-lg hover:bg-gray-800"
-                        onclick="showLogin()">
+                         onclick="showLogin()">
                     Log in
                 </button>
             </div>
@@ -199,6 +199,7 @@
     function checkLogin() {
         let email = document.getElementById('email').value;
         let password = document.getElementById('password').value;
+    }
 
 </script>
 </body>
