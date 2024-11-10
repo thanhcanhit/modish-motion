@@ -13,4 +13,6 @@ public interface AccountService {
     AccountDTO save(AccountDTO account);
     void deleteById(Integer id);
     Page<AccountDTO> findByPage(Pageable pageable);
+
+    boolean authenticate(String username, String password);
 }

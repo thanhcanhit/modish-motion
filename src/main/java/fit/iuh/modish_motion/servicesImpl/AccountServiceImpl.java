@@ -1,12 +1,10 @@
 package fit.iuh.modish_motion.servicesImpl;
 
-import fit.iuh.modish_motion.dto.UserDTO;
 import fit.iuh.modish_motion.entities.Account;
 import fit.iuh.modish_motion.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 import fit.iuh.modish_motion.repositories.AccountRepository;
 import fit.iuh.modish_motion.dto.AccountDTO;
@@ -33,6 +31,20 @@ public class AccountServiceImpl implements AccountService {
     public Optional<AccountDTO> findById(Integer id) {
         return accountRepository.findById(id)
                 .map(account -> AccountDTO.fromEntity(account));
+    }
+
+    public boolean authenticate(String username, String password) {
+        // Tìm người dùng trong cơ sở dữ liệu theo username
+        Account account = accountRepository.findByUsername(username);
+
+        // Kiểm tra nếu người dùng không tồn tại
+        if (account == null) {
+            return false;
+        }
+        if (account.getUsername().equals(username) && account.getPassword().equals(password)) {
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -3,59 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <div th:replace="components/head :: head"></div>
-    <link rel="stylesheet" th:href="@{/css/main.css}"/>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        [data-lucide] {
-            display: inline-block;
-            width: 1em;
-            height: 1em;
-            fill: currentColor;
-            vertical-align: middle;
-            overflow: hidden;
+        .icon-facebook {
+            fill: #fff;
+            color: #1877F2;
+            transition: fill 0.3s ease; /* Thêm hiệu ứng chuyển màu */
         }
 
-        [data-lucide] > svg {
-            display: block;
-            width: 100%;
-            height: 100%;
+        .icon-facebook:hover {
+            fill: #1877F2; /* Màu mặc định của Facebook */
         }
+
+        /* Google icon */
+        .icon-google {
+            fill: #fff; /* Màu trắng khi hover */
+            color: #e52323;
+            transition: fill 0.3s ease; /* Thêm hiệu ứng chuyển màu */
+        }
+
+        .icon-google:hover {
+            fill: #e52323; /* Màu mặc định của Google */
+        }
+
+        /* Twitter icon */
+        .icon-twitter {
+            fill: #fff; /* Màu trắng khi hover */
+            color: #1DA1F2;
+            transition: fill 0.3s ease; /* Thêm hiệu ứng chuyển màu */
+        }
+
+        .icon-twitter:hover {
+            fill: #1DA1F2;
+        }
+
     </style>
     <title>Đăng nhập</title>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen" style="background-image: url('./img/bg.jpg')">
-<div class="flex w-full max-w-5xl bg-white shadow-lg rounded-lg overflow-hidden" style="height: 600px;">
-    <div class="w-1/2 bg-center bg-no-repeat" style="background-image: url('./img/Logo-Yody-Slogan.png'); background-size: contain;">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen bg-cover bg-center relative"
+      th:style="'background-image: url(' + @{/images/login/bg.jpg} + ');'">
+<div class="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
+<div data-theme="light" class="relative z-20  flex w-full max-w-5xl bg-white shadow-lg rounded-lg overflow-hidden" style="height: 600px;">
+    <div class="w-1/2">
+        <img th:src="@{/images/login/Logo.png}" alt="logo"/>
     </div>
     <div class="w-1/2 p-8 overflow-y-auto">
         <div class="text-center mb-4">
             <div class="flex justify-center">
-                <button id="login-tab" onclick="showLogin()" class="px-4 py-2 font-semi bold text-gray-800 border-b-4 border-blue-500">Login</button>
-                <button id="signup-tab" onclick="showSignUp()" class="px-4 py-2 font-semi bold text-gray-500">Sign Up</button>
+                <button id="login-tab" onclick="redirectToLogIn()" class="px-4 py-2 font-semi bold text-gray-800 border-b-4 border-blue-500">Login</button>
+                <button id="signup-tab" onclick="redirectToSignUp()" class="px-4 py-2 font-semi bold text-gray-500">Sign Up</button>
             </div>
         </div>
         <div id="login-form">
-            <form>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-semi bold mb-2" for="email">
-                        Email address
-                    </label>
-                    <input type="email" id="email" placeholder="Email address"
-                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
-                </div>
-                <div class="mb-4 relative">
-                    <label class="block text-gray-700 text-sm font-semi bold mb-2" for="password">
-                        Password
-                    </label>
-                    <input type="password" id="password" placeholder="Password"
-                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
-                    <!--                <button type="button" class="absolute right-3 top-3 text-gray-500">Hide</button>-->
+            <form action="/login" method="post">
+<!--                <label class="input input-bordered flex items-center gap-2 mb-2">-->
+<!--                    <i data-lucide="mail" class="w-4 h-4 mr-2"></i>-->
+<!--                    <input type="text" class="grow" placeholder="Email" />-->
+<!--                </label>-->
+                <label class="input input-bordered flex items-center gap-2 mb-2">
+                    <i data-lucide=user class="w-4 h-4 mr-2"></i>
+                    <input type="text" id="username" class="grow" placeholder="Username" />
+                </label>
+                <label class="input input-bordered flex items-center gap-2 mb-2">
+                    <i data-lucide="key" class="w-4 h-4 mr-2"></i>
+                    <input type="password" id="password" class="grow" placeholder="password" />
+                </label>
+                <div th:if="${error != null}" class="text-red-500 text-sm mb-4">
+                    <p th:text="${error}">Invalid username or password</p>
                 </div>
                 <div class="text-right mb-4">
                     <a href="#" class="text-sm text-blue-500 hover:underline">I forgot my password</a>
                 </div>
                 <button type="submit"
-                        class="w-full bg-gray-300 text-gray-600 font-semi bold py-2 px-4 rounded-lg mt-4 hover:bg-gray-400"
+                        class="btn btn-outline btn-success w-full font-semi bold py-2 px-4 rounded-lg mt-4 hover:bg-gray-400"
                         onclick="checkLogin()">
                     Log in
                 </button>
@@ -67,21 +87,21 @@
                     <div class="flex-grow border-t border-gray-300"></div>
                 </div>
                 <div class="flex justify-center mt-4 space-x-4">
-                    <button class="bg-blue-800 text-white py-2 px-4 rounded-lg hover:bg-blue-900">
-                        <i data-lucide="facebook" class="w-6 h-6 mr-2"></i>
+                    <button class="justify-center py-2 px-2 rounded-lg">
+                        <i data-lucide="facebook" class="w-6 h-6 mr-2 icon-facebook"></i>
                     </button>
-                    <button class="bg-red-600 text-white font-semi bold py-2 px-4 rounded-lg hover:bg-red-700">
-                        <i data-lucide="google" class="w-6 h-6 mr-2"></i>
+                    <button class="justify-center py-2 px-2 rounded-lg">
+                        <i class="fab fa-google w-6 h-6 mr-2 icon-google"></i>
                     </button>
-                    <button class="bg-blue-500 text-white font-semi bold py-2 px-4 rounded-lg hover:bg-blue-600">
-                        <i data-lucide="twitter" class="w-6 h-6 mr-2"></i>
+                    <button class="justify-center py-2 px-2 rounded-lg">
+                        <i data-lucide="twitter" class="w-6 h-6 mr-2 icon-twitter"></i>
                     </button>
                 </div>
             </div>
             <div class="text-center mt-6">
                 <p class="text-gray-500 text-sm">Don't have an account?</p>
                 <button class="mt-2 bg-black text-white font-semi bold py-2 px-4 rounded-lg hover:bg-gray-800"
-                        onclick="showSignUp()">
+                        onclick="redirectToSignUp()" >
                     Create an account
                 </button>
             </div>
@@ -89,60 +109,46 @@
 
         <div id="signup-form" class="hidden">
             <form>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-semi bold mb-2" for="name">
-                        Name
-                    </label>
-                    <input type="text" id="name" placeholder="Name"
-                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-semi bold mb-2" for="dob">
-                        Day of birth
-                    </label>
-                    <input type="date" id="dob" placeholder="Day of birth"
-                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-semi bold mb-2" for="phone">
-                        Phone number
-                    </label>
-                    <input type="text" id="phone" placeholder="Phone number"
-                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-semi bold mb-2" for="address">
-                        Address
-                    </label>
-                    <input type="text" id="address" placeholder="Address"
-                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
-                </div>
-                <div class="md-4">
-                    <label class="block text-gray-700 text-sm font-semi bold mb-2" for="gender">
-                    Gender
-                    </label>
-                    <select id="gender" name="gender" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
-                        <option value="false">Nam</option>
-                        <option value="true">Nữ</option>
+                <label class="input input-bordered flex items-center gap-2 mb-2">
+                    <i data-lucide="skull" class="w-4 h-4 mr-2"></i>
+                    <input type="text" id="name" class="grow" placeholder="Name" />
+                </label>
+                <label class="input input-bordered flex items-center gap-2 mb-2">
+                    <i data-lucide="mail" class="w-4 h-4 mr-2"></i>
+                    <input type="text" id="mail" class="grow" placeholder="Email" />
+                </label>
+                <label class="input input-bordered flex items-center gap-2 mb-2">
+                    <i data-lucide="phone" class="w-4 h-4 mr-2"></i>
+                    <input type="text" id="phone" class="grow" placeholder="Phone" />
+                </label>
+                <label class="input input-bordered flex items-center gap-2 mb-2">
+                    <i data-lucide=user class="w-4 h-4 mr-2"></i>
+                    <input type="text" id="user-name" class="grow" placeholder="Username" />
+                </label>
+                <label class="input input-bordered flex items-center gap-2 mb-2">
+                    <i data-lucide="key" class="w-4 h-4 mr-2"></i>
+                    <input type="password" class="grow" placeholder="password" />
+                </label>
+                <label class="input input-bordered flex items-center gap-2 mb-2">
+                    <i data-lucide="map-pin" class="w-4 h-4 mr-2"></i>
+                    <input type="text" id="address" class="grow" placeholder="Address" />
+                </label>
+
+                <label class="input input-bordered flex items-center gap-2 mb-2">
+                    <i data-lucide="calendar" class="w-4 h-4 mr-2"></i>
+                    <input type="date" id="dob" placeholder="DD/MM/YYYY"
+                           class="grow" />
+                </label>
+
+                <label class="input input-bordered flex items-center gap-2 mb-2">
+                    <i data-lucide="key" class="w-4 h-4 mr-2"></i>
+                    <select id="gender" name="gender" class="w-full px-4 py-2  rounded-lg focus:outline-none">
+                        <option value="false">Male</option>
+                        <option value="true">Female</option>
                     </select>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-semi bold mb-2" for="email-signup">
-                        Email address
-                    </label>
-                    <input type="email" id="email-signup" placeholder="Email address"
-                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
-                </div>
-                <div class="mb-4 relative">
-                    <label class="block text-gray-700 text-sm font-semi bold mb-2" for="password-signup">
-                        Password
-                    </label>
-                    <input type="password" id="password-signup" placeholder="Password"
-                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" />
-                    <!--                <button type="button" class="absolute right-3 top-3 text-gray-500">Hide</button>-->
-                </div>
+                </label>
                 <button type="submit"
-                        class="w-full bg-gray-300 text-gray-600 font-semi bold py-2 px-4 rounded-lg mt-4 hover:bg-gray-400"
+                        class="btn btn-outline btn-success w-full font-semi bold py-2 px-4 rounded-lg mt-4 hover:bg-gray-400"
                         onclick="checkSignup()">
                     Sign up
                 </button>
@@ -154,21 +160,21 @@
                     <div class="flex-grow border-t border-gray-300"></div>
                 </div>
                 <div class="flex justify-center mt-4 space-x-4">
-                    <button class="bg-blue-800 text-white py-2 px-4 rounded-lg hover:bg-blue-900">
-                        <i data-lucide="facebook" class="w-6 h-6 mr-2"></i>
+                    <button class="justify-center py-2 px-2 rounded-lg">
+                        <i data-lucide="facebook" class="w-6 h-6 mr-2 icon-facebook"></i>
                     </button>
-                    <button class="bg-red-600 text-white font-semi bold py-2 px-4 rounded-lg hover:bg-red-700">
-                        <i data-lucide="google" class="w-6 h-6 mr-2"></i>
+                    <button class="justify-center py-2 px-2 rounded-lg">
+                        <i class="fab fa-google w-6 h-6 mr-2 text-red-700 icon-google"></i>
                     </button>
-                    <button class="bg-blue-500 text-white font-semi bold py-2 px-4 rounded-lg hover:bg-blue-600">
-                        <i data-lucide="twitter" class="w-6 h-6 mr-2"></i>
+                    <button class="justify-center py-2 px-2 rounded-lg">
+                        <i data-lucide="twitter" class="w-6 h-6 mr-2 icon-twitter"></i>
                     </button>
                 </div>
             </div>
             <div class="text-center mt-6">
                 <p class="text-gray-500 text-sm">Have an account?</p>
                 <button class="mt-2 bg-black text-white font-semi bold py-2 px-4 rounded-lg hover:bg-gray-800"
-                         onclick="showLogin()">
+                         onclick="redirectToLogIn()">
                     Log in
                 </button>
             </div>
@@ -177,7 +183,15 @@
 </div>
 <div th:replace="/components/lucide_icons :: lucide_icon"></div>
 <script>
-    function showLogin() {
+    window.onload = function() {
+        if (window.location.pathname === "/signup") {
+            showSignUp();
+        } else {
+            showLogin();
+        }
+    };
+    function  showLogin () {
+        //if (event) event.preventDefault(); // Ngừng sự kiện mặc định
         document.getElementById('login-form').classList.remove('hidden');
         document.getElementById('signup-form').classList.add('hidden');
         document.getElementById('login-tab').classList.add('text-gray-800', 'border-b-4', 'border-blue-500');
@@ -187,7 +201,8 @@
         document.title = "Đăng nhập";
     }
 
-    function showSignUp() {
+    function showSignUp () {
+        // Thực thi hàm để hiển thị form đăng ký
         document.getElementById('signup-form').classList.remove('hidden');
         document.getElementById('login-form').classList.add('hidden');
         document.getElementById('signup-tab').classList.add('text-gray-800', 'border-b-4', 'border-blue-500');
@@ -196,11 +211,21 @@
         document.getElementById('login-tab').classList.add('text-gray-500');
         document.title = "Đăng ký tài khoản";
     }
-    function checkLogin() {
-        let email = document.getElementById('email').value;
-        let password = document.getElementById('password').value;
-    }
 
+    function redirectToSignUp() {
+        // Gọi showSignUp trước khi thay đổi URL
+        showSignUp();
+
+        // Sử dụng history.pushState để thay đổi URL mà không tải lại trang
+        history.pushState(null, '', '/signup');
+    }
+    function redirectToLogIn() {
+        // Gọi showSignUp trước khi thay đổi URL
+        showLogin();
+
+        // Sử dụng history.pushState để thay đổi URL mà không tải lại trang
+        history.pushState(null, '', '/login');
+    }
 </script>
 </body>
 </html>
