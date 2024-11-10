@@ -13,6 +13,7 @@ public class CategoryDTO {
     private String categoryName;
 
     public static CategoryDTO fromEntity(Category category) {
+        if (category == null) return null;
         return new CategoryDTO(
             category.getId(),
             category.getCategoryName()

@@ -13,6 +13,7 @@ public class SizeDTO {
     private String size;
 
     public static SizeDTO fromEntity(Size size) {
+        if (size == null) return null;
         return new SizeDTO(
             size.getId(),
             size.getSize()
