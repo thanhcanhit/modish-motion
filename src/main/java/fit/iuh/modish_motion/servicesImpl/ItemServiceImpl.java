@@ -47,7 +47,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Page<ItemDTO> findByPage(Pageable pageable) {
-        return itemRepository.findAll(pageable)
+        return itemRepository.findItemsWithVariants(pageable)
                 .map(ItemDTO::fromEntity);
     }
 }
