@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="components/head :: head"></div>
+</head>
+<body>
+<header th:replace="components/header"></header>
+
+<div th:fragment="content" class="container mx-auto px-24">
+    <div class="breadcrumbs text-md text-gray-500 mb-4">
+        <ul>
+            <li><a href="/">Trang chủ</a></li>
+            <li><a th:text="${product.getGender()}"></a></li>
+            <li><a th:text="${product.getCategory().categoryName}"></a></li>
+            <li class="text-gray-600" th:text="${product.getName()}">Product name</li>
+        </ul>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <section class="flex gap-2">
+            <div class="flex flex-col w-fit justify-center gap-2 py-2">
+                <a href="#item1" class="btn btn-xs">1</a>
+                <a href="#item2" class="btn btn-xs">2</a>
+                <a href="#item3" class="btn btn-xs">3</a>
+                <a href="#item4" class="btn btn-xs">4</a>
+            </div>
+            <div class="carousel w-full relative">
+
+
+                <div id="item1" class="carousel-item w-full">
+                    <img
+                            src="https://img.daisyui.com/images/stock/photo-1625726411847-8cbb60cc71e6.webp"
+                            class="w-full"/>
+                </div>
+                <div id="item2" class="carousel-item w-full">
+                    <img
+                            src="https://img.daisyui.com/images/stock/photo-1609621838510-5ad474b7d25d.webp"
+                            class="w-full"/>
+                </div>
+                <div id="item3" class="carousel-item w-full">
+                    <img
+                            src="https://img.daisyui.com/images/stock/photo-1414694762283-acccc27bca85.webp"
+                            class="w-full"/>
+                </div>
+                <div id="item4" class="carousel-item w-full">
+                    <img
+                            src="https://img.daisyui.com/images/stock/photo-1665553365602-b2fb8e5d1707.webp"
+                            class="w-full"/>
+                </div>
+            </div>
+        </section>
+        <section class="flex flex-col gap-2">
+            <p th:text="${product.name}" class="font-semibold "></p>
+            <div class="flex gap-4 items-center">
+                <p class="text-sm">PVN-<span th:text="${product.getId()}"></span></p>
+                <div class="flex items-center gap-2">
+                    <div class="rating rating-xs">
+                        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" disabled/>
+                        <input
+                                type="radio"
+                                name="rating-2"
+                                class="mask mask-star-2 bg-orange-400"
+                                checked="checked" disabled/>
+                        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400"
+                               checked="checked" disabled/>
+                        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400"
+                               checked="checked" disabled/>
+                        <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" disabled/>
+                    </div>
+                    <p class="font-semibold">4.8 <span class="font-normal text-gray-600">(186)</span></p>
+                </div>
+                <span class="text-gray-500">|</span>
+                <p> Đã bán <span th:text="${product.getQuantitySold()}" class="font-semibold"></span></p>
+
+            </div>
+            <p th:text="${#numbers.formatDecimal(200000, 0, 'POINT', 0, 'COMMA')} + ' đ'"
+               class="font-semibold text-2xl"></p>
+
+            <div>
+                <p class="font-semibold">Màu sắc: <span>Đen</span></p>
+                <div class="flex gap-2 my-2">
+                    <div class="bg-black rounded-full w-8 h-8"></div>
+                </div>
+            </div>
+
+            <div>
+                <p class="font-semibold">Kích thước: </p>
+                <div class="flex gap-2 my-2">
+                    <button class="btn btn-sm bg-black text-white w-[40px] h-[40px]">X</button>
+                    <button class="btn btn-sm btn-outline w-[40px] h-[40px]">M</button>
+                    <button class="btn btn-sm btn-outline w-[40px] h-[40px]">L</button>
+                </div>
+            </div>
+
+            <div>
+                <p class="mb-2 font-semibold">Số lượng:</p>
+                <div class="flex gap-2">
+                    <div class="join border">
+                        <button class="btn join-item bg-transparent w-12 border-none">-</button>
+                        <input class="input  join-item w-12 text-center " value="1"/>
+                        <button class="btn join-item bg-transparent w-12 border-none">+</button>
+                    </div>
+                    <button class="btn btn-wide btn-outline flex-1">Thêm vào giỏ</button>
+                </div>
+            </div>
+            <button class="btn btn-wide btn-warning w-full">Mua ngay</button>
+        </section>
+    </div>
+</div>
+
+
+<footer th:replace="components/footer"></footer>
+
+<div th:replace="/components/lucide_icons :: lucide_icon"></div>
+</body>
+</html>

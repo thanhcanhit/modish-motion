@@ -13,6 +13,7 @@ public class ColorDTO {
     private String color;
 
     public static ColorDTO fromEntity(Color color) {
+        if (color == null) return null;
         return new ColorDTO(
             color.getId(),
             color.getColor()

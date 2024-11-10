@@ -27,6 +27,9 @@ public class Item {
     private String gender;
     private int quantitySold;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "item", fetch = FetchType.EAGER)
     private List<Variant> variants;
+
+    public Item(String itemId) {
+    }
 }
