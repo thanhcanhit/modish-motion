@@ -43,8 +43,16 @@ for (let i = 0; i < dots.length; i++) {
 setInterval(nextSlide, 4000);
 showSlide(currentIndex);
 
+function showSuggestedItems() {
+    // Ẩn tất cả các danh sách sản phẩm
+    document.querySelectorAll('.suggested-items').forEach(item => item.classList.add('hidden'));
 
-function loadPopularItems(button) {
+    // Lấy giá trị của danh mục đã chọn và hiển thị danh sách tương ứng
+    const selectedIndex = document.getElementById('category-select').value;
+    document.getElementById(`suggestedItems${parseInt(selectedIndex) + 1}`).classList.remove('hidden');
+    document.getElementById(`suggestedItems${parseInt(selectedIndex) + 1}`).classList.add('grid');
+}
+function showPopularItems(button) {
     document.querySelectorAll('#category-buttons .btn').forEach(btn => {
         btn.classList.remove('btn-warning'); // Xóa màu hiện tại
         btn.classList.add('bg-gray-100'); // Đổi lại màu mặc định
@@ -53,43 +61,12 @@ function loadPopularItems(button) {
     // Thêm trạng thái active cho nút được chọn
     button.classList.remove('bg-gray-100');
     button.classList.add('btn-warning');
-    const categoryId = button.getAttribute('data-category-id');
-    fetch(`/homeFake/products?categoryId=${categoryId}&limit=4`)
-        .then(response => response.json())
-        .then(items => {
-            const popularGrid = document.getElementById("popular-grid");
-            popularGrid.innerHTML = '';
-            items.forEach(item => {
-                const itemHtml = `
-                        <div class="border rounded-lg p-4">
-                            <img src="${item.imageUrl}" alt="${item.name}" class="w-full h-40 object-cover rounded-md">
-                            <h3 class="text-lg font-semibold mt-2">${item.name}</h3>
-                            <p class="text-gray-600">${item.price} đ</p>
-                        </div>
-                    `;
-                popularGrid.insertAdjacentHTML('beforeend', itemHtml);
-            });
-        })
-        .catch(error => console.error('Lỗi khi tải sản phẩm ưa chuộng:', error));
+    // Ẩn tất cả các danh sách sản phẩm
+    document.querySelectorAll('.popular-items').forEach(item => item.classList.add('hidden'));
+
+    // Lấy chỉ số của danh mục đã chọn và hiển thị danh sách tương ứng
+    const selectedIndex = button.getAttribute('data-category-index');
+    document.getElementById(`popularItems${parseInt(selectedIndex) + 1}`).classList.remove('hidden');
+    document.getElementById(`popularItems${parseInt(selectedIndex) + 1}`).classList.add('grid');
 }
 
-function loadSuggestedItems() {
-    const categoryId = document.getElementById("category-select").value;
-    fetch(`/homeFake/products?categoryId=${categoryId}`)
-        .then(response => response.json())
-        .then(items => {
-            const productGrid = document.getElementById("product-grid");
-            productGrid.innerHTML = '';
-            items.forEach(item => {
-                const itemHtml = `
-                        <div class="border rounded-lg p-4">
-                            <img src="${item.imageUrl}" alt="${item.name}" class="w-full h-40 object-cover rounded-md">
-                            <h3 class="text-lg font-semibold mt-2">${item.name}</h3>
-                            <p class="text-gray-600">${item.price} đ</p>
-                        </div>
-                    `;
-                productGrid.insertAdjacentHTML('beforeend', itemHtml);
-            });
-        })
-        .catch(error => console.error('Lỗi khi tải sản phẩm gợi ý:', error));
-}

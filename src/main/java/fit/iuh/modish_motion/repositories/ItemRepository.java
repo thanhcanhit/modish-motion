@@ -15,7 +15,7 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<Item, String> {
 
     // Additional query methods can be defined here
-    @Query(value = "SELECT * FROM items WHERE category_id = :categoryId ORDER BY RAND() LIMIT :count", nativeQuery = true)
+    @Query(value = "SELECT * FROM items i WHERE i.category_id = :categoryId AND EXISTS (SELECT 1 FROM variants v WHERE v.item_id = i.id) ORDER BY RAND() LIMIT :count", nativeQuery = true)
     List<Item> findRandomItemsByCategory(@Param("categoryId") int categoryId, @Param("count") int count);
 
     @Query("SELECT i FROM Item i WHERE size(i.variants) > 0")
