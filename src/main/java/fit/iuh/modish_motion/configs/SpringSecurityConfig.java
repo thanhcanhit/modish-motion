@@ -23,7 +23,11 @@ public class SpringSecurityConfig {
                                 .anyRequest().authenticated())
                 .formLogin(login -> login.loginPage("/login").loginProcessingUrl("/login").usernameParameter("username")
                         .passwordParameter("password").defaultSuccessUrl("/admin", true))
-                .logout(logout -> logout.logoutUrl("/admin-logout").logoutSuccessUrl("/login") );
+                .logout(logout -> logout.logoutUrl("/admin-logout").logoutSuccessUrl("/login"))
+                        .rememberMe(rememberMe -> rememberMe
+                                .key("uniqueAndSecret") // Khóa bí mật để mã hóa cookie remember-me
+                                .tokenValiditySeconds(86400)
+                );
         return http.build();
     }
 
