@@ -50,4 +50,12 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAll(pageable)
                 .map(CategoryDTO::fromEntity);
     }
+
+    @Override
+    public List<CategoryDTO> findRandomCategories(int count) {
+        return categoryRepository.findRandomCategories(count)
+                .stream()
+                .map(CategoryDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
 }

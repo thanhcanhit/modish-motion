@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="components/head :: head"></div>
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+</head>
+<body>
+<header th:replace="components/header"></header>
+
+<div th:fragment="content">
+    <section>
+        <h1 class="text-blue-500 text border-gray-200 text-2xl">Welcome to Home Page</h1>
+        <p class="text-5xl text-gray-400 font-semibold">This is the home page content.</p>
+        <i data-lucide="volume-2" class="my-class"></i>
+        <i data-lucide="airplay"></i>
+        <i data-lucide="menu"></i>
+    </section>
+</div>
+
+
+<footer th:replace="components/footer"></footer>
+
+<div th:replace="/components/lucide_icons :: lucide_icon"></div>
+</body>
+</html>
