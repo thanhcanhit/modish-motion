@@ -18,4 +18,7 @@ public class Color {
 
     @Column(name = "color", length = 255)
     private String color;
+
+    @Column(name = "hex", length = 255)
+    private String hex;
 }
