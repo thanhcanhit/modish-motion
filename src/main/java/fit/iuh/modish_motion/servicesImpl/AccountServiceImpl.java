@@ -1,5 +1,6 @@
 package fit.iuh.modish_motion.servicesImpl;
 
+import fit.iuh.modish_motion.dto.UserDTO;
 import fit.iuh.modish_motion.entities.Account;
 import fit.iuh.modish_motion.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,18 +34,15 @@ public class AccountServiceImpl implements AccountService {
                 .map(account -> AccountDTO.fromEntity(account));
     }
 
-    public boolean authenticate(String username, String password) {
-        // Tìm người dùng trong cơ sở dữ liệu theo username
-        Account account = accountRepository.findByUsername(username);
 
-        // Kiểm tra nếu người dùng không tồn tại
+
+    @Override
+    public Optional<AccountDTO> findByUserNameAndPassword(String username, String password) {
+        Account account = accountRepository.findByUsernameAndPassword(username, password);
         if (account == null) {
-            return false;
+            return Optional.empty();
         }
-        if (account.getUsername().equals(username) && account.getPassword().equals(password)) {
-            return true;
-        }
-        return false;
+        return Optional.of(AccountDTO.fromEntity(account));
     }
 
     @Override
@@ -63,5 +61,27 @@ public class AccountServiceImpl implements AccountService {
     public Page<AccountDTO> findByPage(Pageable pageable) {
         return accountRepository.findAll(pageable)
                 .map(account -> AccountDTO.fromEntity(account));
+    }
+
+    @Override
+    public boolean authenticate(String username, String password) {
+        Account account = accountRepository.findByUsernameAndPassword(username, password);
+        if (account != null) {
+            System.out.println("User authenticated successfully");
+            return true;
+        } else {
+            System.out.println("Authentication failed");
+            return false;
+        }
+    }
+
+    @Override
+    public Optional<AccountDTO> getAccountWithUserDetails(Integer accountId) {
+        return accountRepository.findById(accountId).map(account -> {
+            AccountDTO accountDTO = AccountDTO.fromEntity(account);
+            UserDTO userDTO = UserDTO.fromEntity(account.getUser());
+            accountDTO.setUser(userDTO);
+            return accountDTO;
+        });
     }
 }

@@ -15,4 +15,8 @@ public interface AccountService {
     Page<AccountDTO> findByPage(Pageable pageable);
 
     boolean authenticate(String username, String password);
+
+    Optional<AccountDTO> findByUserNameAndPassword(String username, String password);
+
+    Optional<AccountDTO> getAccountWithUserDetails(Integer accountId);
 }

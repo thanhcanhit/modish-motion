@@ -1,41 +1,50 @@
 package fit.iuh.modish_motion.controllers;
 
+import fit.iuh.modish_motion.dto.AccountDTO;
+import fit.iuh.modish_motion.dto.UserDTO;
 import fit.iuh.modish_motion.services.AccountService;
 import fit.iuh.modish_motion.services.UserService;
 import fit.iuh.modish_motion.servicesImpl.AccountServiceImpl;
 import fit.iuh.modish_motion.servicesImpl.UserServiceImpl;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
+
+import java.util.List;
+import java.util.Optional;
 
 @Controller
+@SessionAttributes("currentUser")
 public class LoginController {
-    @Autowired
-    private final UserService userService;
-    @Autowired
     private final AccountService accountService;
-
-    public LoginController() {
-        this.userService = new UserServiceImpl();
-        this.accountService = new AccountServiceImpl();
+    @Autowired
+    public LoginController(AccountService accountService) {
+        this.accountService = accountService;
     }
 
 
-    @PostMapping("/login")
+    @PostMapping("/loginrequest")
     public String login(@RequestParam("username") String username,
-                        @RequestParam("password") String password, Model model) {
+                        @RequestParam("password") String password,
+                        HttpSession session,
+                        Model model) {
 
-        // Xác thực người dùng
         boolean isAuthenticated = accountService.authenticate(username, password);
 
         if (isAuthenticated) {
-            // Nếu đăng nhập thành công, chuyển đến trang user profile
-            return "redirect:/user";
+            Optional<AccountDTO> accountDTO = accountService.findByUserNameAndPassword(username, password);
+            if (accountDTO.isPresent()) {
+                // Lưu thông tin người dùng vào session
+                session.setAttribute("currentUser", accountDTO.get());
+            }
+            return "home";  // Redirect to the homepage or dashboard
         } else {
-            // Nếu thất bại, hiển thị thông báo lỗi trên trang đăng nhập
             model.addAttribute("error", "Invalid username or password");
             return "login";
         }
