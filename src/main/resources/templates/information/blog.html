@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khuyến Mãi Tưng Bừng</title>
+    <div th:replace="components/head :: head"></div>
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+</head>
+
+<body>
+<header th:replace="components/header"></header>
+<main class="container px-[116px] py-8">
+    <nav class="text-sm breadcrumbs text-gray-500 mb-6">
+        <ul>
+            <li><a href="/" class="hover:underline text-blue-600">Trang chủ</a></li>
+            <li>Blog</li>
+        </ul>
+    </nav>
+    <div class="container flex flex-col lg:flex-row items-center gap-8 bg-gray-50 rounded-lg shadow-md">
+        <!-- Left Content (Image) -->
+        <div class="lg:w-1/2 h-full">
+            <img th:src="@{/images/footer/blog.png}" alt="Blog Image" class="rounded-lg object-cover w-full h-full">
+        </div>
+
+        <!-- Right Content (Text) -->
+        <div class="lg:w-1/2 p-12">
+            <h1 class="text-5xl font-bold mb-4">Modish Motion BLOG</h1>
+            <p class="text-xl font-light text-gray-600 mb-4">Everyday wear - Everyday read</p>
+            <p class="text-gray-700 text-lg">Nam giới đang ưa chuộng những chiếc quần caro nam bởi đây là kiểu quần
+                có thể kết hợp được với nhiều loại trang phục.</p>
+        </div>
+    </div>
+    <div class="container mx-auto px-4 py-8">
+        <!-- Search Bar -->
+        <div class="flex justify-center mb-8">
+            <input type="text" placeholder="Tìm kiếm bài viết"
+                   class="w-full max-w-md p-3 rounded-full border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+        </div>
+
+        <!-- Carousel -->
+        <div class="relative flex items-center w-full max-w-5xl px-4">
+            <!-- Left Arrow -->
+            <button class="absolute left-0 bg-white rounded-full shadow-md p-2 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+
+            <!-- Carousel Items -->
+            <div class="flex space-x-4 overflow-hidden">
+                <!-- Card 1 -->
+                <div class="w-48 h-48 bg-cover bg-center relative rounded-lg overflow-hidden"
+                     style="background-image: url('/images/footer/blog/ve-modish-motion.png')">
+                    <div class="absolute inset-0 bg-black opacity-40"></div>
+                    <div class="absolute bottom-2 left-2 text-white font-semibold">Về Modish Motion</div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="w-48 h-48 bg-cover bg-center relative rounded-lg overflow-hidden"
+                     style="background-image: url('/images/footer/blog/khuyen-mai.png')">
+                    <div class="absolute inset-0 bg-black opacity-40"></div>
+                    <div class="absolute bottom-2 left-2 text-white font-semibold">Khuyến Mãi</div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="w-48 h-48 bg-cover bg-center relative rounded-lg overflow-hidden"
+                     style="background-image: url('/images/footer/blog/bao-ve-khach-hang.png')">
+                    <div class="absolute inset-0 bg-black opacity-40"></div>
+                    <div class="absolute bottom-2 left-2 text-white font-semibold">Bảo vệ khách hàng</div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="w-48 h-48 bg-cover bg-center relative rounded-lg overflow-hidden"
+                     style="background-image: url('/images/footer/blog/uu-dai-doi-tac.png')">
+                    <div class="absolute inset-0 bg-black opacity-40"></div>
+                    <div class="absolute bottom-2 left-2 text-white font-semibold">Ưu đãi Đối tác</div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="w-48 h-48 bg-cover bg-center relative rounded-lg overflow-hidden"
+                     style="background-image: url('/images/footer/blog/thoi-trang-the-gioi.png')">
+                    <div class="absolute inset-0 bg-black opacity-40"></div>
+                    <div class="absolute bottom-2 left-2 text-white font-semibold">Thời Trang Thế Giới</div>
+                </div>
+            </div>
+
+            <!-- Right Arrow -->
+            <button class="absolute right-0 bg-white rounded-full shadow-md p-2 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+        <div class="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
+            <!-- Main Article -->
+            <div class="relative lg:w-2/3 bg-cover bg-center rounded-lg shadow-lg overflow-hidden"
+                 style="background-image: url('/images/footer/blog/thoi-trang-the-gioi.png')">
+                <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+                <div class="absolute bottom-0 left-0 p-6 text-white">
+                    <h3 class="text-2xl font-bold">Gợi ý TOP 12 mẫu áo lớp polo ĐỘC ĐÁO, HÓT HƠN HÓT</h3>
+                    <div class="mt-4">
+                        <button class="bg-white text-black py-2 px-4 rounded-full font-semibold hover:bg-gray-200">Đọc
+                            thêm</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar: Most Viewed Articles -->
+            <div class="lg:w-1/3 space-y-4">
+                <h4 class="text-xl font-semibold mb-4">Nhiều lượt xem nhất</h4>
+
+                <!-- Article List Item -->
+                <div class="flex items-start space-x-4">
+                    <img th:src="@{/images/footer/blog/article1.png}" alt="Article Image"
+                         class="w-24 h-16 rounded-lg object-cover">
+                    <div>
+                        <h5 class="text-md font-semibold text-gray-800">Chung tay phủ xanh đất Việt: Modish Motion góp sức 1 tỷ
+                            đồng trồng cây...</h5>
+                        <p class="text-sm text-gray-500">Về Modish Motion | 22/05/2024</p>
+                    </div>
+                </div>
+
+                <!-- Article List Item 2 -->
+                <div class="flex items-start space-x-4">
+                    <img th:src="@{/images/footer/blog/article2.png}" alt="Article Image"
+                         class="w-24 h-16 rounded-lg object-cover">
+                    <div>
+                        <h5 class="text-md font-semibold text-gray-800">THÔNG BÁO CHÍNH SÁCH DUY TRÌ HẠNG THẺ VIP Modish Motion
+                            NĂM...</h5>
+                        <p class="text-sm text-gray-500">Về Modish Motion | 22/05/2024</p>
+                    </div>
+                </div>
+
+                <!-- Article List Item 3 -->
+                <div class="flex items-start space-x-4">
+                    <img th:src="@{/images/footer/blog/article3.png}" alt="Article Image"
+                         class="w-24 h-16 rounded-lg object-cover">
+                    <div>
+                        <h5 class="text-md font-semibold text-gray-800">BST JEAN FLEX 2024 - X2 TÔN DÁNG, ĐẸP MỌI GÓC
+                            NHÌN</h5>
+                        <p class="text-sm text-gray-500">Về Modish Motion | 22/05/2024</p>
+                    </div>
+                </div>
+
+                <!-- Article List Item 4 -->
+                <div class="flex items-start space-x-4">
+                    <img th:src="@{/images/footer/blog/article4.png}" alt="Article Image"
+                         class="w-24 h-16 rounded-lg object-cover">
+                    <div>
+                        <h5 class="text-md font-semibold text-gray-800">Modish Motion ra mắt Polo Cafe Đá - Dấu ấn tiên phong
+                            trên thị trường...</h5>
+                        <p class="text-sm text-gray-500">Về Modish Motion | 22/05/2024</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mx-auto px-4 py-8">
+            <!-- Section Header -->
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold">Về Modish Motion</h2>
+                <a href="#" class="text-blue-500 hover:underline font-semibold flex items-center">
+                    Xem thêm <span class="ml-2">&rarr;</span>
+                </a>
+            </div>
+            <h3 class="text-xl font-medium mb-6">Mới nhất</h3>
+
+            <!-- Article Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Article 1 -->
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <img src="/images/footer/blog/ve-modish-motion.png" alt="Modish Motion miền Bắc" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h4 class="text-lg font-semibold mb-2">Hệ thống cửa hàng Modish Motion miền Bắc</h4>
+                        <p class="text-gray-500 text-sm">Về Modish Motion | 22/05/2024</p>
+                    </div>
+                </div>
+
+                <!-- Article 2 -->
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <img src="/images/footer/blog/khuyen-mai.png" alt="Modish Motion miền Trung" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h4 class="text-lg font-semibold mb-2">Hệ thống cửa hàng Modish Motion miền Trung</h4>
+                        <p class="text-gray-500 text-sm">Về Modish Motion | 22/05/2024</p>
+                    </div>
+                </div>
+
+                <!-- Article 3 -->
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <img src="/images/footer/blog/bao-ve-khach-hang.png" alt="Modish Motion miền Nam" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h4 class="text-lg font-semibold mb-2">Hệ thống cửa hàng Modish Motion miền Nam</h4>
+                        <p class="text-gray-500 text-sm">Về Modish Motion | 22/05/2024</p>
+                    </div>
+                </div>
+
+                <!-- Article 4 -->
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <img src="/images/footer/blog/thoi-trang-the-gioi.png" alt="Modish Motion Bắc Giang 3" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h4 class="text-lg font-semibold mb-2">Modish Motion Bắc Giang 3 - Ưu đãi hàng nghìn sản phẩm chỉ từ...</h4>
+                        <p class="text-gray-500 text-sm">Về Modish Motion | 11/10/2024</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Replace remaining placeholders accordingly in similar format -->
+
+</main>
+<footer th:replace="components/footer"></footer>
+<div th:replace="/components/lucide_icons :: lucide_icon"></div>
+</body>
