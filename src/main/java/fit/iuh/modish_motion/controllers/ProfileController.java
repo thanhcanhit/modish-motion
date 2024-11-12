@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.util.Optional;
@@ -18,12 +19,14 @@ public class ProfileController {
         this.accountService = accountService;
     }
     @GetMapping("/profile")
-    public String userProfile(Model model, HttpSession session) {
+    public String userProfile(@RequestParam(value = "tab", defaultValue = "profile") String tab, Model model, HttpSession session) {
         AccountDTO currentUser = (AccountDTO) session.getAttribute("currentUser");
         if (currentUser == null) {
             return "login";
         }
         model.addAttribute("user", currentUser);
+        model.addAttribute("selectedTab", tab);
         return "profile";
     }
+
 }
