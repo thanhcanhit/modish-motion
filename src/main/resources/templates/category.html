@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nam - YODY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #fff;
+            z-index: 1000;
+            border-bottom: 1px solid #eee;
+            transition: transform 0.3s ease;
+        }
+
+        .header.hidden {
+            transform: translateY(-100%);
+        }
+
+        .category-controls {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #fff;
+            z-index: 999;
+            border-bottom: 1px solid #eee;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .category-controls.visible {
+            transform: translateY(0);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            min-width: 160px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .product-grid {
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
+    </style>
+</head>
+<body class="bg-white">
+<header th:replace="components/header"></header>
+
+<div class="category-controls" id="categoryControls">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center h-full">
+            <span class="text-[#31495e] text-sm" th:text="${items.size()}"></span>
+            <div class="flex gap-3">
+                <div class="dropdown relative">
+                    <button class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-[#31495e] hover:border-[#31495e] transition-colors flex items-center gap-2">
+                        Danh sách
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Mới nhất</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Bán chạy</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Giá thấp đến cao</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Giá cao đến thấp</a>
+                    </div>
+                </div>
+                <button class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-[#31495e] hover:border-[#31495e] transition-colors flex items-center gap-2">
+                    Bộ lọc
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main class="pt-16">
+    <div class="container mx-auto px-4">
+        <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6">
+            <a href="/" class="hover:text-[#31495e]">Trang chủ</a>
+            <span>></span>
+            <span class="text-[#31495e]" th:text="${category.categoryName}"></span>
+        </nav>
+
+        <h1 class="text-2xl font-semibold text-[#31495e] mb-8" th:text="${category.categoryName}"></h1>
+
+        <div class="grid grid-cols-3 gap-6 mb-8">
+            <!-- Product Items -->
+            <th:block th:each="item : ${items}">
+                <div th:replace="components/productItem :: productItem(${item})"></div>
+            </th:block>
+        </div>
+
+        <div class="flex justify-center mb-12">
+            <button class="px-8 py-3 border border-gray-200 rounded-lg text-sm text-[#31495e] hover:border-[#31495e] transition-colors flex items-center gap-2">
+                Xem thêm
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 9l6 6 6-6"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="text-[#31495e] space-y-4 mb-12">
+            <div class="collapsed-content max-h-24 overflow-hidden relative" id="description">
+                <p><strong class="text-orange-500">Áo nam</strong>, món đồ thời trang kinh điển và linh hoạt, đã trở thành biểu tượng của phong cách vượt thời gian. Với sự kết hợp hoàn hảo giữa nét lịch lãm và sự thoải mái, <strong>áo nam YODY</strong> không chỉ là một trang phục thông thường mà còn là tuyên ngôn về phong cách sống năng động và tinh tế.</p>
+                <!-- More content -->
+            </div>
+            <button onclick="toggleDescription()" class="text-sm font-medium hover:text-orange-500 transition-colors flex items-center gap-1 mx-auto">
+                <span id="toggleText">Xem thêm</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="toggleIcon">
+                    <path d="M6 9l6 6 6-6"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Header/Controls Toggle
+    let lastScroll = 0;
+    const header = document.getElementById('mainHeader');
+    const categoryControls = document.getElementById('categoryControls');
+
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset;
+        const threshold = 200; // Adjust based on your needs
+
+        if (currentScroll > threshold) {
+            header.classList.add('hidden');
+            categoryControls.classList.add('visible');
+        } else {
+            header.classList.remove('hidden');
+            categoryControls.classList.remove('visible');
+        }
+
+        lastScroll = currentScroll;
+    });
+
+    // Description Toggle
+    function toggleDescription() {
+        const description = document.getElementById('description');
+        const toggleText = document.getElementById('toggleText');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        description.classList.toggle('max-h-24');
+        if (description.classList.contains('max-h-24')) {
+            toggleText.textContent = 'Xem thêm';
+            toggleIcon.style.transform = 'rotate(0deg)';
+        } else {
+            toggleText.textContent = 'Thu gọn';
+            toggleIcon.style.transform = 'rotate(180deg)';
+        }
+    }
+</script>
+</body>
+</html>

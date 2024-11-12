@@ -50,4 +50,10 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAll(pageable)
                 .map(CategoryDTO::fromEntity);
     }
+
+    @Override
+    public CategoryDTO findByName(String name) {
+        Optional<Category> category = categoryRepository.findByCategoryName(name);
+        return category.map(CategoryDTO::fromEntity).orElse(null);
+    }
 }

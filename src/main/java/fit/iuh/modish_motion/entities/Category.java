@@ -1,9 +1,7 @@
 package fit.iuh.modish_motion.entities;
 
-
 import jakarta.persistence.*;
 import lombok.*;
-
 
 @Getter
 @Setter

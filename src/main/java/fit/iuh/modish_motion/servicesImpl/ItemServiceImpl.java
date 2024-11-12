@@ -50,4 +50,12 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository.findItemsWithVariants(pageable)
                 .map(ItemDTO::fromEntity);
     }
+
+    @Override
+    public List<ItemDTO> findByCategoryId(int categoryId) {
+        List<Item> items = itemRepository.findByCategoryId(categoryId);
+        return items.stream()
+                .map(ItemDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
 }
