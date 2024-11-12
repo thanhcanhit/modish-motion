@@ -6,6 +6,7 @@
 
     import java.util.LinkedHashMap;
     import java.util.List;
+    import java.util.Objects;
     import java.util.stream.Collectors;
 
     @Getter
@@ -23,26 +24,28 @@
         private String gender;
         private int quantitySold;
         private List<VariantDTO> variants;
-        private List<VariantDTO> displayVariants; // New field for distinct color variants
+        private List<VariantDTO> displayVariants;
 
         public static ItemDTO fromEntity(Item item) {
             List<VariantDTO> allVariants = item.getVariants().stream()
-                    .filter(variant -> variant != null)
+                    .filter(Objects::nonNull)
                     .map(VariantDTO::fromEntity)
                     .collect(Collectors.toList());
 
-            // Collect up to 4 unique color variants
+
             List<VariantDTO> uniqueColorVariants = allVariants.stream()
-                    .filter(variant -> variant.getColor() != null) // Ensure color is not null
+                    .filter(variant -> variant.getColor() != null)
                     .collect(Collectors.toMap(
-                            variant -> variant.getColor().getId(), // Key by color ID
-                            variant -> variant,                    // Value is the variant itself
-                            (existing, replacement) -> existing,   // Keep the first occurrence of each color
-                            LinkedHashMap::new                       // Preserve insertion order
+                            variant -> variant.getColor().getId(),
+                            variant -> variant,
+                            (existing, replacement) -> existing,
+                            LinkedHashMap::new
                     ))
                     .values().stream()
                     .limit(4)
                     .collect(Collectors.toList());
+
+            // Build the ItemDTO object
 
             return new ItemDTO(
                     item.getId(),
@@ -54,7 +57,7 @@
                     item.getGender(),
                     item.getQuantitySold(),
                     allVariants,
-                    uniqueColorVariants // Set displayVariants with unique color variants
+                    uniqueColorVariants
             );
         }
 
