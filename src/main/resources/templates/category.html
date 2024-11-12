@@ -13,30 +13,26 @@
             right: 0;
             height: 64px;
             background: #fff;
-            z-index: 1000;
+            z-index: 40;
             border-bottom: 1px solid #eee;
-            transition: transform 0.3s ease;
-        }
-
-        .header.hidden {
-            transform: translateY(-100%);
         }
 
         .category-controls {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 64px;
+            position: sticky;
+            top: 64px; /* Adjust this value to match the height of the header */
             background: #fff;
-            z-index: 999;
+            z-index: 30;
             border-bottom: 1px solid #eee;
-            transform: translateY(-100%);
-            transition: transform 0.3s ease;
+            padding: 12px 0;
+            transition: all 0.3s ease;
         }
 
-        .category-controls.visible {
-            transform: translateY(0);
+        .category-controls.fixed {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            z-index: 50; /* Ensure it is above the header */
         }
 
         .dropdown-content {
@@ -55,7 +51,7 @@
             display: block;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .product-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -66,59 +62,70 @@
                 grid-template-columns: repeat(1, 1fr);
             }
         }
+
+        #sideMenu {
+            padding: 0 1rem;
+        }
+
+        @media (min-width: 1024px) {
+            #sideMenu {
+                padding: 0 1.5rem;
+            }
+        }
     </style>
 </head>
 <body class="bg-white">
-<header th:replace="components/header"></header>
-
-<div class="category-controls" id="categoryControls">
-    <div class="container mx-auto px-4">
-        <div class="flex justify-between items-center h-full">
-            <span class="text-[#31495e] text-sm" th:text="${items.size()}"></span>
-            <div class="flex gap-3">
-                <div class="dropdown relative">
-                    <button class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-[#31495e] hover:border-[#31495e] transition-colors flex items-center gap-2">
-                        Danh sách
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M6 9l6 6 6-6"/>
-                        </svg>
-                    </button>
-                    <div class="dropdown-content">
-                        <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Mới nhất</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Bán chạy</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Giá thấp đến cao</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Giá cao đến thấp</a>
-                    </div>
-                </div>
-                <button class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-[#31495e] hover:border-[#31495e] transition-colors flex items-center gap-2">
-                    Bộ lọc
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M6 9l6 6 6-6"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+<header th:replace="components/header :: header(${categories})"></header>
 
 <main class="pt-16">
-    <div class="container mx-auto px-4">
-        <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6">
+    <div class="container mx-auto px-4 lg:px-6">
+        <nav class="flex items-center gap-2 text-sm text-gray-500 py-4">
             <a href="/" class="hover:text-[#31495e]">Trang chủ</a>
             <span>></span>
-            <span class="text-[#31495e]" th:text="${category.categoryName}"></span>
+            <span class="text-[#31495e]" th:text="${category.categoryName}">Nam</span>
         </nav>
 
-        <h1 class="text-2xl font-semibold text-[#31495e] mb-8" th:text="${category.categoryName}"></h1>
+        <h1 class="text-2xl font-semibold text-[#31495e] mb-4" th:text="${category.categoryName}">Nam</h1>
 
-        <div class="grid grid-cols-3 gap-6 mb-8">
+        <div class="category-controls" id="categoryControls">
+            <div class="container mx-auto px-4 lg:px-6">
+                <div class="flex justify-between items-center">
+                    <span class="text-[#31495e] text-sm" th:text="${items.size() + ' sản phẩm'}">335 sản phẩm</span>
+                    <div class="flex gap-3">
+                        <div class="dropdown relative">
+                            <button class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-[#31495e] hover:border-[#31495e] transition-colors flex items-center gap-2">
+                                Danh sách
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M6 9l6 6 6-6"/>
+                                </svg>
+                            </button>
+                            <div class="dropdown-content">
+                                <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Mới nhất</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Bán chạy</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Giá thấp đến cao</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Giá cao đến thấp</a>
+                            </div>
+                        </div>
+                        <button onclick="openFilter()"
+                                class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-[#31495e] hover:border-[#31495e] transition-colors flex items-center gap-2">
+                            Bộ lọc
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 py-6 justify-items-center">
             <!-- Product Items -->
             <th:block th:each="item : ${items}">
-                <div th:replace="components/productItem :: productItem(${item})"></div>
+                <div th:replace="components/productItem :: productItem(${item})" class="w-full"></div>
             </th:block>
         </div>
 
-        <div class="flex justify-center mb-12">
+        <div class="flex justify-center py-8">
             <button class="px-8 py-3 border border-gray-200 rounded-lg text-sm text-[#31495e] hover:border-[#31495e] transition-colors flex items-center gap-2">
                 Xem thêm
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -127,10 +134,9 @@
             </button>
         </div>
 
-        <div class="text-[#31495e] space-y-4 mb-12">
+        <div class="text-[#31495e] space-y-4 pb-12">
             <div class="collapsed-content max-h-24 overflow-hidden relative" id="description">
                 <p><strong class="text-orange-500">Áo nam</strong>, món đồ thời trang kinh điển và linh hoạt, đã trở thành biểu tượng của phong cách vượt thời gian. Với sự kết hợp hoàn hảo giữa nét lịch lãm và sự thoải mái, <strong>áo nam YODY</strong> không chỉ là một trang phục thông thường mà còn là tuyên ngôn về phong cách sống năng động và tinh tế.</p>
-                <!-- More content -->
             </div>
             <button onclick="toggleDescription()" class="text-sm font-medium hover:text-orange-500 transition-colors flex items-center gap-1 mx-auto">
                 <span id="toggleText">Xem thêm</span>
@@ -142,22 +148,34 @@
     </div>
 </main>
 
+<th:block th:replace="~{filter :: filter}"></th:block>
+
 <script>
-    // Header/Controls Toggle
-    let lastScroll = 0;
-    const header = document.getElementById('mainHeader');
+    // Category Controls Sticky Behavior
     const categoryControls = document.getElementById('categoryControls');
+    const header = document.querySelector('header');
+    const headerHeight = header.offsetHeight;
+    let lastScroll = 0;
 
     window.addEventListener('scroll', () => {
         const currentScroll = window.pageYOffset;
-        const threshold = 200; // Adjust based on your needs
 
-        if (currentScroll > threshold) {
-            header.classList.add('hidden');
-            categoryControls.classList.add('visible');
+        if (currentScroll > headerHeight) {
+            if (currentScroll > lastScroll) {
+                // Scrolling down
+                categoryControls.classList.add('fixed');
+                categoryControls.style.top = '0';
+                categoryControls.style.zIndex = '50';
+            } else {
+                // Scrolling up
+                categoryControls.classList.remove('fixed');
+                categoryControls.style.top = '64px'; // Adjust this value to match the height of the header
+                categoryControls.style.zIndex = '30';
+            }
         } else {
-            header.classList.remove('hidden');
-            categoryControls.classList.remove('visible');
+            categoryControls.classList.remove('fixed');
+            categoryControls.style.top = '64px'; // Adjust this value to match the height of the header
+            categoryControls.style.zIndex = '30';
         }
 
         lastScroll = currentScroll;
@@ -177,6 +195,17 @@
             toggleText.textContent = 'Thu gọn';
             toggleIcon.style.transform = 'rotate(180deg)';
         }
+    }
+
+    function openFilter() {
+        const overlay = document.getElementById('filterOverlay');
+        const panel = document.getElementById('filterPanel');
+
+        overlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        requestAnimationFrame(() => {
+            panel.classList.remove('translate-y-full');
+        });
     }
 </script>
 </body>

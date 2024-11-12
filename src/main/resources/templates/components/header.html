@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<header th:fragment="header" class="fixed top-0 left-0 right-0 bg-white z-40 shadow-sm">
+<header th:fragment="header(categories)" class="fixed top-0 left-0 right-0 bg-white z-40 shadow-sm">
     <div class="container mx-auto px-4">
         <!-- Main Header -->
         <nav class="flex items-center justify-between h-16">
@@ -25,7 +25,7 @@
                 </button>
 
                 <a href="/cart" class="p-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                 </a>
@@ -94,7 +94,7 @@
              onclick="closeMenu()"></div>
         <!-- Side Menu -->
         <div id="sideMenu"
-             class="fixed top-0 left-0 h-full w-80 bg-white -translate-x-full transition-all duration-300 ease-out shadow-lg overflow-y-auto">
+             class="fixed top-0 left-0 h-full w-80 bg-white -translate-x-full transition-all duration-300 ease-out shadow-lg overflow-y-auto z-50">
             <!-- Menu Header -->
             <div class="flex items-center justify-between p-4 border-b">
                 <span class="text-xl font-bold">Menu</span>
@@ -120,7 +120,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </div>
-                        <div class="hidden pl-4">
+                        <div class="hidden pl-4 submenu">
                             <a th:href="@{/categories/{categoryName}(categoryName=${category.categoryName})}" class="block px-4 py-2 hover:bg-gray-100 text-[#31495e]" th:text="${category.categoryName}"></a>
                         </div>
                     </div>
@@ -129,9 +129,23 @@
         </div>
     </div>
 
+    <style>
+        .submenu {
+            position: absolute;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 50;
+        }
+    </style>
+
     <script>
         function openMenu() {
             document.getElementById('menuOverlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
             requestAnimationFrame(() => {
                 document.getElementById('sideMenu').classList.remove('-translate-x-full');
             });
@@ -139,6 +153,7 @@
 
         function closeMenu() {
             document.getElementById('sideMenu').classList.add('-translate-x-full');
+            document.body.style.overflow = '';
             setTimeout(() => {
                 document.getElementById('menuOverlay').classList.add('hidden');
             }, 300);

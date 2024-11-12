@@ -41,6 +41,13 @@ public class HomeController {
         return "home";
     }
 
+    @GetMapping("/categories")
+    public String categoriesPage(Model model) {
+        List<Category> categories = categoryRepository.findAll();
+        model.addAttribute("categories", categories);
+        return "categories";
+    }
+
     @GetMapping("/data")
     public ResponseEntity<String> getData(Model model) {
         List<UserDTO> users = userService.findAll(); // Gọi service để lấy dữ liệu người dùng dưới dạng DTO
