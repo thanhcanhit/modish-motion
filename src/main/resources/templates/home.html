@@ -8,15 +8,15 @@
 <body>
 <header th:replace="components/header"></header>
 
-<div th:fragment="content" class="bg-white">
-    <div class="px-10">
+<div th:fragment="content" class="bg-white pt-8">
+    <div class="px-10 h-[500px] ">
         <!-- Banner Slider -->
-        <div class="relative w-full  mx-auto mt-10 overflow-hidden">
+        <div class="relative w-full  mx-auto mt-10 overflow-hidden h-full">
             <!-- Slide Wrapper -->
             <div id="slider" class="flex transition-transform duration-500 ease-in-out">
                 <!-- Sử dụng Thymeleaf để lặp qua từng banner -->
                 <div th:each="banner, iterStat : ${banners}"
-                     class="w-full flex-shrink-0"
+                     class="w-full flex-shrink-0 customSlider"
                      th:classappend="${iterStat.index == 0} ? 'block' : 'hidden'">
                     <a th:href="${banner.link}">
                         <img th:src="${banner.imageUrl}" alt="Banner" class="w-full h-full object-cover">
@@ -55,28 +55,28 @@
                     <button th:each="category, iterStat : ${categories1}"
                             th:text="${category.categoryName}"
                             th:data-category-index="${iterStat.index}"
-                            class="btn mx-2 border-0 rounded-full hover:bg-gray-100"
+                            class="btn min-w-[80px] mx-2 border-0 rounded-full hover:bg-gray-100"
                             th:classappend="${iterStat.index == 0} ? 'btn-warning' : 'bg-gray-100'"
                             onclick="showPopularItems(this)">
                     </button>
                 </div>
                 <div id="popular-grid" >
-                    <div id="popularItems1" class="popular-items grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div id="popularItems1" class="popular-items grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ">
                         <div th:each="item : ${popularItems1}">
                             <div th:replace="components/productItem :: productItem(item=${item})"></div>
                         </div>
                     </div>
-                    <div id="popularItems2" class="popular-items hidden  grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div id="popularItems2" class="popular-items hidden  grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ">
                         <div th:each="item : ${popularItems2}">
                             <div th:replace="components/productItem :: productItem(item=${item})"></div>
                         </div>
                     </div>
-                    <div id="popularItems3" class="popular-items hidden grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div id="popularItems3" class="popular-items hidden grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ">
                         <div th:each="item : ${popularItems3}">
                             <div th:replace="components/productItem :: productItem(item=${item})"></div>
                         </div>
                     </div>
-                    <div id="popularItems4" class="popular-items hidden  grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div id="popularItems4" class="popular-items hidden  grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ">
                         <div th:each="item : ${popularItems4}">
                             <div th:replace="components/productItem :: productItem(item=${item})"></div>
                         </div>
@@ -113,22 +113,22 @@
                 </select>
             </div>
             <div id="product-grid" >
-                <div id="suggestedItems1" class="suggested-items grid grid-cols-1 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 ">
+                <div id="suggestedItems1" class="suggested-items grid grid-cols-1 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 ">
                     <div th:each="item : ${suggestedItems1}">
                         <div th:replace="components/productItem :: productItem(item=${item})"></div>
                     </div>
                 </div>
-                <div id="suggestedItems2" class="suggested-items hidden grid-cols-1 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <div id="suggestedItems2" class="suggested-items hidden grid-cols-1 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 ">
                     <div th:each="item : ${suggestedItems2}">
                         <div th:replace="components/productItem :: productItem(item=${item})"></div>
                     </div>
                 </div>
-                <div id="suggestedItems3" class="suggested-items hidden grid-cols-1 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <div id="suggestedItems3" class="suggested-items hidden grid-cols-1 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 ">
                     <div th:each="item : ${suggestedItems3}">
                         <div th:replace="components/productItem :: productItem(item=${item})"></div>
                     </div>
                 </div>
-                <div id="suggestedItems4" class="suggested-items hidden grid-cols-1 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <div id="suggestedItems4" class="suggested-items hidden grid-cols-1 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 ">
                     <div th:each="item : ${suggestedItems4}">
                         <div th:replace="components/productItem :: productItem(item=${item})"></div>
                     </div>
@@ -173,8 +173,6 @@
 <div th:replace="/components/lucide_icons :: lucide_icon"></div>
 
 <script src="/js/home.js"></script>
-<style>
-    .hidden { display: none; }
-</style>
+
 </body>
 </html>

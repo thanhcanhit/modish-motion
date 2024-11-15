@@ -1,5 +1,5 @@
 // JavaScript for handling banner slider with dot indicators and navigation buttons
-const slides = document.getElementsByClassName("flex-shrink-0");
+const slides = document.getElementsByClassName("customSlider");
 const dots = document.getElementsByClassName("dot");
 let currentIndex = 0;
 
