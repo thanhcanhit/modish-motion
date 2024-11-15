@@ -56,9 +56,12 @@ public class UserServiceImpl implements UserService {
     public void updateUser(Integer id, UserDTO user) {
         Optional<UserDTO> userDTO = findById(id);
         if (userDTO.isPresent()) {
-            userDTO.get().setUsername(user.getUsername());
+            userDTO.get().setName(user.getName());
             userDTO.get().setEmail(user.getEmail());
-            userDTO.get().setRole(user.getRole());
+            userDTO.get().setDob(user.getDob());
+            userDTO.get().setGender(user.isGender());
+            userDTO.get().setAddress(user.getAddress());
+            userDTO.get().setPhoneNumber(user.getPhoneNumber());
             userRepository.save(userDTO.get().toEntity());
         }
     }
