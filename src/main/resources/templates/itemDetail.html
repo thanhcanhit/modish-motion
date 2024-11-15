@@ -7,7 +7,7 @@
 <body>
 <header th:replace="components/header"></header>
 
-<div class="container mx-auto px-24 py-8 pb-32">
+<div data-theme="light" class="container mx-auto px-24 pt-24 pb-32">
     <!-- Breadcrumbs -->
     <div class="breadcrumbs text-md text-gray-500 mb-4">
         <ul>
@@ -75,7 +75,7 @@
                 <div class="flex gap-2" id="color-options">
                     <button th:each="variant : ${product.displayVariants}"
                             th:data-color-id="${variant.color.id}"
-                            class="btn btn-sm btn-outline w-20 py-1 h-fit color-option">
+                            class="btn btn-sm btn-outline min-w-20 overflow-hidden py-1 h-fit color-option">
                         <span class="flex gap-1 flex-col items-center">
                             <span
                                     th:style="|background-color: ${variant.color.hex}|"
@@ -85,7 +85,8 @@
                         </span>
                         <span
                                 th:text="${variant.color.color}"
-                                class="text-xs"
+                                style="font-size: 10px"
+                                class="text-nowrap"
                         ></span>
                         </span>
                     </button>
