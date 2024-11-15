@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<article th:fragment="productItem(item)" class="w-full space-y-1 p-2 max-w-[265px]" th:id="${item.id}">
+    <a th:href="@{/product/{id}(id=${item.id})}" class="flex flex-col gap-2 mb-4">
+        <img id="product-image" class="product-image h-[354px] object-cover" alt="Product img"
+             th:src="${item.variants != null && item.variants.size() > 0 &&
+                      item.variants[0].imageUrls != null &&
+                      item.variants[0].imageUrls.size() > 0 ?
+                      item.variants[0].imageUrls[0] : '/images/item/product.png'}"/>
+        <p class="lg:text-md line-clamp-1 text-md font-normal" th:text="${item.name}">Product name</p>
+        <p class="font-semibold flex gap-4 text-lg items-center ">
+            <!-- Display Promotion Price if Available -->
+            <span th:if="${item.promotionPrice > 0}"
+                  class="text-red-500"
+                  th:text="${#numbers.formatDecimal(item.variants[0].price - item.promotionPrice, 0, 'POINT', 0, 'COMMA')} + 'đ'">
+        Discounted Price
+    </span>
+            <!-- Display Original Price with Strikethrough -->
+            <span th:if="${item.promotionPrice > 0}"
+                  class="line-through text-gray-400 text-xs"
+                  th:text="${item.variants != null && !item.variants.isEmpty() ?
+                    #numbers.formatDecimal(item.variants[0].price, 0, 'POINT', 0, 'COMMA') : '0'} + 'đ'">
+        Original Price
+    </span>
+            <!-- Display Only Original Price if No Promotion -->
+            <span th:if="${item.promotionPrice == 0}"
+                  th:text="${item.variants != null && !item.variants.isEmpty() ?
+                    #numbers.formatDecimal(item.variants[0].price, 0, 'POINT', 0, 'COMMA') : '0'} + 'đ'">
+        Price
+    </span>
+        </p>
+    </a>
+
+    <!-- Display up to 4 distinct color variants -->
+    <div class="flex gap-2 overscroll-x-auto">
+        <div th:if="${item.displayVariants != null && !item.displayVariants.isEmpty()}"
+             th:each="variant : ${item.displayVariants}">
+            <button th:if="${variant.imageUrls != null && !variant.imageUrls.isEmpty()}"
+                    th:attr="data-image-url=${variant.imageUrls[0]}"
+                    class="h-6 w-6 rounded-full block border item-color-button"
+                    th:style="|background-color: ${variant.color.hex}|"
+                    onclick="changeImage(this)">
+            </button>
+        </div>
+    </div>
+
+    <!-- Inline Script for Isolated Scope -->
+    <script>
+        (function () {
+            function changeImage(button) {
+                const imagePath = button.getAttribute("data-image-url");
+                const productImage = button.closest("article").querySelector(".product-image");
+                if (productImage) {
+                    productImage.src = imagePath;
+                }
+
+                const buttons = document.querySelectorAll(".item-color-button");
+                console.log(buttons)
+                buttons.forEach(btn => btn.classList.remove("border-yellow-500"));
+                button.classList.add("border-yellow-500");
+            }
+
+            // Attach changeImage to the window for access in inline onclick events
+            window.changeImage = changeImage;
+        })();
+    </script>
+</article>
+</html>
