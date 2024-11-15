@@ -57,5 +57,10 @@ public class CategoryServiceImpl implements CategoryService {
                 .stream()
                 .map(CategoryDTO::fromEntity)
                 .collect(Collectors.toList());
+  }
+  @Override
+    public CategoryDTO findByName(String name) {
+        Optional<Category> category = categoryRepository.findByCategoryName(name);
+        return category.map(CategoryDTO::fromEntity).orElse(null);
     }
 }
