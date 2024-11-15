@@ -52,6 +52,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<CategoryDTO> findRandomCategories(int count) {
+        return categoryRepository.findRandomCategories(count)
+                .stream()
+                .map(CategoryDTO::fromEntity)
+                .collect(Collectors.toList());
+  }
+  @Override
     public CategoryDTO findByName(String name) {
         Optional<Category> category = categoryRepository.findByCategoryName(name);
         return category.map(CategoryDTO::fromEntity).orElse(null);

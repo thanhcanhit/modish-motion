@@ -13,5 +13,6 @@ public interface CategoryService {
     CategoryDTO save(CategoryDTO category);
     void deleteById(Integer id);
     Page<CategoryDTO> findByPage(Pageable pageable);
+    List<CategoryDTO> findRandomCategories(int count);
     CategoryDTO findByName(String name);
 }

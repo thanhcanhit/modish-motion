@@ -52,6 +52,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public List<ItemDTO> findRandomItemsByCategory(int categoryId, int count) {
+        return itemRepository.findRandomItemsByCategory(categoryId, count)
+                .stream()
+          .map(ItemDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
     public List<ItemDTO> findByCategoryId(int categoryId) {
         List<Item> items = itemRepository.findByCategoryId(categoryId);
         return items.stream()

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khuyến Mãi Tưng Bừng</title>
+    <div th:replace="components/head :: head"></div>
+</head>
+
+<body>
+    <main class="container px-[116px] py-8">
+        <nav class="text-sm breadcrumbs text-gray-500 mb-6">
+            <ul>
+                <li><a href="/" class="hover:underline text-blue-600">Trang chủ</a></li>
+                <li><a href="#" class="hover:underline text-blue-600">Blog</a></li>
+                <li>Khuyến Mãi</li>
+            </ul>
+        </nav>
+
+        <div class="py-8 flex flex-col lg:flex-row items-center shadow-lg rounded-lg bg-gray-50">
+            <!-- Left Content (Text) -->
+            <div class="lg:w-1/2 p-12">
+                <h1 class="text-5xl font-bold text-gray-800">Khuyến Mãi</h1>
+                <p class="text-base text-gray-700 mt-4">Cùng săn sale các Deal giá hời nhất tại Modish Motion, tham khảo và cập nhật các
+                    tin tức khuyến mãi tại Modish Motion để không bỏ lỡ một deal giá tốt!</p>
+            </div>
+        
+            <!-- Right Content (Image) -->
+            <div class="lg:w-1/2">
+                <img src="./images/modish-motion-sale.png" alt="Khuyến Mãi" class="rounded-lg shadow-md object-cover w-full h-[383px]">
+            </div>
+        </div>
+
+        <div class="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
+            <!-- Left Content (Promotion Banner) -->
+            <div class="lg:w-2/3 relative rounded-lg overflow-hidden shadow-lg">
+                <img src="./images/modish-motion-sale1.png" alt="Khuyến Mãi" class="object-cover w-full h-full">
+                <!-- <div class="absolute inset-0 bg-red-600 bg-opacity-60 flex flex-col justify-center items-start p-8 text-white">
+                    <h2 class="text-4xl font-bold">Đăng kí Thông Tin</h2>
+                    <button class="mt-4 px-6 py-2 bg-white text-red-600 font-bold rounded-full">Rinh Liền ➔</button>
+                    <p class="mt-8 text-xl font-semibold">ĐỘC QUYỀN WEBSITE – VOUCHER 100K CHO KHÁCH HÀNG ĐĂNG KÍ EMAIL</p>
+                    <p class="mt-2 text-sm">Ưu đãi độc quyền - Modish Motion gửi tặng mã voucher trị giá 100.000đ khi quý khách thực hiện đăng ký thông tin tại Website.</p>
+                </div> -->
+            </div>
+        
+            <!-- Right Content (Most Viewed Section) -->
+            <div class="lg:w-1/3 space-y-4">
+                <h3 class="text-xl font-semibold">Nhiều lượt xem nhất</h3>
+        
+                <div class="flex items-center gap-4 p-4 bg-gray-100 rounded-lg shadow-md">
+                    <img src="https://via.placeholder.com/80x80" alt="Image 1" class="rounded-lg">
+                    <div>
+                        <p class="text-sm font-semibold">Modish Motion KẾT NỐI - CHIA SẺ NIỀM VUI THÊM NGÀN ƯU ĐÃI!</p>
+                        <span class="text-xs text-gray-500">Khuyến Mãi | 06/09/2024</span>
+                    </div>
+                </div>
+        
+                <div class="flex items-center gap-4 p-4 bg-gray-100 rounded-lg shadow-md">
+                    <img src="https://via.placeholder.com/80x80" alt="Image 2" class="rounded-lg">
+                    <div>
+                        <p class="text-sm font-semibold">MUA CÀNG NHIỀU GIẢM CÀNG SÂU - LÊN ĐẾN 15%</p>
+                        <span class="text-xs text-gray-500">Khuyến Mãi | 02/10/2024</span>
+                    </div>
+                </div>
+        
+                <div class="flex items-center gap-4 p-4 bg-gray-100 rounded-lg shadow-md">
+                    <img src="https://via.placeholder.com/80x80" alt="Image 3" class="rounded-lg">
+                    <div>
+                        <p class="text-sm font-semibold">ĐỘC QUYỀN WEBSITE - VOUCHER 100K CHO KHÁCH...</p>
+                        <span class="text-xs text-gray-500">Khuyến Mãi | 02/10/2024</span>
+                    </div>
+                </div>
+        
+                <div class="flex items-center gap-4 p-4 bg-gray-100 rounded-lg shadow-md">
+                    <img src="https://via.placeholder.com/80x80" alt="Image 4" class="rounded-lg">
+                    <div>
+                        <p class="text-sm font-semibold">Tặng ngay Voucher 25K cho khách hàng Follow Zalo Modish Motion</p>
+                        <span class="text-xs text-gray-500">Khuyến Mãi | 06/09/2024</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container mx-auto px-4 py-8 flex gap-8">
+            <!-- Search Bar -->
+            <div class="w-1/4">
+                <input type="text" placeholder="Tìm trong chuyên mục" class="w-full p-3 rounded-full border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+            </div>
+        
+            <!-- Promotion Grid -->
+            <div class="w-3/4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <!-- Promotion Item 1 -->
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <img src="https://via.placeholder.com/300x200" alt="Promotion Image" class="w-full object-cover">
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold">Tặng ngay Voucher 25K cho khách hàng Follow Zalo Modish Motion</h3>
+                        <p class="text-gray-500 text-sm">Khuyến Mãi | 02/10/2024</p>
+                    </div>
+                </div>
+        
+                <!-- Promotion Item 2 -->
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <img src="https://via.placeholder.com/300x200" alt="Promotion Image" class="w-full object-cover">
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold">Ưu đãi lớn nhất năm 2024 - SALE CUỐI MÙA LÊN ĐẾN 50%</h3>
+                        <p class="text-gray-500 text-sm">Khuyến Mãi | 02/10/2024</p>
+                    </div>
+                </div>
+        
+                <!-- Promotion Item 3 -->
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <img src="https://via.placeholder.com/300x200" alt="Promotion Image" class="w-full object-cover">
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold">MUA CÀNG NHIỀU GIẢM CÀNG SÂU - LÊN ĐẾN 15%</h3>
+                        <p class="text-gray-500 text-sm">Khuyến Mãi | 02/10/2024</p>
+                    </div>
+                </div>
+        
+                <!-- Promotion Item 4 -->
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <img src="https://via.placeholder.com/300x200" alt="Promotion Image" class="w-full object-cover">
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold">Đăng kí Thông Tin để nhận ưu đãi lớn từ Modish Motion</h3>
+                        <p class="text-gray-500 text-sm">Khuyến Mãi | 02/10/2024</p>
+                    </div>
+                </div>
+        
+                <!-- Promotion Item 5 -->
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <img src="https://via.placeholder.com/300x200" alt="Promotion Image" class="w-full object-cover">
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold">Modish Motion KẾT NỐI - CHIA SẺ NIỀM VUI THÊM NGÀN ƯU ĐÃI!</h3>
+                        <p class="text-gray-500 text-sm">Khuyến Mãi | 06/09/2024</p>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </main>
+</body>
+
+</html>
