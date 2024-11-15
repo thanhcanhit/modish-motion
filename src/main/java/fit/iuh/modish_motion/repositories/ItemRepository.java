@@ -1,4 +1,3 @@
-
 package fit.iuh.modish_motion.repositories;
 
 import fit.iuh.modish_motion.entities.Item;
@@ -20,4 +19,6 @@ public interface ItemRepository extends JpaRepository<Item, String> {
 
     @Query("SELECT i FROM Item i WHERE size(i.variants) > 0")
     Page<Item> findItemsWithVariants(Pageable pageable);
+
+    List<Item> findByCategoryId(int categoryId);
 }
