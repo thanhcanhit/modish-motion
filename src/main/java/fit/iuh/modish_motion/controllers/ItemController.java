@@ -23,7 +23,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @Autowired
-    public ItemController(ItemService itemService) {
+    ItemController(ItemService itemService) {
         this.itemService = itemService;
     }
 
