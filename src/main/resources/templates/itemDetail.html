@@ -7,7 +7,7 @@
 <body>
 <header th:replace="components/header"></header>
 
-<div class="container mx-auto px-24 py-8">
+<div class="container mx-auto px-24 py-8 pb-32">
     <!-- Breadcrumbs -->
     <div class="breadcrumbs text-md text-gray-500 mb-4">
         <ul>
@@ -18,7 +18,7 @@
         </ul>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16">
         <!-- Product Image Carousel and Thumbnails -->
         <section class="flex gap-2 col-span-5">
             <!-- Thumbnails for Selected Color -->
@@ -71,26 +71,37 @@
 
             <!-- Color Options -->
             <div>
-                <p class="font-semibold">Màu sắc:</p>
+                <p class="font-semibold mb-2">Màu sắc:</p>
                 <div class="flex gap-2" id="color-options">
-                    <button th:each="color : ${product.displayVariants}"
-                            th:text="${color.color.color ?: 'Color'}"
-                            th:data-color-id="${color.color.id}"
-                            class="btn btn-sm btn-outline w-20 h-10 color-option">
+                    <button th:each="variant : ${product.displayVariants}"
+                            th:data-color-id="${variant.color.id}"
+                            class="btn btn-sm btn-outline w-20 py-1 h-fit color-option">
+                        <span class="flex gap-1 flex-col items-center">
+                            <span
+                                    th:style="|background-color: ${variant.color.hex}|"
+                                    class="w-5 h-5 rounded-full border"
+                            >
+
+                        </span>
+                        <span
+                                th:text="${variant.color.color}"
+                                class="text-xs"
+                        ></span>
+                        </span>
                     </button>
                 </div>
             </div>
 
             <!-- Size Options -->
             <div>
-                <p class="font-semibold">Kích thước:</p>
+                <p class="font-semibold mb-2">Kích thước:</p>
                 <div class="flex gap-2" id="size-options">
                     <!-- Size buttons will be dynamically updated based on selected color -->
                 </div>
             </div>
 
             <!-- Quantity Selector -->
-            <div class="flex gap-4 mt-4 items-end">
+            <div class="flex gap-4 mt-4 items-end w-full">
                 <div>
                     <p class="font-semibold mb-2">Số lượng:</p>
                     <div class="flex items-center gap-2">
@@ -101,7 +112,46 @@
                 </div>
 
                 <!-- Add to Cart and Buy Now Buttons -->
-                <button id="add-to-cart-btn" class="btn btn-outline btn-wide">Thêm vào giỏ</button>
+                <button id="add-to-cart-btn" class="btn btn-warning flex-1">Thêm vào giỏ</button>
+            </div>
+
+            <div class="bg-gray-50 grid place-items-center p-4 py-6">
+                <div class="flex gap-2">
+                    <img class="h-8 object-cover" th:src="@{/images/detail_item/zalopay.webp}"/>
+                    <img class="h-8 object-cover" th:src="@{/images/detail_item/visa-card.webp}"/>
+                    <img class="h-8 object-cover" th:src="@{/images/detail_item/master-card.webp}"/>
+                    <img class="h-8 object-cover" th:src="@{/images/detail_item/vnpay-qr.webp}"/>
+                    <img class="h-8 object-cover" th:src="@{/images/detail_item/momo.webp}"/>
+                </div>
+                <p class="font-semibold text-sm">Đảm bảo thanh toán an toàn và bảo mật
+                </p>
+            </div>
+
+            <div class="space-y-2 text-sm">
+                <div class="flex gap-2 items-center">
+                    <i data-lucide="truck" class="w-5 h-5 text-gray-600"></i>
+                    <p><b>Miễn phí vận chuyển</b>: Đơn hàng từ <span class="font-bold text-amber-500">498K</span></p>
+                </div>
+                <div class="flex gap-2">
+                    <i data-lucide="timer" class="w-5 h-5 text-gray-600"></i>
+                    <p><b>Giao hàng</b>: Từ 3 - 5 ngày trên cả nước</p>
+                </div>
+                <div class="flex gap-2">
+                    <i data-lucide="repeat" class="w-5 h-5 text-gray-600"></i>
+                    <p><b>Miễn phí đổi trả</b>: Tại 267+ cửa hàng trong 15 ngày</p>
+                </div>
+                <div class="flex gap-2">
+                    <i data-lucide="tag" class="w-5 h-5 text-gray-600"></i>
+                    <p>Sử dụng mã giảm giá ở bước thanh toán</p>
+                </div>
+                <div class="flex gap-2">
+                    <i data-lucide="shield-check" class="w-5 h-5 text-gray-600"></i>
+                    <p>Thông tin bảo mật và mã hoá</p>
+                </div>
+            </div>
+
+            <div th:text="${product.characteristic}" class="text-sm font-semibold mt-8">
+
             </div>
         </section>
     </div>
@@ -184,7 +234,7 @@
                 sizesForColor.forEach(size => {
                     const sizeButton = document.createElement('button');
                     sizeButton.textContent = size.size;
-                    sizeButton.className = 'btn btn-sm btn-outline w-10 h-10 size-option';
+                    sizeButton.className = 'btn btn-sm btn-outline min-w-10 h-10 size-option';
                     sizeButton.setAttribute('data-size-id', size.id);
                     sizeOptionsContainer.appendChild(sizeButton);
 
