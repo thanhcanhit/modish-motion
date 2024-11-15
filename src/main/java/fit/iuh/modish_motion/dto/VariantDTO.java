@@ -41,6 +41,7 @@ public class VariantDTO {
         );
     }
 
+
     public Variant toEntity() {
         Variant variant = new Variant();
         variant.setId(this.id);
