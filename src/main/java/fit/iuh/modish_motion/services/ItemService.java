@@ -13,4 +13,6 @@ public interface ItemService {
     ItemDTO save(ItemDTO item);
     void deleteById(String id);
     Page<ItemDTO> findByPage(Pageable pageable);
+
+    List<ItemDTO> findRandomItemsByCategory(int categoryId, int count);
 }
