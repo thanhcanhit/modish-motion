@@ -7,6 +7,7 @@ import fit.iuh.modish_motion.dto.SizeDTO;
 import fit.iuh.modish_motion.services.CategoryService;
 import fit.iuh.modish_motion.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,19 +30,24 @@ public class CategoryController {
         this.itemService = itemService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
+        List<CategoryDTO> categories = categoryService.findAll();
+        return ResponseEntity.ok(categories);
+    }
+
     @GetMapping("/{categoryName}")
     public String getItemsByCategory(
             @PathVariable("categoryName") String categoryName,
             @RequestParam(required = false) List<Integer> colors,
             @RequestParam(required = false) List<Integer> sizes,
-            @RequestParam(required = false) String priceRange,
+            @RequestParam(required = false) String sortBy,
             Model model
     ) {
         CategoryDTO category = categoryService.findByName(categoryName);
         List<CategoryDTO> categories = categoryService.findAll();
         model.addAttribute("categories", categories);
         if (category != null) {
-            // Get all items for the category
             List<ItemDTO> items = itemService.findByCategoryId(category.getId());
 
             // Extract unique colors and sizes from variants
@@ -63,8 +69,7 @@ public class CategoryController {
 
             // Apply filters if present
             if (colors != null && !colors.isEmpty() ||
-                    sizes != null && !sizes.isEmpty() ||
-                    priceRange != null) {
+                    sizes != null && !sizes.isEmpty()) {
 
                 items = items.stream()
                         .filter(item -> {
@@ -78,19 +83,23 @@ public class CategoryController {
                                         (variant.getSize() != null &&
                                                 sizes.contains(variant.getSize().getId()));
 
-                                boolean priceMatch = true;
-                                if (priceRange != null) {
-                                    String[] range = priceRange.split("-");
-                                    double minPrice = Double.parseDouble(range[0]);
-                                    double maxPrice = Double.parseDouble(range[1]);
-                                    priceMatch = variant.getPrice() >= minPrice &&
-                                            variant.getPrice() <= maxPrice;
-                                }
-
-                                return colorMatch && sizeMatch && priceMatch;
+                                return colorMatch && sizeMatch;
                             });
                         })
                         .collect(Collectors.toList());
+            }
+
+            // Apply sorting if present
+            if (sortBy != null) {
+                switch (sortBy) {
+                    case "priceAsc":
+                        items.sort(Comparator.comparing(item -> item.getVariants().get(0).getPrice()));
+                        break;
+                    case "priceDesc":
+                        items.sort(Comparator.comparing(item -> item.getVariants().get(0).getPrice(), Comparator.reverseOrder()));
+                        break;
+                    // Add more sorting options as needed
+                }
             }
 
             model.addAttribute("items", items);

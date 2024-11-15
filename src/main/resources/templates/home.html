@@ -16,7 +16,7 @@
             <div id="slider" class="flex transition-transform duration-500 ease-in-out">
                 <!-- Sử dụng Thymeleaf để lặp qua từng banner -->
                 <div th:each="banner, iterStat : ${banners}"
-                     class="w-full flex-shrink-0"
+                     class="w-full flex-shrink-0 customSlider"
                      th:classappend="${iterStat.index == 0} ? 'block' : 'hidden'">
                     <a th:href="${banner.link}">
                         <img th:src="${banner.imageUrl}" alt="Banner" class="w-full h-full object-cover">

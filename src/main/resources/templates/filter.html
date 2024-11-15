@@ -28,7 +28,7 @@
                         <label th:for="${'color-' + colorGroup.key}"
                                class="flex flex-col items-center gap-2 cursor-pointer">
                             <span class="w-8 h-8 rounded-full border border-gray-200 transition-transform hover:scale-110"
-                                  th:style="${'background-color: ' + colorGroup.key}"></span>
+                                  th:style="${'background-color: ' + colorGroup.value.hex}"></span>
                             <span class="text-sm text-[#31495e]" th:text="${colorGroup.key}">Màu</span>
                         </label>
                     </div>
@@ -175,6 +175,17 @@
             // Show dot for checked radio
             if (this.checked) {
                 this.nextElementSibling.querySelector('span span').classList.remove('hidden');
+            }
+        });
+    });
+
+    // Highlight selected filters
+    document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(input => {
+        input.addEventListener('change', function() {
+            if (this.checked) {
+                this.nextElementSibling.classList.add('border-[#31495e]');
+            } else {
+                this.nextElementSibling.classList.remove('border-[#31495e]');
             }
         });
     });

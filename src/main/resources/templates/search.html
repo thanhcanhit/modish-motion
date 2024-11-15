@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nam - YODY</title>
+    <title>Kết quả tìm kiếm</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .header {
@@ -79,13 +79,10 @@
 
 <main class="pt-16">
     <div class="container mx-auto px-4 lg:px-6">
-        <nav class="flex items-center gap-2 text-sm text-gray-500 py-4">
-            <a href="/" class="hover:text-[#31495e]">Trang chủ</a>
-            <span>></span>
-            <span class="text-[#31495e]" th:text="${category.categoryName}">Nam</span>
-        </nav>
-
-        <h1 class="text-2xl font-semibold text-[#31495e] mb-4" th:text="${category.categoryName}">Nam</h1>
+        <h1 class="text-2xl font-semibold text-[#31495e] mb-4">
+            Kết quả tìm kiếm cho
+        </h1>
+        <h2 class="text-xl text-[#31495e] mb-2" th:text="${searchQuery}"></h2>
 
         <div class="category-controls" id="categoryControls">
             <div class="container mx-auto px-4 lg:px-6">
@@ -126,21 +123,13 @@
         </div>
 
 <!--        <div class="text-[#31495e] space-y-4 pb-12">-->
-<!--            <div class="collapsed-content max-h-24 overflow-hidden relative" id="description">-->
-<!--                <p><strong class="text-orange-500">Áo nam</strong>, món đồ thời trang kinh điển và linh hoạt, đã trở thành biểu tượng của phong cách vượt thời gian. Với sự kết hợp hoàn hảo giữa nét lịch lãm và sự thoải mái, <strong>áo nam YODY</strong> không chỉ là một trang phục thông thường mà còn là tuyên ngôn về phong cách sống năng động và tinh tế.</p>-->
-<!--            </div>-->
-<!--            <button onclick="toggleDescription()" class="text-sm font-medium hover:text-orange-500 transition-colors flex items-center gap-1 mx-auto">-->
-<!--                <span id="toggleText">Xem thêm</span>-->
-<!--                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="toggleIcon">-->
-<!--                    <path d="M6 9l6 6 6-6"/>-->
-<!--                </svg>-->
-<!--            </button>-->
+<!--            &lt;!&ndash; ...existing code... &ndash;&gt;-->
 <!--        </div>-->
     </div>
 </main>
 
 <th:block th:replace="~{filter :: filter}"></th:block>
-
+<script th:src="@{/js/filter.js}"></script>
 <script>
     // Category Controls Sticky Behavior
     const categoryControls = document.getElementById('categoryControls');
@@ -222,6 +211,5 @@
         window.location.search = urlParams.toString();
     }
 </script>
-<script th:src="@{/js/filter.js}"></script>
 </body>
 </html>

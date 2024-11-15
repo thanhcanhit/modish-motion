@@ -1,5 +1,6 @@
 package fit.iuh.modish_motion.repositories;
 
+import fit.iuh.modish_motion.dto.ItemDTO;
 import fit.iuh.modish_motion.entities.Item;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,7 @@ public interface ItemRepository extends JpaRepository<Item, String> {
     Page<Item> findItemsWithVariants(Pageable pageable);
 
     List<Item> findByCategoryId(int categoryId);
+
+    Page<Item> findByCategoryId(int categoryId, Pageable pageable);
+    List<Item> findByNameContaining(String name);
 }
