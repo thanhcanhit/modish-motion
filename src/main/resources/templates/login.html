@@ -3,55 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <div th:replace="components/head :: head"></div>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <style>
-        .icon-facebook {
-            fill: #fff;
-            color: #1877F2;
-            transition: fill 0.3s ease; /* Thêm hiệu ứng chuyển màu */
-        }
-
-        .icon-facebook:hover {
-            fill: #1877F2; /* Màu mặc định của Facebook */
-        }
-
-        /* Google icon */
-        .icon-google {
-            fill: #fff; /* Màu trắng khi hover */
-            color: #e52323;
-            transition: fill 0.3s ease; /* Thêm hiệu ứng chuyển màu */
-        }
-
-        .icon-google:hover {
-            fill: #e52323; /* Màu mặc định của Google */
-        }
-
-        /* Twitter icon */
-        .icon-twitter {
-            fill: #fff; /* Màu trắng khi hover */
-            color: #1DA1F2;
-            transition: fill 0.3s ease; /* Thêm hiệu ứng chuyển màu */
-        }
-
-        .icon-twitter:hover {
-            fill: #1DA1F2;
-        }
-
-    </style>
     <title>Đăng nhập</title>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen bg-cover bg-center relative"
-      th:style="'background-image: url(' + @{/images/login/bg.jpg} + ');'">
-<div class="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
-<div data-theme="light" class="relative z-20  flex w-full max-w-5xl bg-white shadow-lg rounded-lg overflow-hidden" style="height: 600px;">
-    <div class="w-1/2">
-        <img th:src="@{/images/login/Logo.png}" alt="logo"/>
+<body data-theme="light" class="flex items-center justify-center min-h-screen bg-cover bg-center relative bg-gradient-to-br from-blue-500 to-yellow-400 ">
+<div  class="relative  flex w-full max-w-7xl bg-white/50 shadow-lg rounded-lg overflow-hidden px-8 py-10" style="height: 600px;">
+    <div class="w-1/2 flex items-center">
+        <img th:src="@{/images/login/logo.png}" alt="logo"/>
     </div>
     <div class="w-1/2 p-8 overflow-y-auto">
         <div class="text-center mb-4">
             <div class="flex justify-center">
-                <button id="login-tab" onclick="redirectToLogIn()" class="px-4 py-2 font-semi bold text-gray-800 border-b-4 border-blue-500">Login</button>
-                <button id="signup-tab" onclick="redirectToSignUp()" class="px-4 py-2 font-semi bold text-gray-500">Sign Up</button>
+                <button id="login-tab" onclick="redirectToLogIn()" class="px-4 py-2 font-semibold text-gray-800 border-b-4 border-blue-500">Login</button>
+                <button id="signup-tab" onclick="redirectToSignUp()" class="px-4 py-2 font-semibold text-gray-500">Sign Up</button>
             </div>
         </div>
         <div id="login-form">
@@ -66,10 +29,10 @@
                 </label>
 
                 <div class="text-right mb-4">
-                    <a href="#" class="text-sm text-blue-500 hover:underline">I forgot my password</a>
+                    <a href="#" class="text-sm text-blue-500 hover:underline cursor-pointer">I forgot my password</a>
                 </div>
                 <button type="submit"
-                        class="btn btn-outline btn-success w-full font-semi bold py-2 px-4 rounded-lg mt-4 hover:bg-gray-400">
+                        class="flex items-center justify-center w-full px-4 py-2 bg-white text-gray-800 font-semibold border border-gray-300 rounded-full shadow-sm hover:bg-teal-300">
                     Log in
                 </button>
                 <div th:if="${error != null}" class="text-red-500 text-sm mb-4">
@@ -83,32 +46,33 @@
                     <div class="flex-grow border-t border-gray-300"></div>
                 </div>
                 <div class="flex justify-center mt-4 space-x-4">
-                    <button class="justify-center py-2 px-2 rounded-lg">
-                        <i data-lucide="facebook" class="w-6 h-6 mr-2 icon-facebook"></i>
-                    </button>
-                    <button class="justify-center py-2 px-2 rounded-lg">
-                        <i class="fab fa-google w-6 h-6 mr-2 icon-google"></i>
-                    </button>
-                    <button class="justify-center py-2 px-2 rounded-lg">
-                        <i data-lucide="twitter" class="w-6 h-6 mr-2 icon-twitter"></i>
+                    <button class="flex items-center justify-center w-full max-w-xs px-4 py-2 bg-white text-gray-800 font-semibold border border-gray-300 rounded-full shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
+                        <img th:src="@{/svg/google.svg}" alt="Google logo" class="w-5 h-5 mr-3">
+                        Continue with Google
                     </button>
                 </div>
             </div>
             <div class="text-center mt-6">
                 <p class="text-gray-500 text-sm">Don't have an account?</p>
-                <button class="mt-2 bg-black text-white font-semi bold py-2 px-4 rounded-lg hover:bg-gray-800"
-                        onclick="redirectToSignUp()" >
+                <a class="text-sm text-blue-500 hover:underline cursor-pointer"
+                   onclick="redirectToSignUp()" >
                     Create an account
-                </button>
+                </a>
             </div>
         </div>
 
-        <div id="signup-form" class="hidden">
+        <div id="signup-form" class="hidden ">
             <form>
-                <label class="input input-bordered flex items-center gap-2 mb-2">
-                    <i data-lucide="skull" class="w-4 h-4 mr-2"></i>
-                    <input type="text" id="name" class="grow" placeholder="Name" />
-                </label>
+                <div class="flex gap-4 mb-2">
+                    <label class="input input-bordered flex items-center gap-2 grow">
+                        <i data-lucide="skull" class="w-4 h-4 mr-2"></i>
+                        <input type="text" id="name" class="grow" placeholder="Name" />
+                    </label>
+                    <label class="input input-bordered flex items-center gap-2 grow">
+                        <i data-lucide=user class="w-4 h-4 mr-2"></i>
+                        <input type="text" id="user-name" class="grow" placeholder="Username" />
+                    </label>
+                </div>
                 <label class="input input-bordered flex items-center gap-2 mb-2">
                     <i data-lucide="mail" class="w-4 h-4 mr-2"></i>
                     <input type="text" id="mail" class="grow" placeholder="Email" />
@@ -117,13 +81,10 @@
                     <i data-lucide="phone" class="w-4 h-4 mr-2"></i>
                     <input type="text" id="phone" class="grow" placeholder="Phone" />
                 </label>
-                <label class="input input-bordered flex items-center gap-2 mb-2">
-                    <i data-lucide=user class="w-4 h-4 mr-2"></i>
-                    <input type="text" id="user-name" class="grow" placeholder="Username" />
-                </label>
+
                 <label class="input input-bordered flex items-center gap-2 mb-2">
                     <i data-lucide="key" class="w-4 h-4 mr-2"></i>
-                    <input type="password" class="grow" placeholder="password" />
+                    <input type="password" class="grow" placeholder="Password" />
                 </label>
                 <label class="input input-bordered flex items-center gap-2 mb-2">
                     <i data-lucide="map-pin" class="w-4 h-4 mr-2"></i>
@@ -136,7 +97,7 @@
                            class="grow" />
                 </label>
 
-                <label class="input input-bordered flex items-center gap-2 mb-2">
+                <label class="input input-bordered flex items-center gap-2 mb-4">
                     <i data-lucide="key" class="w-4 h-4 mr-2"></i>
                     <select id="gender" name="gender" class="w-full px-4 py-2  rounded-lg focus:outline-none">
                         <option value="false">Male</option>
@@ -144,7 +105,7 @@
                     </select>
                 </label>
                 <button type="submit"
-                        class="btn btn-outline btn-success w-full font-semi bold py-2 px-4 rounded-lg mt-4 hover:bg-gray-400"
+                        class="flex items-center justify-center w-full px-4 py-2 mt-3 bg-white text-gray-800 font-semibold border border-gray-300 rounded-full shadow-sm hover:bg-teal-300"
                         onclick="checkSignup()">
                     Sign up
                 </button>
@@ -156,23 +117,18 @@
                     <div class="flex-grow border-t border-gray-300"></div>
                 </div>
                 <div class="flex justify-center mt-4 space-x-4">
-                    <button class="justify-center py-2 px-2 rounded-lg">
-                        <i data-lucide="facebook" class="w-6 h-6 mr-2 icon-facebook"></i>
-                    </button>
-                    <button class="justify-center py-2 px-2 rounded-lg">
-                        <i class="fab fa-google w-6 h-6 mr-2 text-red-700 icon-google"></i>
-                    </button>
-                    <button class="justify-center py-2 px-2 rounded-lg">
-                        <i data-lucide="twitter" class="w-6 h-6 mr-2 icon-twitter"></i>
+                    <button class="flex items-center justify-center w-full max-w-xs px-4 py-2 bg-white text-gray-800 font-semibold border border-gray-300 rounded-full shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
+                        <img th:src="@{/svg/google.svg}" alt="Google logo" class="w-5 h-5 mr-3">
+                        Continue with Google
                     </button>
                 </div>
             </div>
             <div class="text-center mt-6">
                 <p class="text-gray-500 text-sm">Have an account?</p>
-                <button class="mt-2 bg-black text-white font-semi bold py-2 px-4 rounded-lg hover:bg-gray-800"
+                <a class="text-sm text-blue-500 hover:underline cursor-pointer"
                          onclick="redirectToLogIn()">
                     Log in
-                </button>
+                </a>
             </div>
         </div>
     </div>
