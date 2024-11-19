@@ -14,5 +14,6 @@ public interface ItemService {
     void deleteById(String id);
     Page<ItemDTO> findByPage(Pageable pageable);
     List<ItemDTO> findRandomItemsByCategory(int categoryId, int count);
+    List<ItemDTO> findRandomItems(int count);
     List<ItemDTO> findByCategoryId(int categoryId);
 }

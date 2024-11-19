@@ -1,6 +1,8 @@
 package fit.iuh.modish_motion.servicesImpl;
 
+import fit.iuh.modish_motion.dto.ItemDTO;
 import fit.iuh.modish_motion.dto.VariantDTO;
+import fit.iuh.modish_motion.entities.Item;
 import fit.iuh.modish_motion.entities.Variant;
 import fit.iuh.modish_motion.repositories.VariantRepository;
 import fit.iuh.modish_motion.services.VariantService;
@@ -22,6 +24,14 @@ public class VariantServiceImpl implements VariantService {
     @Override
     public List<VariantDTO> findAll() {
         List<Variant> variants = variantRepository.findAll();
+        return variants.stream()
+                .map(VariantDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<VariantDTO> findByItemId(String itemId) {
+        List<Variant> variants = variantRepository.findByItemId(itemId);
         return variants.stream()
                 .map(VariantDTO::fromEntity)
                 .collect(Collectors.toList());
@@ -50,4 +60,6 @@ public class VariantServiceImpl implements VariantService {
         return variantRepository.findAll(pageable)
                 .map(VariantDTO::fromEntity);
     }
+
+
 }

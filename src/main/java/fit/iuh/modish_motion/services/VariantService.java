@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface VariantService {
     List<VariantDTO> findAll();
+    List<VariantDTO> findByItemId(String itemId);
     Optional<VariantDTO> findById(String id);
     VariantDTO save(VariantDTO variant);
     void deleteById(String id);

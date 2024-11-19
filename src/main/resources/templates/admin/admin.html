@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="components/head :: head"></div>
+</head>
+<body>
+<header th:replace="components/header"></header>
+
+<div data-theme="light" th:fragment="content" class="bg-white pt-20 pb-80 px-2.5">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Quản lý sản phẩm</h1>
+    <div class="flex justify-between mt-2.5">
+        <div class="w-[70%] mr-2.5 border-r">
+            <div class="flex justify-between items-center mr-2.5">
+                <form th:action="@{/adminFake}" method="get" class="flex input input-bordered items-center py-2.5 w-[60%]">
+                    <input type="text" class="grow" placeholder="Search" th:value="${search}" />
+                    <button>
+                        <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 16 16"
+                                fill="currentColor"
+                                class="h-full w-6 opacity-70">
+                            <path
+                                    fill-rule="evenodd"
+                                    d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                                    clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                </form>
+                <button class="btn w-[180px]" onclick="openItemModal(true)"><i data-lucide="Plus"></i>Thêm sản phẩm</button>
+            </div>
+            <h2 class="text-lg font-bold text-gray-800 my-4">Danh sách sản phẩm</h2>
+            <table class="table w-full rounded overflow-hidden">
+                <thead class="text-black">
+                <tr>
+                    <th class="px-4 py-2">STT</th>
+                    <th class="px-4 py-2">Tên sản phẩm</th>
+                    <th class="px-4 py-2">Giá</th>
+                    <th class="px-4 py-2">Loại</th>
+                    <th class="px-4 py-2">Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${items == null || items.isEmpty()}">
+                    <td colspan="5" class="text-center">Không có sản phẩm nào được tìm thấy.</td>
+                </tr>
+                <tr th:each="item, iterStat : ${items}" th:classappend="${selectedItemId == item.id} ? 'bg-gray-200' : ''"
+                    th:data-url="@{/adminFake/{id}(id=${item.id}, search=${search})}"
+                    class="cursor-pointer hover:bg-gray-100" onclick="navigateToItem(this)">
+                    <td th:text="${item.id}"></td>
+                    <td th:text="${item.name}"></td>
+                    <td th:text="${item.promotionPrice}"></td>
+                    <td th:text="${item.category?.categoryName}"></td>
+                    <td class="flex justify-end">
+                        <button class="btn btn-sm mx-1" th:attr="data-item-id=${item.id}" onclick="editProduct(this.getAttribute('data-item-id')); event.stopPropagation();">
+                            <i data-lucide="Pencil" class="h-4 w-4"></i>
+                        </button>
+                        <button class="btn btn-sm mx-1" th:attr="data-item-id=${item.id}" onclick="deleteProduct(this.getAttribute('data-item-id')); event.stopPropagation();">
+                            <i data-lucide="Trash2" class="h-4 w-4 text-red-600"></i>
+                        </button>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="w-[30%] ml-2.5 ">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">Danh sách biến thể</h2>
+
+            <table class="table w-full bg-white rounded overflow-hidden">
+                <thead class="text-black">
+                <tr>
+                    <th class="px-4 py-2">Tên biến thể</th>
+                    <th class="px-4 py-2">Số lượng</th>
+                    <th class="px-4 py-2">Hành động</th>
+                </tr>
+                </thead>
+                <tbody id="variants-list">
+                <tr th:if="${variants == null || variants.isEmpty()}">
+                    <td colspan="4" class="text-center">Chọn sản phẩm để xem danh sách biến thể.</td>
+                </tr>
+                <tr th:each="variant : ${variants}" class="hover:bg-gray-100">
+                    <td th:text="${variant.name}"></td>
+                    <td th:text="${variant.availableQuantity}"></td>
+                    <td class="flex justify-end">
+                        <button class="btn btn-sm mx-1"
+                                th:attr="data-item-id=${variant.itemId}"
+                                th:attrappend="data-variant-id=${variant.id}"
+                                onclick="editVariant(this.getAttribute('data-item-id'), this.getAttribute('data-variant-id'))">
+                            <i data-lucide="Pencil" class="h-4 w-4"></i>
+                        </button>
+                        <button class="btn btn-sm mx-1"
+                                th:attr="data-item-id=${variant.itemId}"
+                                th:attrappend="data-variant-id=${variant.id}"
+                                onclick="deleteVariant(this.getAttribute('data-item-id'), this.getAttribute('data-variant-id'))">
+                            <i data-lucide="Trash2" class="h-4 w-4"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+
+            </table>
+            <div class="flex justify-end w-full my-4 px-2">
+                <button onclick="openVariantModal(true)" class="btn text-black rounded-full">
+                    <i data-lucide="Plus"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="item-modal" class="mt-12 fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded shadow w-full max-w-lg">
+            <h2 id="product-modal-title" class="text-lg font-bold mb-4">Add Product</h2>
+            <form id="product-form">
+                <div class="m-1">
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text">Name: </span>
+                        </div>
+                    <input id="product-name" type="text" class="input input-bordered w-full " placeholder=""/>
+                    </label>
+                </div>
+                <div class="m-1">
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text">Promotion Price: </span>
+                        </div>
+                        <input id="product-price" type="number" class="input input-bordered w-full pr-8" placeholder=""/>
+                    </label>
+                </div>
+                <div class="m-1">
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text">Tags: </span>
+                        </div>
+                        <input id="product-tags" type="text" class="input input-bordered w-full " placeholder=""/>
+                    </label>
+                </div>
+                <div class="m-1">
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text">Category: </span>
+                        </div>
+                    <select id="product-category" name="category_id" class="select select-bordered w-full p-2 rounded ">
+
+                        <option th:each="category : ${categories}" th:value="${category.id}"
+                                th:text="${category.categoryName}"></option>
+                    </select>
+                    </label>
+                </div>
+                <div class="m-1">
+                    <label class="form-control w-full">
+                        <div class="label">
+                            <span class="label-text">Characteristic: </span>
+                        </div>
+                        <textarea class="textarea textarea-bordered h-24" placeholder=""></textarea>
+
+                    </label>
+                </div>
+                <div class="m-1">
+                    <div class="label">
+                        <span class="label-text">Gender: </span>
+                    </div>
+                    <div class="flex items-center justify-start">
+
+                        <div class="form-control">
+                            <label class="label cursor-pointer">
+                                <span class="label-text pr-2.5">Nam:</span>
+                                <input type="radio" name="gender" class="radio checked:bg-gray-500 pr-2"
+                                       checked="checked"/>
+                            </label>
+                        </div>
+                        <div class="form-control">
+                            <label class="label cursor-pointer">
+                                <span class="label-text pr-2.5">Nữ:</span>
+                                <input type="radio" name="gender" class="radio checked:bg-gray-500 pr-2"
+                                       checked="checked"/>
+                            </label>
+                        </div>
+                        <div class="form-control">
+                            <label class="label cursor-pointer">
+                                <span class="label-text pr-2.5">Unisex:</span>
+                                <input type="radio" name="gender" class="radio checked:bg-gray-500 pr-2"
+                                       checked="checked"/>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeItemModal()"
+                            class="btn  px-4 py-2 rounded">
+                        Hủy
+                    </button>
+                    <button type="button" onclick="saveProduct()" class="btn text-black px-4 py-2 rounded">
+                        Lưu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="variant-modal" class="mt-10 fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded shadow w-full max-w-lg">
+            <h2 id="variant-modal-title" class="text-lg font-bold mb-4">Add Variant</h2>
+            <form  id="variant-form">
+                <div class="m-1">
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text">Name: </span>
+                        </div>
+                        <input id="variant-name" type="text" class="input input-bordered w-full " placeholder=""/>
+                    </label>
+                </div>
+                <div class="m-1">
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text">Price: </span>
+                        </div>
+                        <input id="variant-price" type="number" class="input input-bordered w-full pr-8" placeholder=""/>
+                    </label>
+                </div>
+                <div class="m-1">
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text">Quantity: </span>
+                        </div>
+                        <input id="variant-quantity" type="number" class="input input-bordered w-full pr-8" placeholder=""/>
+                    </label>
+                </div>
+                <div class="m-1">
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text">Color: </span>
+                        </div>
+                    <select name="color_id" class="select select-bordered w-full p-2 rounded ">
+
+                        <option th:each="color : ${colors}" th:value="${color.id}"
+                                th:text="${color.color}"></option>
+                    </select>
+                    </label>
+                </div>
+                <div class="m-1">
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text">Size: </span>
+                        </div>
+                    <select name="size_id" class="select select-bordered w-full p-2 rounded ">
+
+                        <option th:each="size : ${sizes}" th:value="${size.id}"
+                                th:text="${size.size}"></option>
+                    </select>
+                    </label>
+                </div>
+                <div class="m-1">
+                    <label class="form-control w-full mt-2">
+                        <div class="label">
+                            <span class="label-text">Pick a image: </span>
+                        </div>
+                        <input type="file" class="file-input file-input-ghost file-input-sm w-full "/>
+                    </label>
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeVariantModal()"
+                            class="btn  hover:bg-gray-400 px-4 py-2 rounded">
+                        Hủy
+                    </button>
+                    <button type="button" onclick="saveVariant()" class="btn  text-black px-4 py-2 rounded">
+                        Lưu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<footer th:replace="components/footer"></footer>
+<div th:replace="/components/lucide_icons :: lucide_icon"></div>
+<script src="/js/admin.js"></script>
+</body>
+</html>

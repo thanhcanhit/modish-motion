@@ -35,7 +35,6 @@
             </button>
 
             <!-- Dot Indicators -->
-            <!-- Dot Indicators -->
             <div class="absolute bottom-4 w-full flex justify-center">
             <span th:each="banner, iterStat : ${banners}"
                   class="dot h-1.5 w-1.5 mx-1 bg-white bg-opacity rounded-full cursor-pointer transform transition-all duration-300"
@@ -104,7 +103,7 @@
         <div class="mx-auto mt-8">
             <div class="navbar bg-white justify-center py-5 items-center">
                 <h2 class="text-2xl text-gray-600 pr-5">Gợi ý sản phẩm</h2>
-                <select id="category-select" class="select select-bordered max-w-xs bg-white text-gray-400 text-md font-medium"
+                <select id="category-select" class="select select-bordered caret-transparent max-w-xs bg-white text-gray-400 text-md font-medium"
                         onchange="showSuggestedItems()">
                     <option th:each="category, iterStat : ${categories2}"
                             th:value="${iterStat.index}"
