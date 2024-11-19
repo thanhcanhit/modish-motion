@@ -64,4 +64,12 @@ public class ItemServiceImpl implements ItemService {
                 .map(ItemDTO::fromEntity)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<ItemDTO> findRelatedItems(int categoryId, String itemId, int limit) {
+        return itemRepository.findRelatedItems(categoryId, itemId, limit)
+                .stream()
+                .map(ItemDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
 }

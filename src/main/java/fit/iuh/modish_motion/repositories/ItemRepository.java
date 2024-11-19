@@ -21,4 +21,7 @@ public interface ItemRepository extends JpaRepository<Item, String> {
     Page<Item> findItemsWithVariants(Pageable pageable);
 
     List<Item> findByCategoryId(int categoryId);
+
+    @Query(value = "SELECT * FROM items i WHERE i.category_id = :categoryId AND i.id != :itemId AND EXISTS (SELECT 1 FROM variants v WHERE v.item_id = i.id) ORDER BY RAND() LIMIT :limit", nativeQuery = true)
+    List<Item> findRelatedItems(@Param("categoryId") int categoryId, @Param("itemId") String itemId, @Param("limit") int limit);
 }

@@ -15,4 +15,5 @@ public interface ItemService {
     Page<ItemDTO> findByPage(Pageable pageable);
     List<ItemDTO> findRandomItemsByCategory(int categoryId, int count);
     List<ItemDTO> findByCategoryId(int categoryId);
+    List<ItemDTO> findRelatedItems(int categoryId, String itemId, int limit);
 }

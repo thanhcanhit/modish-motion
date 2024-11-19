@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -30,9 +31,17 @@ public class ItemController {
     @GetMapping("/{id}")
     public String getProductById(Model model, @PathVariable Integer id) {
         Optional<ItemDTO> itemSearch = itemService.findById(id.toString());
-        ItemDTO item  = itemSearch.orElse(null);
+        ItemDTO item = itemSearch.orElse(null);
         model.addAttribute("product", item);
-        System.out.println(item);
+
+        if (item != null && item.getCategory() != null) {
+            List<ItemDTO> relatedProducts = itemService.findRelatedItems(
+                item.getCategory().getId(), 
+                item.getId(), 
+                4
+            );
+            model.addAttribute("relatedProducts", relatedProducts);
+        }
 
         return "itemDetail";
     }
