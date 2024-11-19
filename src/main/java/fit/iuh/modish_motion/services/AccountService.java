@@ -1,6 +1,7 @@
 package fit.iuh.modish_motion.services;
 
 import fit.iuh.modish_motion.dto.AccountDTO;
+import fit.iuh.modish_motion.entities.Account;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,4 +14,10 @@ public interface AccountService {
     AccountDTO save(AccountDTO account);
     void deleteById(Integer id);
     Page<AccountDTO> findByPage(Pageable pageable);
+
+    boolean authenticate(String username, String password);
+
+    Optional<AccountDTO> findByUserNameAndPassword(String username, String password);
+
+    Optional<AccountDTO> findByUsername(String username);
 }

@@ -2,8 +2,8 @@ package fit.iuh.modish_motion.dto;
 
 import lombok.*;
 import fit.iuh.modish_motion.entities.User;
-
 import java.util.Date;
+
 
 @Getter
 @Setter

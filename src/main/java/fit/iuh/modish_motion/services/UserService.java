@@ -13,4 +13,5 @@ public interface UserService {
     UserDTO save(UserDTO user);
     void deleteById(Integer id);
     Page<UserDTO> findByPage(Pageable pageable);
+    void updateUser(Integer id, UserDTO user);
 }
