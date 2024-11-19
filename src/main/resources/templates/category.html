@@ -177,17 +177,27 @@
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 py-6 justify-items-center"
           id="productGrid"
         >
-          <th:block
-            th:replace="fragments/productItems :: productItems"
-          ></th:block>
+          <th:block th:each="item, iterStat : ${items}">
+            <div
+              th:replace="components/productItem :: productItem(${item})"
+              th:classappend="${iterStat.index >= 10} ? 'hidden' : ''"
+            ></div>
+          </th:block>
         </div>
-        <div class="text-center py-4">
+        <div class="text-center py-4 flex justify-center gap-4">
           <button
             id="loadMoreBtn"
             class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 transform hover:scale-105"
-            th:if="${hasMore}"
+            onclick="loadMoreItems()"
           >
             Xem thêm
+          </button>
+          <button
+            id="collapseBtn"
+            class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all duration-300 transform hover:scale-105 hidden"
+            onclick="collapseItems()"
+          >
+            Thu gọn
           </button>
         </div>
       </div>
@@ -199,343 +209,122 @@
       document.addEventListener("DOMContentLoaded", function () {
         const productGrid = document.getElementById("productGrid");
         const loadMoreBtn = document.getElementById("loadMoreBtn");
+        const collapseBtn = document.getElementById("collapseBtn");
         const productCountElement = document.getElementById("productCount");
-        let currentPage = 0;
+        const items = Array.from(productGrid.children);
+        const totalItems = /*[[${totalItems}]]*/ 0;
+        const itemsFilter = /*[[${items}]]*/ [];
+        let itemsToShow = 18;
+        let currentIndex = itemsToShow;
 
-        window.loadMore = function () {
-          currentPage++;
-          loadItems(currentPage);
+        // Cập nhật số lượng sản phẩm hiển thị
+        function updateProductCount() {
+          productCountElement.textContent = `${totalItems} sản phẩm`;
+        }
+        let { colors, sizes } = getFilterItems(itemsFilter);
+        
+        // console.log(colors);
+        // console.log(sizes);
+        // Check xem color có trong mảng chưa
+        function checkColor(color, colors) {
+          colors.forEach((c) => {
+            if (c.id == color.id) {
+              // console.log("false");
+              return false;
+            }
+          });
+          // console.log("true");
+          return true;
+        }
+
+        // Check xem size có trong mảng chưa
+        function checkSize(size, sizes) {
+          sizes.forEach((s) => {
+            if (s.id == size.id) {
+              // console.log("false");
+              return false;
+            }
+          });
+          // console.log("true");
+          return true;
+        }
+
+        // Lấy thông tin về các color và size trong danh sách sản phẩm
+        function getFilterItems(items) {
+          let colors = [];
+          let sizes = [];
+          items.forEach((item) => {
+            const variants = item.displayVariants;
+            variants.forEach((variant) => {
+              let bool1 = checkColor(variant.color, colors);
+              if (bool1) {
+                colors.push(variant.color); // color có dạng {id, color, hex}
+              }
+              let bool2 = checkSize(variant.size, sizes);
+              if (bool2) {
+                sizes.push(variant.size); // {id, size}
+              }
+            });
+          });
+          // lọc các phần tử trùng lặp
+          colors = colors.filter((color, index, self) => {
+            return index === self.findIndex((t) => t.id === color.id);
+          });
+          sizes = sizes.filter((size, index, self) => {
+            return index === self.findIndex((t) => t.id === size.id);
+          });
+          return { colors, sizes };
+        }
+
+        // Đưa data vào filter
+        renderFilters(colors, sizes);
+
+        updateProductCount();
+
+        // Ẩn các sản phẩm ban đầu
+        items.forEach((item, index) => {
+          if (index >= itemsToShow) {
+            item.classList.add("hidden");
+          }
+        });
+
+        window.loadMoreItems = function () {
+          const itemsToLoad = Math.min(
+            itemsToShow,
+            items.length - currentIndex
+          );
+          for (let i = currentIndex; i < currentIndex + itemsToLoad; i++) {
+            items[i].classList.remove("hidden");
+          }
+          currentIndex += itemsToLoad;
+
+          if (currentIndex >= items.length) {
+            loadMoreBtn.classList.add("hidden");
+          }
+
+          collapseBtn.classList.remove("hidden");
         };
 
-        function loadItems(page) {
-          // url của trang hiện tại
-          const url = new URL(window.location.href);
-          console.log(url);
-          url.pathname = url.pathname.replace(/\/$/, "") + "/loadMore";
-          console.log(url.pathname);
-          url.searchParams.set("page", page);
+        window.collapseItems = function () {
+          const itemsToHide = Math.min(itemsToShow, currentIndex - itemsToShow);
+          for (let i = currentIndex - 1; i >= currentIndex - itemsToHide; i--) {
+            items[i].classList.add("hidden");
+          }
+          currentIndex -= itemsToHide;
 
-          // lấy ra các màu và size đã chọn, mỗi cái được chọn có class là selected
-          const selectedColors = Array.from(
-            document.querySelectorAll(".filter-btn[data-type='color'].selected")
-          ).map((btn) => btn.getAttribute("data-value"));
-          // console.log("selectedColors", selectedColors);
-          const selectedSizes = Array.from(
-            document.querySelectorAll(".filter-btn[data-type='size'].selected")
-          ).map((btn) => btn.getAttribute("data-value"));
-          // console.log("selectedSizes", selectedSizes);
-
-          // Thêm các màu và size đã chọn vào URL
-
-          if (selectedColors.length > 0) {
-            url.searchParams.set(
-              "colors",
-              selectedColors.map((color) => color.id).join(",") // gửi về server dưới dạng [1,2,3] trong đó: 1,2,3 là id của color
-            );
-          } else {
-            url.searchParams.set(
-              "colors",
-              [] // Nếu không có màu nào được chọn thì gửi về server dưới dạng []
-            );
+          if (currentIndex <= itemsToShow) {
+            collapseBtn.classList.add("hidden");
           }
 
-          if (selectedSizes.length > 0) {
-            url.searchParams.set(
-              "sizes",
-              selectedSizes.map((size) => size.id).join(",") // gửi về server dưới dạng [1,2,3] trong đó: 1,2,3 là id của size
-            );
-          } else {
-            url.searchParams.set(
-              "sizes",
-              [] // Nếu không có size nào được chọn thì gửi về server dưới dạng []
-            );
-          }
+          loadMoreBtn.classList.remove("hidden");
+        };
 
-          console.log(
-            "url.searchParams.get('colors')",
-            url.searchParams.get("colors")
-          ); // url.searchParams.get('colors')
-
-          // Tải thêm sản phẩm từ server
-          // Có tải lại ngueyen trang không?
-          // trả lời là không
-          fetch(url)
-            // trả về response dưới dạng text
-            .then((response) => response.text())
-            .then((html) => {
-              const parser = new DOMParser();
-              const doc = parser.parseFromString(html, "text/html");
-              const newItems = doc.querySelectorAll("div.product-item");
-              newItems.forEach((item) => {
-                productGrid.appendChild(item.cloneNode(true));
-              });
-              // newItems này có dạng như thế nào vậy?
-              // newItems là một mảng chứa các element div.product-item mới
-              // có dạng là: [div.product-item, div.product-item, div.product-item, ...]
-              console.log("newItems", newItems);
-
-              const hasMore = doc.getElementById("hasMore").value === "true";
-              console.log("hasMore", hasMore);
-
-              const totalItems = parseInt(
-                doc.getElementById("totalItems").value,
-                10
-              );
-              console.log("totalItems", totalItems);
-
-              const currentItemCount =
-                productGrid.querySelectorAll("div.product-item").length;
-
-              updateProductCount(currentItemCount);
-
-              if (!hasMore || currentItemCount >= totalItems) {
-                loadMoreBtn.style.display = "none";
-              }
-
-              // Cập nhật bộ lọc mà không nhân đôi, truyền dữ liệu vừa load vào hàm updateFilters
-              //lấy ra allColors và allSizes từ hidden input
-              const allColors = doc.getElementById("allColors").value;
-              // console.log("allColors:", allColors);
-              const allSizes = doc.getElementById("allSizes").value;
-              // console.log("allSizes:", allSizes);
-              updateFilters(allColors, allSizes);
-            })
-            .catch((error) => console.error("Error loading items:", error));
+        // Kiểm tra nếu có ít hơn hoặc bằng 18 sản phẩm, ẩn cả hai nút
+        if (items.length <= itemsToShow) {
+          loadMoreBtn.classList.add("hidden");
+          collapseBtn.classList.add("hidden");
         }
-
-        function updateProductCount(currentItemCount) {
-          productCountElement.textContent = `${currentItemCount} sản phẩm`;
-        }
-
-        function openFilter() {
-          const filterPanel = document.getElementById("filterPanel");
-          if (filterPanel) {
-            filterPanel.classList.remove("hidden");
-            // Khi mở bộ lọc thì thực hiện cập nhật lại bộ lọc
-            updateFilters();
-          }
-        }
-
-        function updateFilters(allColors, allSizes) {
-          //nếu không có allColors và allSizes
-          if (!allColors || !allSizes) {
-            //lấy ra allColors và allSizes từ hidden input
-            const { colors, sizes } = getColorAndSize();
-            // update colorFilters and sizeFilters
-            updateFilterSection("colorFilters", colors, true);
-            updateFilterSection("sizeFilters", sizes, true);
-          } else {
-            const { colors, sizes } = getColorAndSize1(allColors, allSizes);
-            console.log("colors", colors);
-            console.log("sizes", sizes);
-            // update colorFilters and sizeFilters
-            updateFilterSection("colorFilters", allColors, false);
-            updateFilterSection("sizeFilters", allSizes, false);
-          }
-        }
-
-        function updateFilterSection(sectionId, items, isFirst) {
-          // Lấy ra section cần update
-          // console.log("items for filter", items);
-          const section = document.getElementById(sectionId);
-          // section.innerHTML = ""; // Xóa tất cả các filter hiện tại
-
-          // kiểm tra xem items là color hay size
-          const type = sectionId === "colorFilters" ? "color" : "size";
-          // items đang là 1 cái string, dạng {id: 60426, color: 'Trắng', hex: '#FFFFFF'}; {id: 60427, color: 'Trắng', hex: '#FFFFFF'}
-          // nên cần chuyển nó về dạng mảng
-          const arr = [];
-          if (!isFirst) {
-            if(type === "color")
-            {
-              items = items.trim();
-              items = items.split(";");
-              items.forEach((item) => {
-                const obj = JSON.parse(item);
-                arr.push(obj);
-              });
-            }else
-            {
-              items = items.trim();
-              items = items.split(";");
-              items.forEach((item) => {
-                const obj = JSON.parse(item);
-                arr.push(obj);
-              });
-            }
-
-          // Nếu là color thì tạo button với 2 span bên trong
-          // 1 là 1 hình tròn có màu tương ứng (lấy từ hex)
-          // 2 là tên màu
-          
-          if (type === "color" && isFirst) {
-            items.forEach(({ id, color, hex }) => {
-              const button = document.createElement("button");
-              button.classList.add("filter-btn");
-              // Thêm data-type là color cho button
-              button.setAttribute("data-type", "color");
-              button.setAttribute("data-value", { id, color, hex });
-              button.style.backgroundColor = hex;
-              button.onclick = () => toggleFilter("color", { id, color, hex });
-              const span1 = document.createElement("span");
-              span1.style.width = "20px";
-              span1.style.height = "20px";
-              span1.style.borderRadius = "50%";
-              span1.style.backgroundColor = hex;
-              const span2 = document.createElement("span");
-              span2.textContent = color;
-              button.appendChild(span1);
-              button.appendChild(span2);
-              section.appendChild(button);
-            });
-          } else if(type === "size" && isFirst) {
-            // Nếu là size thì tạo button với 1 span bên trong
-            // span là tên size
-            items.forEach(({ id, size }) => {
-              const button = document.createElement("button");
-              button.classList.add("filter-btn");
-              // Thêm data-type là size cho button
-              button.setAttribute("data-type", "size");
-              button.setAttribute("data-value", { id, size });
-              button.onclick = () => toggleFilter("size", { id, size });
-              const span = document.createElement("span");
-              span.textContent = size;
-              button.appendChild(span);
-              section.appendChild(button);
-            });
-          }else if(type === "color" && !isFirst)
-          {
-            arr.forEach(({ id, color, hex }) => {
-              const button = document.createElement("button");
-              button.classList.add("filter-btn");
-              // Thêm data-type là color cho button
-              button.setAttribute("data-type", "color");
-              button.setAttribute("data-value", { id, color, hex });
-              button.style.backgroundColor = hex;
-              button.onclick = () => toggleFilter("color", { id, color, hex });
-              const span1 = document.createElement("span");
-              span1.style.width = "20px";
-              span1.style.height = "20px";
-              span1.style.borderRadius = "50%";
-              span1.style.backgroundColor = hex;
-              const span2 = document.createElement("span");
-              span2.textContent = color;
-              button.appendChild(span1);
-              button.appendChild(span2);
-              section.appendChild(button);
-            });
-          }else
-          {
-            arr.forEach(({ id, size }) => {
-              const button = document.createElement("button");
-              button.classList.add("filter-btn");
-              // Thêm data-type là size cho button
-              button.setAttribute("data-type", "size");
-              button.setAttribute("data-value", { id, size });
-              button.onclick = () => toggleFilter("size", { id, size });
-              const span = document.createElement("span");
-              span.textContent = size;
-              button.appendChild(span);
-              section.appendChild(button);
-            });
-          }
-        }
-      }
-        if (loadMoreBtn) {
-          loadMoreBtn.addEventListener("click", window.loadMore);
-        }
-
-        // Khởi tạo bộ lọc ban đầu khi load trang category lần đầu
-        updateFilters();
-
-        // Thêm sự kiện cho nút áp dụng bộ lọc
-        document
-          .getElementById("applyFiltersBtn")
-          .addEventListener("click", function () {
-            productGrid.innerHTML = ""; // Xóa tất cả sản phẩm hiện tại
-            currentPage = 0; // Reset trang về 0
-            loadMoreBtn.style.display = "block"; // Hiển thị nút "Xem thêm"
-            loadItems(currentPage); // Tải lại sản phẩm với bộ lọc mới
-            closeFilter(); // Đóng panel bộ lọc
-          });
-
-
-      
-
-      function getColorAndSize() {
-        // lấy item từ controller
-        const items = /*[[${items}]]*/ [];
-        // khởi tạo mảng colors và sizes
-        const colors = [];
-        const sizes = [];
-        // duyệt qua từng item
-        items.forEach((item) => {
-          // duyệt qua từng variant của item
-          var variants = item.displayVariants;
-          variants.forEach((variant) => {
-            // lấy ra id, name, hex của color
-            const colorID = variant.color.id;
-            const colorName = variant.color.color;
-            const colorHex = variant.color.hex;
-            // kiểm tra xem color đã tồn tại trong mảng colors chưa
-            const isColorExist = colors.some((color) => color.id === colorID);
-            // nếu chưa tồn tại thì thêm vào mảng colors
-            if (!isColorExist) {
-              colors.push({ id: colorID, color: colorName, hex: colorHex });
-            }
-            // lấy ra id, size của size
-            const sizeID = variant.size.id;
-            const size = variant.size.size;
-            // kiểm tra xem size đã tồn tại trong mảng sizes chưa
-            const isSizeExist = sizes.some((size) => size.id === sizeID);
-            // nếu chưa tồn tại thì thêm vào mảng sizes
-            if (!isSizeExist) {
-              sizes.push({ id: sizeID, size: size });
-            }
-          });
-        });
-        // trả về mảng colors và sizes
-        console.log("colors", colors);
-        console.log("sizes", sizes);
-        return { colors, sizes };
-      }
-
-      function getColorAndSize1() {
-        // lấy item từ controller
-        const items = /*[[${items}]]*/ [];
-        // khởi tạo mảng colors và sizes
-        const colors = [];
-        const sizes = [];
-        // duyệt qua từng item
-        items.forEach((item) => {
-          // duyệt qua từng variant của item
-          var variants = item.displayVariants;
-          variants.forEach((variant) => {
-            // lấy ra id, name, hex của color
-            const colorID = variant.color.id;
-            const colorName = variant.color.color;
-            const colorHex = variant.color.hex;
-            // kiểm tra xem color đã tồn tại trong mảng colors chưa
-            const isColorExist = colors.some((color) => color.id === colorID);
-            // nếu chưa tồn tại thì thêm vào mảng colors
-            if (!isColorExist) {
-              colors.push({ id: colorID, name: colorName, hex: colorHex });
-            }
-            // lấy ra id, size của size
-            const sizeID = variant.size.id;
-            const size = variant.size.size;
-            // kiểm tra xem size đã tồn tại trong mảng sizes chưa
-            const isSizeExist = sizes.some((size) => size.id === sizeID);
-            // nếu chưa tồn tại thì thêm vào mảng sizes
-            if (!isSizeExist) {
-              sizes.push({ id: sizeID, size: size });
-            }
-          });
-        });
-        // trả về mảng colors và sizes
-        return { colors, sizes };
-      }
-    });
+      });
     </script>
     <script th:src="@{/js/filter.js}"></script>
   </body>
