@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div th:replace="components/head :: head"></div>
+    <title>Hồ Sơ Của Tôi</title>
+</head>
+<body class="bg-gray-100">
+<header th:replace="components/header"></header>
+<div class="container mx-auto my-10" data-theme="light">
+    <div class="flex space-x-6">
+        <div class="w-1/4 bg-white rounded-lg shadow-lg p-4">
+            <div class="flex items-center space-x-4 mb-6">
+                <img th:src="@{/images/profile/hamburmeo.jfif}" alt="avatar" class="rounded-full w-14 h-14">
+                <div>
+                    <div>
+                        <p th:text="'Welcome, ' + ${session.currentUser.username}"></p>
+                    </div>
+                    <p class="text-gray-800 font-bold"></p>
+                    <a href="#" class="text-blue-500 text-sm hover:underline">Sửa Hồ Sơ</a>
+                </div>
+            </div>
+            <ul class="text-sm text-gray-600">
+                <li class="py-2 border-b border-gray-200">
+                    <a href="#" th:onclick="|window.location.href='@{/profile?tab=profile}'|" class="flex items-center" th:classappend="${selectedTab == 'profile'} ? 'text-red-500' : ''">Hồ Sơ</a>
+                </li>
+                <li class="py-2 border-b border-gray-200">
+                    <a href="#" th:onclick="|window.location.href='@{/profile?tab=bank}'|" class="flex items-center" th:classappend="${selectedTab == 'bank'} ? 'text-red-500' : ''">Ngân Hàng</a>
+                </li>
+                <li class="py-2 border-b border-gray-200">
+                    <a href="#" th:onclick="|window.location.href='@{/profile?tab=address}'|" class="flex items-center" th:classappend="${selectedTab == 'address'} ? 'text-red-500' : ''">Địa Chỉ</a>
+                </li>
+                <li class="py-2 border-b border-gray-200">
+                    <a href="#" th:onclick="|window.location.href='@{/profile?tab=password}'|" class="flex items-center" th:classappend="${selectedTab == 'password'} ? 'text-red-500' : ''">Đổi Mật Khẩu</a>
+                </li>
+                <li class="py-2 border-b border-gray-200">
+                    <a href="#" th:onclick="|window.location.href='@{/profile?tab=orders}'|" class="flex items-center" th:classappend="${selectedTab == 'orders'} ? 'text-red-500' : ''">Đơn Mua</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="w-3/4 bg-white rounded-lg shadow-lg p-6">
+            <div th:if="${selectedTab == 'profile'}">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Hồ Sơ Của Tôi</h2>
+                <p class="text-gray-500 mb-6">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
+                <div class="grid grid-cols-4 gap-4">
+                    <!-- Profile Form -->
+                    <div class="col-span-2">
+                        <form>
+                            <div class="mb-4">
+                                <label for="username" class="block text-sm font-semi bold text-gray-600">Tên đăng nhập</label>
+                                <p id="username" class="text-gray-800" th:text="${user.username}"></p>
+                            </div>
+                            <div class="mb-4">
+                                <label for="name" class="block text-sm font-semi bold text-gray-600">Tên</label>
+                                <p  id="name" class="text-gray-800" th:text="${user.user.name}"></p>
+                            </div>
+                            <div class="mb-4">
+                                <label for="email" class="block text-sm font-semi bold text-gray-600">Email</label>
+                                <p id="email" class="text-gray-800" th:text="${user.user.email}"> <a href="#" class="text-blue-500 text-sm hover:underline">Thay Đổi</a></p>
+                            </div>
+                            <div class="mb-4">
+                                <label for="phone" class="block text-sm font-semi bold text-gray-600">Số điện thoại</label>
+                                <p id="phone" class="text-gray-800" th:text="${user.user.phoneNumber}"> <a href="#" class="text-blue-500 text-sm hover:underline">Thay Đổi</a></p>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-semi bold text-gray-600">Giới tính</label>
+                                <div class="flex items-center space-x-4">
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="gender" class="form-radio text-blue-500"
+                                               th:checked="${user.user.gender == false}">
+                                        <span class="ml-2">Nam</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="gender" class="form-radio text-blue-500"
+                                               th:checked="${user.user.gender == true}">
+                                        <span class="ml-2">Nữ</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="dob" class="block text-sm font-semi bold text-gray-600">Ngày sinh</label>
+                                <p id="dob" class="text-gray-800" th:text="${user.user.getDob()}"> <a href="#" class="text-blue-500 text-sm hover:underline">Thay Đổi</a></p>
+                            </div>
+                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Lưu</button>
+                        </form>
+                    </div>
+
+                    <!-- Profile Picture -->
+                    <div class="flex flex-col items-center">
+                        <img th:src="@{/images/profile/hamburmeo.jfif}" alt="avatar" class="rounded-full w-32 h-32 mb-4">
+                        <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg">Chọn Ảnh</button>
+                        <p class="text-gray-500 text-sm mt-4">Dung lượng file tối đa 1 MB</p>
+                        <p class="text-gray-500 text-sm">Định dạng: .JPEG, .PNG</p>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div th:if="${selectedTab == 'bank'}">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Ngân Hàng</h2>
+                <!-- Nội dung Ngân Hàng ở đây -->
+            </div>
+
+            <!-- Địa Chỉ -->
+            <div th:if="${selectedTab == 'address'}">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Địa Chỉ</h2>
+                <!-- Nội dung Địa Chỉ ở đây -->
+            </div>
+
+            <!-- Đổi Mật Khẩu -->
+            <!-- Đổi Mật Khẩu -->
+            <div th:if="${selectedTab == 'password'}">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Đổi Mật Khẩu</h2>
+                <p class="text-gray-500 mb-6">Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác</p>
+
+                <form class="w-full">
+                    <div class="mb-4 flex items-center">
+                        <label for="oldPassword" class="w-1/4 text-gray-600 text-right mr-4"> Mật khẩu cũ</label>
+                        <div class="flex items-center gap-2 input input-bordered w-2/4">
+                            <input type="password" class="grow w-full" id="oldPassword" />
+                            <i id="toggleOldPassword" data-lucide="eye-closed" class="w-4 h-4 cursor-pointer"
+                               onclick="togglePasswordVisibility('oldPassword', 'toggleOldPassword')"></i>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 flex items-center">
+                        <label for="newPassword" class="w-1/4 text-gray-600 text-right mr-4">Mật khẩu mới</label>
+                        <div class="flex items-center gap-2 input input-bordered w-2/4">
+                            <input type="password" class="grow w-full" id="newPassword" />
+                            <i id="toggleNewPassword" data-lucide="eye-closed" class="w-4 h-4 cursor-pointer"
+                               onclick="togglePasswordVisibility('newPassword', 'toggleNewPassword')"></i>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 flex items-center">
+                        <label for="confirmPassword" class="w-1/4 text-gray-600 text-right mr-4">Nhập lại mật khẩu mới</label>
+                        <div class="flex items-center gap-2 input input-bordered w-2/4">
+                            <input type="password" class="grow w-full" id="confirmPassword" />
+                            <i id="toggleConfirmPassword" data-lucide="eye-closed" class="w-4 h-4 cursor-pointer"
+                               onclick="togglePasswordVisibility('confirmPassword', 'toggleConfirmPassword')"></i>
+                        </div>
+                    </div>
+
+                    <!-- Nút Lưu ở giữa -->
+                    <div class="flex justify-center mt-6">
+                        <button type="submit" class="bg-red-500 text-white px-8 py-2 rounded-lg hover:bg-red-600 w-1/3 text-center">Đổi mật khẩu</button>
+                    </div>
+                </form>
+            </div>
+
+
+            <!-- Đơn Mua -->
+            <div th:if="${selectedTab == 'orders'}">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Đơn Mua</h2>
+                <!-- Nội dung Đơn Mua ở đây -->
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="/components/lucide_icons :: lucide_icon"></div>
+<footer th:replace="components/footer"></footer>
+
+<script>
+    function togglePasswordVisibility(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (input.type === "password") {
+            input.type = "text";
+            icon.setAttribute("data-lucide", "eye");
+        } else {
+            input.type = "password";
+            icon.setAttribute("data-lucide", "eye-closed");
+        }
+        lucide.createIcons();  // Để cập nhật biểu tượng sau khi thay đổi thuộc tính
+    }
+</script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package fit.iuh.modish_motion.repositories;
 
+import fit.iuh.modish_motion.dto.ItemDTO;
 import fit.iuh.modish_motion.entities.Item;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,24 @@ public interface ItemRepository extends JpaRepository<Item, String> {
     Page<Item> findItemsWithVariants(Pageable pageable);
 
     List<Item> findByCategoryId(int categoryId);
+
+    @Query(value = "SELECT * FROM items i WHERE i.category_id = :categoryId AND i.id != :itemId AND EXISTS (SELECT 1 FROM variants v WHERE v.item_id = i.id) ORDER BY RAND() LIMIT :limit", nativeQuery = true)
+    List<Item> findRelatedItems(@Param("categoryId") int categoryId, @Param("itemId") String itemId, @Param("limit") int limit);
+    Page<Item> findByCategoryId(int categoryId, Pageable pageable);
+    List<Item> findByNameContaining(String name);
+    long countByCategoryId(int categoryId);
+    @Query("SELECT i FROM Item i JOIN i.variants v WHERE i.category.id = :categoryId " +
+            "AND (:colors IS NULL OR v.color.color IN :colors) " +
+            "AND (:sizes IS NULL OR v.size.size IN :sizes)")
+    Page<Item> findByCategoryIdAndFilter(@Param("categoryId") int categoryId,
+                                         @Param("colors") List<String> colors,
+                                         @Param("sizes") List<String> sizes,
+                                         Pageable pageable);
+
+    @Query("SELECT COUNT(DISTINCT i) FROM Item i JOIN i.variants v WHERE i.category.id = :categoryId " +
+            "AND (:colors IS NULL OR v.color.color IN :colors) " +
+            "AND (:sizes IS NULL OR v.size.size IN :sizes)")
+    long countByCategoryIdAndFilter(@Param("categoryId") int categoryId,
+                                    @Param("colors") List<String> colors,
+                                    @Param("sizes") List<String> sizes);
 }
