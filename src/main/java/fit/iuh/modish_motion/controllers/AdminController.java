@@ -57,19 +57,19 @@ public class AdminController {
             List<AccountDTO> accounts = accountService.findAll();
             model.addAttribute("accounts", accounts);
         }
-        return "admin";
+        return "dashboard";
     }
     @GetMapping("/admin/check-auth")
     public ResponseEntity<?> checkAuthentication() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok("Authentication details: " + auth);
     }
-//    @GetMapping("/admin/dashboard/users")
-//    public String getAccountList(Model model) {
-//        List<AccountDTO> accounts = accountService.findAll();
-//        model.addAttribute("accounts", accounts);
-//        return "admin";
-//    }
+    @GetMapping("/admin/dashboard/users")
+    public String getAccountList(Model model) {
+        List<AccountDTO> accounts = accountService.findAll();
+        model.addAttribute("accounts", accounts);
+        return "dashboard-users";
+    }
 
     // Trang danh sách người dùng
 //    @GetMapping("/users")

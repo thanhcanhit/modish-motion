@@ -48,26 +48,6 @@
 
     <!-- Main Content -->
     <main class="flex-1 p-8">
-        <!-- Header -->
-        <header class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-semibold">
-                <span th:if="${selectedTab == 'products'}">Quản Lý Sản Phẩm</span>
-                <span th:if="${selectedTab == 'users'}">Quản Lý Người Dùng</span>
-                <span th:if="${selectedTab == 'orders'}">Quản Lý Đơn Hàng</span>
-                <span th:if="${selectedTab == 'statistics'}">Thống Kê</span>
-            </h1>
-            <div class="flex items-center space-x-4">
-                <input
-                        type="text"
-                        placeholder="Search..."
-                        class="border border-gray-300 rounded-lg px-4 py-2"
-                />
-                <img
-                        th:src="@{/images/profile/hamburmeo.jfif}" alt="avatar"
-                        class="w-10 h-10 rounded-full"
-                />
-            </div>
-        </header>
         <div >
             <div th:if="${selectedTab == 'products'}">
                 <div class="w-3/4 bg-white rounded-lg shadow-lg p-6">
