@@ -1,14 +1,8 @@
 package fit.iuh.modish_motion.controllers;
 
 import fit.iuh.modish_motion.dto.ItemDTO;
-import fit.iuh.modish_motion.dto.UserDTO;
 import fit.iuh.modish_motion.services.ItemService;
-import fit.iuh.modish_motion.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

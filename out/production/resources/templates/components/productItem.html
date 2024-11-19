@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<article  th:fragment="productItem(item)" class="w-full space-y-1 p-2 max-w-[265px]"
-         th:id="${item.id}">
+<article th:fragment="productItem(item)" class="product-item w-full space-y-1 p-2 max-w-[265px]" th:id="${item.id}">
     <a th:href="@{/product/{id}(id=${item.id})}" class="flex flex-col gap-2 mb-4">
         <img id="product-image" class="product-image h-[354px] object-cover" alt="Product img"
              th:src="${item.variants != null && item.variants.size() > 0 &&
                       item.variants[0].imageUrls != null &&
                       item.variants[0].imageUrls.size() > 0 ?
                       item.variants[0].imageUrls[0] : '/images/item/product.png'}"/>
-        <p class="lg:text-md line-clamp-1 text-md font-normal" th:text="${item.name}">Product name</p>
-        <p class="font-semibold flex gap-4 text-lg items-center ">
+        <p class="font-normal lg:text-md line-clamp-1 text-md" th:text="${item.name}">Product name</p>
+        <p class="flex items-center gap-4 text-lg font-semibold ">
             <!-- Display Promotion Price if Available -->
             <span th:if="${item.promotionPrice > 0}"
                   class="text-red-500"
@@ -18,7 +17,7 @@
     </span>
             <!-- Display Original Price with Strikethrough -->
             <span th:if="${item.promotionPrice > 0}"
-                  class="line-through text-gray-400 text-xs"
+                  class="text-xs text-gray-400 line-through"
                   th:text="${item.variants != null && !item.variants.isEmpty() ?
                     #numbers.formatDecimal(item.variants[0].price, 0, 'POINT', 0, 'COMMA') : '0'} + 'đ'">
         Original Price
@@ -38,7 +37,7 @@
              th:each="variant : ${item.displayVariants}">
             <button th:if="${variant.imageUrls != null && !variant.imageUrls.isEmpty()}"
                     th:attr="data-image-url=${variant.imageUrls[0]}"
-                    class="h-6 w-6 rounded-full block border item-color-button"
+                    class="block w-6 h-6 border rounded-full item-color-button"
                     th:style="|background-color: ${variant.color.hex}|"
                     onclick="changeImage(this)">
             </button>

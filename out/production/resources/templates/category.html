@@ -1,212 +1,542 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nam - YODY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 64px;
-            background: #fff;
-            z-index: 40;
-            border-bottom: 1px solid #eee;
-        }
+      .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background: #fff;
+        z-index: 40;
+        border-bottom: 1px solid #eee;
+      }
 
-        .category-controls {
-            position: sticky;
-            top: 64px; /* Adjust this value to match the height of the header */
-            background: #fff;
-            z-index: 30;
-            border-bottom: 1px solid #eee;
-            padding: 12px 0;
-            transition: all 0.3s ease;
-        }
+      .category-controls {
+        position: sticky;
+        top: 64px; /* Adjust this value to match the height of the header */
+        background: #fff;
+        z-index: 30;
+        border-bottom: 1px solid #eee;
+        padding: 12px 0;
+        transition: all 0.3s ease;
+      }
 
-        .category-controls.fixed {
-            position: fixed;
-            left: 0;
-            right: 0;
-            top: 0;
-            z-index: 50; /* Ensure it is above the header */
-        }
+      .category-controls.fixed {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        z-index: 50; /* Ensure it is above the header */
+      }
 
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            min-width: 160px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        min-width: 160px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
 
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
 
-        @media (max-width: 1024px) {
-            .product-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+      @media (max-width: 1024px) {
+        .product-grid {
+          grid-template-columns: repeat(2, 1fr);
         }
+      }
 
-        @media (max-width: 640px) {
-            .product-grid {
-                grid-template-columns: repeat(1, 1fr);
-            }
+      @media (max-width: 640px) {
+        .product-grid {
+          grid-template-columns: repeat(1, 1fr);
         }
+      }
 
+      #sideMenu {
+        padding: 0 1rem;
+      }
+
+      @media (min-width: 1024px) {
         #sideMenu {
-            padding: 0 1rem;
+          padding: 0 1.5rem;
         }
+      }
 
-        @media (min-width: 1024px) {
-            #sideMenu {
-                padding: 0 1.5rem;
-            }
+      #productGrid {
+        min-height: 100vh; /* Đảm bảo grid luôn có chiều cao tối thiểu */
+      }
+      #loadMoreBtn {
+        transition: opacity 0.3s ease-out;
+      }
+      #loadMoreBtn.hiding {
+        opacity: 0;
+      }
+      .selected {
+        border: 1px solid black;
+      }
+
+      .filter-btn-container {
+        display: grid;
+        gap: 0.5rem;
+      }
+
+      @media (min-width: 1024px) {
+        .filter-btn-container {
+          grid-template-columns: repeat(3, 1fr);
         }
+      }
+
+      @media (min-width: 640px) and (max-width: 1023px) {
+        .filter-btn-container {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 639px) {
+        .filter-btn-container {
+          grid-template-columns: repeat(1, 1fr);
+        }
+      }
+
+      .filter-btn span {
+        font-size: 1rem; /* Increase the size of the spans */
+      }
     </style>
-</head>
-<body class="bg-white">
-<header th:replace="components/header :: header(${categories})"></header>
+  </head>
+  <body class="bg-white">
+    <header th:replace="components/header"></header>
 
-<main class="pt-16">
-    <div class="container mx-auto px-4 lg:px-6">
+    <main class="pt-16">
+      <div class="container mx-auto px-4 lg:px-6">
         <nav class="flex items-center gap-2 text-sm text-gray-500 py-4">
-            <a href="/" class="hover:text-[#31495e]">Trang chủ</a>
-            <span>></span>
-            <span class="text-[#31495e]" th:text="${category.categoryName}">Nam</span>
+          <a href="/" class="hover:text-[#31495e]">Trang chủ</a>
+          <span>></span>
+          <span class="text-[#31495e]" th:text="${category.categoryName}"
+            >Nam</span
+          >
         </nav>
 
-        <h1 class="text-2xl font-semibold text-[#31495e] mb-4" th:text="${category.categoryName}">Nam</h1>
+        <h1
+          class="text-2xl font-semibold text-[#31495e] mb-4"
+          th:text="${category.categoryName}"
+        >
+          Nam
+        </h1>
 
         <div class="category-controls" id="categoryControls">
-            <div class="container mx-auto px-4 lg:px-6">
-                <div class="flex justify-between items-center">
-                    <span class="text-[#31495e] text-sm" th:text="${items.size() + ' sản phẩm'}">335 sản phẩm</span>
-                    <div class="flex gap-3">
-                        <div class="dropdown relative">
-                            <button class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-[#31495e] hover:border-[#31495e] transition-colors flex items-center gap-2">
-                                Danh sách
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M6 9l6 6 6-6"/>
-                                </svg>
-                            </button>
-                            <div class="dropdown-content">
-                                <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Mới nhất</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Bán chạy</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Giá thấp đến cao</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-[#31495e] hover:bg-gray-100">Giá cao đến thấp</a>
-                            </div>
-                        </div>
-                        <button onclick="openFilter()"
-                                class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-[#31495e] hover:border-[#31495e] transition-colors flex items-center gap-2">
-                            Bộ lọc
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M6 9l6 6 6-6"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 py-6 justify-items-center">
-            <!-- Product Items -->
-            <th:block th:each="item : ${items}">
-                <div th:replace="components/productItem :: productItem(${item})" class="w-full"></div>
-            </th:block>
-        </div>
-
-        <div class="flex justify-center py-8">
-            <button class="px-8 py-3 border border-gray-200 rounded-lg text-sm text-[#31495e] hover:border-[#31495e] transition-colors flex items-center gap-2">
-                Xem thêm
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M6 9l6 6 6-6"/>
+          <div class="container mx-auto px-4 lg:px-6">
+            <div class="flex justify-between items-center">
+              <span
+                id="productCount"
+                class="text-[#31495e] text-sm"
+                th:text="${items.size()} + ' sản phẩm'"
+                >335 sản phẩm</span
+              >
+              <button
+                onclick="openFilter()"
+                class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:border-gray-400 transition-colors flex items-center gap-2"
+              >
+                Bộ lọc
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
                 </svg>
-            </button>
-        </div>
-
-        <div class="text-[#31495e] space-y-4 pb-12">
-            <div class="collapsed-content max-h-24 overflow-hidden relative" id="description">
-                <p><strong class="text-orange-500">Áo nam</strong>, món đồ thời trang kinh điển và linh hoạt, đã trở thành biểu tượng của phong cách vượt thời gian. Với sự kết hợp hoàn hảo giữa nét lịch lãm và sự thoải mái, <strong>áo nam YODY</strong> không chỉ là một trang phục thông thường mà còn là tuyên ngôn về phong cách sống năng động và tinh tế.</p>
+              </button>
             </div>
-            <button onclick="toggleDescription()" class="text-sm font-medium hover:text-orange-500 transition-colors flex items-center gap-1 mx-auto">
-                <span id="toggleText">Xem thêm</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="toggleIcon">
-                    <path d="M6 9l6 6 6-6"/>
-                </svg>
-            </button>
+          </div>
         </div>
-    </div>
-</main>
 
-<th:block th:replace="~{filter :: filter}"></th:block>
+        <input
+          type="hidden"
+          id="scrollPosition"
+          name="scrollPosition"
+          th:value="${scrollPosition}"
+        />
 
-<script>
-    // Category Controls Sticky Behavior
-    const categoryControls = document.getElementById('categoryControls');
-    const header = document.querySelector('header');
-    const headerHeight = header.offsetHeight;
-    let lastScroll = 0;
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 py-6 justify-items-center"
+          id="productGrid"
+        >
+          <th:block
+            th:replace="fragments/productItems :: productItems"
+          ></th:block>
+        </div>
+        <div class="text-center py-4">
+          <button
+            id="loadMoreBtn"
+            class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 transform hover:scale-105"
+            th:if="${hasMore}"
+          >
+            Xem thêm
+          </button>
+        </div>
+      </div>
+    </main>
+    <div th:replace="filter"></div>
+    <footer th:replace="components/footer"></footer>
 
-    window.addEventListener('scroll', () => {
-        const currentScroll = window.pageYOffset;
+    <script th:inline="javascript">
+      document.addEventListener("DOMContentLoaded", function () {
+        const productGrid = document.getElementById("productGrid");
+        const loadMoreBtn = document.getElementById("loadMoreBtn");
+        const productCountElement = document.getElementById("productCount");
+        let currentPage = 0;
 
-        if (currentScroll > headerHeight) {
-            if (currentScroll > lastScroll) {
-                // Scrolling down
-                categoryControls.classList.add('fixed');
-                categoryControls.style.top = '0';
-                categoryControls.style.zIndex = '50';
-            } else {
-                // Scrolling up
-                categoryControls.classList.remove('fixed');
-                categoryControls.style.top = '64px'; // Adjust this value to match the height of the header
-                categoryControls.style.zIndex = '30';
+        window.loadMore = function () {
+          currentPage++;
+          loadItems(currentPage);
+        };
+
+        function loadItems(page) {
+          // url của trang hiện tại
+          const url = new URL(window.location.href);
+          console.log(url);
+          url.pathname = url.pathname.replace(/\/$/, "") + "/loadMore";
+          console.log(url.pathname);
+          url.searchParams.set("page", page);
+
+          // lấy ra các màu và size đã chọn, mỗi cái được chọn có class là selected
+          const selectedColors = Array.from(
+            document.querySelectorAll(".filter-btn[data-type='color'].selected")
+          ).map((btn) => btn.getAttribute("data-value"));
+          // console.log("selectedColors", selectedColors);
+          const selectedSizes = Array.from(
+            document.querySelectorAll(".filter-btn[data-type='size'].selected")
+          ).map((btn) => btn.getAttribute("data-value"));
+          // console.log("selectedSizes", selectedSizes);
+
+          // Thêm các màu và size đã chọn vào URL
+
+          if (selectedColors.length > 0) {
+            url.searchParams.set(
+              "colors",
+              selectedColors.map((color) => color.id).join(",") // gửi về server dưới dạng [1,2,3] trong đó: 1,2,3 là id của color
+            );
+          } else {
+            url.searchParams.set(
+              "colors",
+              [] // Nếu không có màu nào được chọn thì gửi về server dưới dạng []
+            );
+          }
+
+          if (selectedSizes.length > 0) {
+            url.searchParams.set(
+              "sizes",
+              selectedSizes.map((size) => size.id).join(",") // gửi về server dưới dạng [1,2,3] trong đó: 1,2,3 là id của size
+            );
+          } else {
+            url.searchParams.set(
+              "sizes",
+              [] // Nếu không có size nào được chọn thì gửi về server dưới dạng []
+            );
+          }
+
+          console.log(
+            "url.searchParams.get('colors')",
+            url.searchParams.get("colors")
+          ); // url.searchParams.get('colors')
+
+          // Tải thêm sản phẩm từ server
+          // Có tải lại ngueyen trang không?
+          // trả lời là không
+          fetch(url)
+            // trả về response dưới dạng text
+            .then((response) => response.text())
+            .then((html) => {
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(html, "text/html");
+              const newItems = doc.querySelectorAll("div.product-item");
+              newItems.forEach((item) => {
+                productGrid.appendChild(item.cloneNode(true));
+              });
+              // newItems này có dạng như thế nào vậy?
+              // newItems là một mảng chứa các element div.product-item mới
+              // có dạng là: [div.product-item, div.product-item, div.product-item, ...]
+              console.log("newItems", newItems);
+
+              const hasMore = doc.getElementById("hasMore").value === "true";
+              console.log("hasMore", hasMore);
+
+              const totalItems = parseInt(
+                doc.getElementById("totalItems").value,
+                10
+              );
+              console.log("totalItems", totalItems);
+
+              const currentItemCount =
+                productGrid.querySelectorAll("div.product-item").length;
+
+              updateProductCount(currentItemCount);
+
+              if (!hasMore || currentItemCount >= totalItems) {
+                loadMoreBtn.style.display = "none";
+              }
+
+              // Cập nhật bộ lọc mà không nhân đôi, truyền dữ liệu vừa load vào hàm updateFilters
+              //lấy ra allColors và allSizes từ hidden input
+              const allColors = doc.getElementById("allColors").value;
+              // console.log("allColors:", allColors);
+              const allSizes = doc.getElementById("allSizes").value;
+              // console.log("allSizes:", allSizes);
+              updateFilters(allColors, allSizes);
+            })
+            .catch((error) => console.error("Error loading items:", error));
+        }
+
+        function updateProductCount(currentItemCount) {
+          productCountElement.textContent = `${currentItemCount} sản phẩm`;
+        }
+
+        function openFilter() {
+          const filterPanel = document.getElementById("filterPanel");
+          if (filterPanel) {
+            filterPanel.classList.remove("hidden");
+            // Khi mở bộ lọc thì thực hiện cập nhật lại bộ lọc
+            updateFilters();
+          }
+        }
+
+        function updateFilters(allColors, allSizes) {
+          //nếu không có allColors và allSizes
+          if (!allColors || !allSizes) {
+            //lấy ra allColors và allSizes từ hidden input
+            const { colors, sizes } = getColorAndSize();
+            // update colorFilters and sizeFilters
+            updateFilterSection("colorFilters", colors, true);
+            updateFilterSection("sizeFilters", sizes, true);
+          } else {
+            const { colors, sizes } = getColorAndSize1(allColors, allSizes);
+            console.log("colors", colors);
+            console.log("sizes", sizes);
+            // update colorFilters and sizeFilters
+            updateFilterSection("colorFilters", allColors, false);
+            updateFilterSection("sizeFilters", allSizes, false);
+          }
+        }
+
+        function updateFilterSection(sectionId, items, isFirst) {
+          // Lấy ra section cần update
+          // console.log("items for filter", items);
+          const section = document.getElementById(sectionId);
+          // section.innerHTML = ""; // Xóa tất cả các filter hiện tại
+
+          // kiểm tra xem items là color hay size
+          const type = sectionId === "colorFilters" ? "color" : "size";
+          // items đang là 1 cái string, dạng {id: 60426, color: 'Trắng', hex: '#FFFFFF'}; {id: 60427, color: 'Trắng', hex: '#FFFFFF'}
+          // nên cần chuyển nó về dạng mảng
+          const arr = [];
+          if (!isFirst) {
+            if(type === "color")
+            {
+              items = items.trim();
+              items = items.split(";");
+              items.forEach((item) => {
+                const obj = JSON.parse(item);
+                arr.push(obj);
+              });
+            }else
+            {
+              items = items.trim();
+              items = items.split(";");
+              items.forEach((item) => {
+                const obj = JSON.parse(item);
+                arr.push(obj);
+              });
             }
-        } else {
-            categoryControls.classList.remove('fixed');
-            categoryControls.style.top = '64px'; // Adjust this value to match the height of the header
-            categoryControls.style.zIndex = '30';
+
+          // Nếu là color thì tạo button với 2 span bên trong
+          // 1 là 1 hình tròn có màu tương ứng (lấy từ hex)
+          // 2 là tên màu
+          
+          if (type === "color" && isFirst) {
+            items.forEach(({ id, color, hex }) => {
+              const button = document.createElement("button");
+              button.classList.add("filter-btn");
+              // Thêm data-type là color cho button
+              button.setAttribute("data-type", "color");
+              button.setAttribute("data-value", { id, color, hex });
+              button.style.backgroundColor = hex;
+              button.onclick = () => toggleFilter("color", { id, color, hex });
+              const span1 = document.createElement("span");
+              span1.style.width = "20px";
+              span1.style.height = "20px";
+              span1.style.borderRadius = "50%";
+              span1.style.backgroundColor = hex;
+              const span2 = document.createElement("span");
+              span2.textContent = color;
+              button.appendChild(span1);
+              button.appendChild(span2);
+              section.appendChild(button);
+            });
+          } else if(type === "size" && isFirst) {
+            // Nếu là size thì tạo button với 1 span bên trong
+            // span là tên size
+            items.forEach(({ id, size }) => {
+              const button = document.createElement("button");
+              button.classList.add("filter-btn");
+              // Thêm data-type là size cho button
+              button.setAttribute("data-type", "size");
+              button.setAttribute("data-value", { id, size });
+              button.onclick = () => toggleFilter("size", { id, size });
+              const span = document.createElement("span");
+              span.textContent = size;
+              button.appendChild(span);
+              section.appendChild(button);
+            });
+          }else if(type === "color" && !isFirst)
+          {
+            arr.forEach(({ id, color, hex }) => {
+              const button = document.createElement("button");
+              button.classList.add("filter-btn");
+              // Thêm data-type là color cho button
+              button.setAttribute("data-type", "color");
+              button.setAttribute("data-value", { id, color, hex });
+              button.style.backgroundColor = hex;
+              button.onclick = () => toggleFilter("color", { id, color, hex });
+              const span1 = document.createElement("span");
+              span1.style.width = "20px";
+              span1.style.height = "20px";
+              span1.style.borderRadius = "50%";
+              span1.style.backgroundColor = hex;
+              const span2 = document.createElement("span");
+              span2.textContent = color;
+              button.appendChild(span1);
+              button.appendChild(span2);
+              section.appendChild(button);
+            });
+          }else
+          {
+            arr.forEach(({ id, size }) => {
+              const button = document.createElement("button");
+              button.classList.add("filter-btn");
+              // Thêm data-type là size cho button
+              button.setAttribute("data-type", "size");
+              button.setAttribute("data-value", { id, size });
+              button.onclick = () => toggleFilter("size", { id, size });
+              const span = document.createElement("span");
+              span.textContent = size;
+              button.appendChild(span);
+              section.appendChild(button);
+            });
+          }
+        }
+      }
+        if (loadMoreBtn) {
+          loadMoreBtn.addEventListener("click", window.loadMore);
         }
 
-        lastScroll = currentScroll;
-    });
+        // Khởi tạo bộ lọc ban đầu khi load trang category lần đầu
+        updateFilters();
 
-    // Description Toggle
-    function toggleDescription() {
-        const description = document.getElementById('description');
-        const toggleText = document.getElementById('toggleText');
-        const toggleIcon = document.getElementById('toggleIcon');
+        // Thêm sự kiện cho nút áp dụng bộ lọc
+        document
+          .getElementById("applyFiltersBtn")
+          .addEventListener("click", function () {
+            productGrid.innerHTML = ""; // Xóa tất cả sản phẩm hiện tại
+            currentPage = 0; // Reset trang về 0
+            loadMoreBtn.style.display = "block"; // Hiển thị nút "Xem thêm"
+            loadItems(currentPage); // Tải lại sản phẩm với bộ lọc mới
+            closeFilter(); // Đóng panel bộ lọc
+          });
 
-        description.classList.toggle('max-h-24');
-        if (description.classList.contains('max-h-24')) {
-            toggleText.textContent = 'Xem thêm';
-            toggleIcon.style.transform = 'rotate(0deg)';
-        } else {
-            toggleText.textContent = 'Thu gọn';
-            toggleIcon.style.transform = 'rotate(180deg)';
-        }
-    }
 
-    function openFilter() {
-        const overlay = document.getElementById('filterOverlay');
-        const panel = document.getElementById('filterPanel');
+      
 
-        overlay.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        requestAnimationFrame(() => {
-            panel.classList.remove('translate-y-full');
+      function getColorAndSize() {
+        // lấy item từ controller
+        const items = /*[[${items}]]*/ [];
+        // khởi tạo mảng colors và sizes
+        const colors = [];
+        const sizes = [];
+        // duyệt qua từng item
+        items.forEach((item) => {
+          // duyệt qua từng variant của item
+          var variants = item.displayVariants;
+          variants.forEach((variant) => {
+            // lấy ra id, name, hex của color
+            const colorID = variant.color.id;
+            const colorName = variant.color.color;
+            const colorHex = variant.color.hex;
+            // kiểm tra xem color đã tồn tại trong mảng colors chưa
+            const isColorExist = colors.some((color) => color.id === colorID);
+            // nếu chưa tồn tại thì thêm vào mảng colors
+            if (!isColorExist) {
+              colors.push({ id: colorID, color: colorName, hex: colorHex });
+            }
+            // lấy ra id, size của size
+            const sizeID = variant.size.id;
+            const size = variant.size.size;
+            // kiểm tra xem size đã tồn tại trong mảng sizes chưa
+            const isSizeExist = sizes.some((size) => size.id === sizeID);
+            // nếu chưa tồn tại thì thêm vào mảng sizes
+            if (!isSizeExist) {
+              sizes.push({ id: sizeID, size: size });
+            }
+          });
         });
-    }
-</script>
-</body>
+        // trả về mảng colors và sizes
+        console.log("colors", colors);
+        console.log("sizes", sizes);
+        return { colors, sizes };
+      }
+
+      function getColorAndSize1() {
+        // lấy item từ controller
+        const items = /*[[${items}]]*/ [];
+        // khởi tạo mảng colors và sizes
+        const colors = [];
+        const sizes = [];
+        // duyệt qua từng item
+        items.forEach((item) => {
+          // duyệt qua từng variant của item
+          var variants = item.displayVariants;
+          variants.forEach((variant) => {
+            // lấy ra id, name, hex của color
+            const colorID = variant.color.id;
+            const colorName = variant.color.color;
+            const colorHex = variant.color.hex;
+            // kiểm tra xem color đã tồn tại trong mảng colors chưa
+            const isColorExist = colors.some((color) => color.id === colorID);
+            // nếu chưa tồn tại thì thêm vào mảng colors
+            if (!isColorExist) {
+              colors.push({ id: colorID, name: colorName, hex: colorHex });
+            }
+            // lấy ra id, size của size
+            const sizeID = variant.size.id;
+            const size = variant.size.size;
+            // kiểm tra xem size đã tồn tại trong mảng sizes chưa
+            const isSizeExist = sizes.some((size) => size.id === sizeID);
+            // nếu chưa tồn tại thì thêm vào mảng sizes
+            if (!isSizeExist) {
+              sizes.push({ id: sizeID, size: size });
+            }
+          });
+        });
+        // trả về mảng colors và sizes
+        return { colors, sizes };
+      }
+    });
+    </script>
+    <script th:src="@{/js/filter.js}"></script>
+  </body>
 </html>
