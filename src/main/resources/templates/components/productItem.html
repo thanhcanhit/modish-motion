@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<article th:fragment="productItem(item)" class="w-full space-y-1 p-2 max-w-[265px]" th:id="${item.id}">
+<article  th:fragment="productItem(item)" class="w-full space-y-1 p-2 max-w-[265px]"
+         th:id="${item.id}">
     <a th:href="@{/product/{id}(id=${item.id})}" class="flex flex-col gap-2 mb-4">
         <img id="product-image" class="product-image h-[354px] object-cover" alt="Product img"
              th:src="${item.variants != null && item.variants.size() > 0 &&

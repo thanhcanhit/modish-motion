@@ -21,16 +21,12 @@
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                    }
-                }
-            }
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.setAttribute('data-theme', 'light');
+        });
     </script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css"/>
+    <script type="module" src="/js/cartUI.js"></script>
+
 </head>
 </html>

@@ -7,7 +7,7 @@
 <body>
 <header th:replace="components/header"></header>
 
-<div data-theme="light" class="container mx-auto px-24 pt-24 pb-32">
+<div class="container mx-auto px-24 pt-20 pb-32">
     <!-- Breadcrumbs -->
     <div class="breadcrumbs text-md text-gray-500 mb-4">
         <ul>
@@ -75,7 +75,7 @@
                 <div class="flex gap-2" id="color-options">
                     <button th:each="variant : ${product.displayVariants}"
                             th:data-color-id="${variant.color.id}"
-                            class="btn btn-sm btn-outline min-w-20 overflow-hidden py-1 h-fit color-option">
+                            class="btn btn-sm btn-outline bg-white hover:bg-white hover:text-amber-500 hover:border-amber-500 min-w-20 overflow-hidden py-1 h-fit color-option">
                         <span class="flex gap-1 flex-col items-center">
                             <span
                                     th:style="|background-color: ${variant.color.hex}|"
@@ -117,12 +117,12 @@
             </div>
 
             <div class="bg-gray-50 grid place-items-center p-4 py-6">
-                <div class="flex gap-2">
-                    <img class="h-8 object-cover" th:src="@{/images/detail_item/zalopay.webp}"/>
-                    <img class="h-8 object-cover" th:src="@{/images/detail_item/visa-card.webp}"/>
-                    <img class="h-8 object-cover" th:src="@{/images/detail_item/master-card.webp}"/>
-                    <img class="h-8 object-cover" th:src="@{/images/detail_item/vnpay-qr.webp}"/>
-                    <img class="h-8 object-cover" th:src="@{/images/detail_item/momo.webp}"/>
+                <div class="flex gap-2 flex-wrap">
+                    <img alt="" class="h-8 object-cover" th:src="@{/images/detail_item/zalopay.webp}"/>
+                    <img alt="" class="h-8 object-cover" th:src="@{/images/detail_item/visa-card.webp}"/>
+                    <img alt="" class="h-8 object-cover" th:src="@{/images/detail_item/master-card.webp}"/>
+                    <img alt="" class="h-8 object-cover" th:src="@{/images/detail_item/vnpay-qr.webp}"/>
+                    <img alt="" class="h-8 object-cover" th:src="@{/images/detail_item/momo.webp}"/>
                 </div>
                 <p class="font-semibold text-sm">Đảm bảo thanh toán an toàn và bảo mật
                 </p>
@@ -158,16 +158,9 @@
     </div>
 </div>
 
-<div class="toast-container fixed bottom-4 right-4 z-50">
-    <div id="toast" class="toast hidden" role="alert">
-        <div class="alert shadow-md">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                 class="stroke-info h-6 w-6 shrink-0">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span id="toast-message">Item added to cart!</span>
-        </div>
+<div id="toast" class="toast toast-end z-50">
+    <div id="alert-toast" class="hidden alert">
+        <span id="toast-message"></span>
     </div>
 </div>
 
@@ -196,8 +189,6 @@
         const variantThumbnailsContainer = document.getElementById('variant-thumbnails');
         const addToCartBtn = document.getElementById('add-to-cart-btn');
 
-
-        // Default selection of first color and size
         if (colorOptions.length > 0) {
             selectedColorId = colorOptions[0].getAttribute('data-color-id');
             updateSizes();
@@ -223,7 +214,6 @@
             variants.forEach(variant => {
                 if (variant.color && variant.color.id == selectedColorId) {
                     if (variant.size) {
-                        // Check if size is already added
                         if (!sizesForColor.some(size => size.id === variant.size.id)) {
                             sizesForColor.push(variant.size);
                         }
@@ -235,7 +225,7 @@
                 sizesForColor.forEach(size => {
                     const sizeButton = document.createElement('button');
                     sizeButton.textContent = size.size;
-                    sizeButton.className = 'btn btn-sm btn-outline min-w-10 h-10 size-option';
+                    sizeButton.className = 'btn btn-sm btn-outline bg-white hover:bg-white hover:text-amber-500 hover:border-amber-500  min-w-10 h-10 size-option';
                     sizeButton.setAttribute('data-size-id', size.id);
                     sizeOptionsContainer.appendChild(sizeButton);
 
@@ -247,7 +237,6 @@
                     });
                 });
 
-                // Default selection of first size
                 selectedSizeId = sizesForColor[0].id;
                 updateImages();
                 updateThumbnails();
@@ -297,7 +286,6 @@
             thumbnailsForVariant = Array.from(thumbnailsForVariant);
 
             thumbnailsForVariant.forEach(imgUrl => {
-
                 const imgElement = document.createElement('img');
                 imgElement.src = imgUrl;
                 imgElement.alt = 'Thumbnail';
@@ -323,24 +311,34 @@
 
         function highlightSelectedColor() {
             colorOptions.forEach(button => {
-                button.classList.remove('btn-active');
+                button.classList.remove('border-amber-500', 'text-amber-500');
             });
-            document.querySelector(`.color-option[data-color-id="${selectedColorId}"]`).classList.add('btn-active');
+            document.querySelector(`.color-option[data-color-id="${selectedColorId}"]`).classList.add('border-amber-500', 'text-amber-500');
         }
 
         function highlightSelectedSize() {
             const sizeOptions = document.querySelectorAll('.size-option');
             sizeOptions.forEach(button => {
-                button.classList.remove('btn-active');
+                button.classList.remove('border-amber-500', 'text-amber-500');
             });
             if (selectedSizeId) {
-                document.querySelector(`.size-option[data-size-id="${selectedSizeId}"]`).classList.add('btn-active');
+                document.querySelector(`.size-option[data-size-id="${selectedSizeId}"]`).classList.add('border-amber-500', 'text-amber-500');
             }
+        }
+
+        function updateCartIndicator() {
+            const cart = new Cart();
+            cart.updateIndicator();
         }
 
         addToCartBtn.addEventListener('click', function () {
             const quantityInput = document.getElementById('quantity');
             const quantity = parseInt(quantityInput.value);
+
+            if (!selectedColorId || !selectedSizeId) {
+                showToast('Vui lòng chọn màu sắc và kích thước', 'warning');
+                return;
+            }
 
             const selectedVariant = variants.find(variant =>
                 variant.color && variant.color.id == selectedColorId &&
@@ -351,23 +349,44 @@
                 const orderDetail = new OrderDetailDTO(null, null, selectedVariant, quantity);
                 const cart = new Cart();
                 cart.addItem(orderDetail);
-                showToast(`Added ${quantity} of ${selectedVariant.name} to cart!`);
+                showToast(`Đã thêm ${quantity} sản phẩm vào giỏ hàng`, 'success');
+                updateCartIndicator();
             } else {
-                showToast('Please select a valid color and size.');
+                showToast('Không tìm thấy sản phẩm phù hợp', 'error');
             }
         });
 
-        function showToast(message) {
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('alert-toast');
             const toastMessage = document.getElementById('toast-message');
+            
+            // Xóa các class cũ
+            toast.className = 'alert';
+            
+            // Thêm class mới dựa vào type
+            switch(type) {
+                case 'success':
+                    toast.classList.add('alert-success');
+                    break;
+                case 'error':
+                    toast.classList.add('alert-error');
+                    break;
+                case 'warning':
+                    toast.classList.add('alert-warning');
+                    break;
+                default:
+                    toast.classList.add('alert-info');
+            }
+            
             toastMessage.textContent = message;
-            const toast = document.getElementById('toast');
             toast.classList.remove('hidden');
+            
+            // Ẩn toast sau 3 giây
             setTimeout(() => {
                 toast.classList.add('hidden');
             }, 3000);
         }
     });
-
 
     function decreaseQuantity() {
         const quantityInput = document.getElementById('quantity');
