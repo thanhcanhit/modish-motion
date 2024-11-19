@@ -28,7 +28,29 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                 </a>
+                <div class="dropdown dropdown-hover">
+                    <button tabindex="0" class="p-2">
+                        <i data-lucide="user-round" class="w-5 h-5"></i>
+                    </button>
+                    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                        <li th:each="authority : ${#authentication.authorities}" th:if="${authority.authority == 'ADMIN'}">
+                            <a th:href="@{/admin/dashboard}" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
+                        </li>
+                        <li th:if="${#authentication.name != 'anonymousUser'}">
+<!--                            <a th:if="${}"-->
+<!--                               th:href="@{/admin/dashboard}"-->
+<!--                               class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>-->
+                            <a th:href="@{/profile}" class="block px-4 py-2 hover:bg-gray-100">Quản lý tài khoản</a>
+                            <a th:href="@{/logout}" class="block px-4 py-2 hover:bg-gray-100">Đăng xuất</a>
+                        </li>
+                        <li th:if="${#authentication.name == 'anonymousUser'}">
+                            <a th:href="@{/login}" class="block px-4 py-2 hover:bg-gray-100">Đăng nhập</a>
+                            <a th:href="@{/signup}" class="block px-4 py-2 hover:bg-gray-100">Đăng ký</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
+
         </nav>
     </div>
 

@@ -1,7 +1,9 @@
 package fit.iuh.modish_motion.controllers;
 
+import fit.iuh.modish_motion.dto.AccountDTO;
 import fit.iuh.modish_motion.dto.UserDTO;
 import fit.iuh.modish_motion.entities.User;
+import fit.iuh.modish_motion.services.AccountService;
 import fit.iuh.modish_motion.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +21,42 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
+    private AccountService accountService;
+
+    public AdminController(AccountService accountService, UserService userService) {
+        this.accountService = accountService;
+        this.userService = userService;
+    }
 
     @GetMapping("/admin")
-    public String dashboard() {
+    public String adminRedirect() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            // Kiểm tra quyền của người dùng
+            boolean isAdmin = authentication.getAuthorities()
+                    .stream()
+                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ADMIN"));
+            if (isAdmin) {
+                return "redirect:/admin/dashboard"; // Điều hướng tới dashboard nếu là admin
+            } else {
+                return "redirect:/not-found"; // Điều hướng tới not-found nếu không phải admin
+            }
+        }
+
+        return "redirect:/login"; // Điều hướng tới login nếu chưa đăng nhập
+    }
+
+    @GetMapping("/admin/dashboard")
+    public String dashboard(@RequestParam(value = "tab", defaultValue = "products") String tab,
+                            Model model) {
+        model.addAttribute("selectedTab", tab);
+
+        if ("users".equals(tab)) {
+            // Thêm danh sách tài khoản vào model
+            List<AccountDTO> accounts = accountService.findAll();
+            model.addAttribute("accounts", accounts);
+        }
         return "admin";
     }
     @GetMapping("/admin/check-auth")
@@ -29,6 +64,12 @@ public class AdminController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok("Authentication details: " + auth);
     }
+//    @GetMapping("/admin/dashboard/users")
+//    public String getAccountList(Model model) {
+//        List<AccountDTO> accounts = accountService.findAll();
+//        model.addAttribute("accounts", accounts);
+//        return "admin";
+//    }
 
     // Trang danh sách người dùng
 //    @GetMapping("/users")
