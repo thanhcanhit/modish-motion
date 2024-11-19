@@ -43,8 +43,7 @@ public class SpringSecurityConfig {
                         .usernameParameter("username")
                         .passwordParameter("password")
                         .successHandler((request, response, authentication) -> {
-                            // Ghi log thông tin đăng nhập
-                            System.out.println("User logged in: " + authentication.getName());
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
                             response.sendRedirect("/"); // Điều hướng sau khi đăng nhập thành công
                         })
                 )
@@ -52,7 +51,6 @@ public class SpringSecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/logout") // URL dùng để xử lý logout
                         .logoutSuccessUrl("/login") // Trang điều hướng sau khi logout thành công
-                        .invalidateHttpSession(true) // Xóa session hiện tại
                         .clearAuthentication(true) // Xóa thông tin xác thực
                 )
                 .exceptionHandling(exception -> exception
@@ -64,7 +62,7 @@ public class SpringSecurityConfig {
                         .authenticationEntryPoint((request, response, authException) -> {
                             System.out.println("User not authenticated: " +
                                     SecurityContextHolder.getContext().getAuthentication());
-                            response.sendRedirect("/profile");
+                            response.sendRedirect("/login");
                         }))
                 .rememberMe(rememberMe -> rememberMe
                         .key("uniqueAndSecret")

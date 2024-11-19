@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@SessionAttributes("currentUser")
 public class LoginController {
     private final AccountService accountService;
     @Autowired
@@ -38,40 +37,20 @@ public class LoginController {
     @PostMapping("/loginrequest")
     public String login(@RequestParam("username") String username,
                         @RequestParam("password") String password,
-                        HttpSession session,
                         Model model) {
 
-//        boolean isAuthenticated = accountService.authenticate(username, password);
-//
-//        if (isAuthenticated) {
-//            Optional<AccountDTO> accountDTO = accountService.findByUserNameAndPassword(username, password);
-//            if (accountDTO.isPresent()) {
-//                // Lưu thông tin người dùng vào session
-//                session.setAttribute("currentUser", accountDTO.get());
-//            }
-//            return "redirect:/admin";  // Redirect to the homepage or dashboard
-//        } else {
-//            model.addAttribute("error", "Invalid username or password");
-//            return "login";
-//        }
+        //boolean isAuthenticated = accountService.authenticate(username, password);
         Optional<AccountDTO> accountDTO = accountService.findByUserNameAndPassword(username, password);
         if (accountDTO.isPresent()) {
             AccountDTO account = accountDTO.get();
 
-            // Tạo đối tượng Authentication
             List<GrantedAuthority> authorities = Collections.singletonList(
                     new SimpleGrantedAuthority(account.isAdmin() ? "ADMIN" : "USER")
             );
             Authentication auth = new UsernamePasswordAuthenticationToken(username, password, authorities);
-
-            // Lưu Authentication vào SecurityContextHolder
             SecurityContextHolder.getContext().setAuthentication(auth);
 
-            // Lưu thông tin vào session nếu cần thiết
-            //session.setAttribute("currentUser", account);
-            System.out.println("User logged in: " + account);
-
-            return "redirect:/admin"; // Chuyển hướng đến /admin
+            return "redirect:/";
         } else {
             model.addAttribute("error", "Invalid username or password");
             return "login";
@@ -86,12 +65,6 @@ public class LoginController {
         }
         return "login";  // Hiển thị trang đăng nhập nếu chưa đăng nhập
     }
-
-//    @GetMapping("/logout")
-//    public String logout(Model model) {
-//
-//        return "login";
-//    }
 
     @GetMapping("/user")
     public String userPage(Model model) {

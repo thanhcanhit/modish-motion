@@ -33,17 +33,9 @@ public class ProfileController {
         // Lấy thông tin người dùng từ SecurityContext
         AccountDTO currentUser = accountService.findByUsername(auth.getName())
                 .orElse(null);
-
-        if (currentUser == null) {
-            System.out.println("User not found in database: " + auth.getName());
-            return "redirect:/login"; // Nếu không tìm thấy trong database, chuyển hướng login
-        }
-
         // Thêm thông tin người dùng vào model
         model.addAttribute("user", currentUser);
         model.addAttribute("selectedTab", tab);
         return "profile";
     }
-
-
 }
