@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import fit.iuh.modish_motion.repositories.AccountRepository;
 import fit.iuh.modish_motion.dto.AccountDTO;
+
 import java.util.stream.Collectors;
 
 import java.util.List;
@@ -36,13 +37,38 @@ public class AccountServiceImpl implements AccountService {
 
 
 
-    @Override
-    public Optional<AccountDTO> findByUserNameAndPassword(String username, String password) {
-        Account account = accountRepository.findByUsernameAndPassword(username, password);
-        if (account == null) {
-            return Optional.empty();
+//    @Override
+//    public Optional<AccountDTO> findByUserNameAndPassword(String username, String password) {
+//        Account account = accountRepository.findByUsernameAndPassword(username, password);
+//        if (account == null) {
+//            return Optional.empty();
+//        }
+//        return Optional.of(AccountDTO.fromEntity(account));
+//    }
+@Override
+public Optional<AccountDTO> findByUserNameAndPassword(String username, String password) {
+    System.out.println("Finding account by username: " + username + " and password: " + password);
+    Optional<Account> account = accountRepository.findByUsername(username);
+
+    if (account.isPresent()) {
+        Account acc = account.get();
+        if (password.isEmpty() || acc.getPassword().equals(password)) { // Chấp nhận không kiểm tra password
+            System.out.println("Account found: " + acc);
+            return account.map(AccountDTO::fromEntity);
+        } else {
+            System.out.println("Password does not match");
         }
-        return Optional.of(AccountDTO.fromEntity(account));
+    } else {
+        System.out.println("Account not found with username: " + username);
+    }
+    return Optional.empty();
+}
+
+
+    @Override
+    public Optional<AccountDTO> findByUsername(String username) {
+        return accountRepository.findByUsername(username)
+                .map(account -> AccountDTO.fromEntity(account));
     }
 
     @Override
@@ -75,13 +101,19 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
-    @Override
-    public Optional<AccountDTO> getAccountWithUserDetails(Integer accountId) {
-        return accountRepository.findById(accountId).map(account -> {
-            AccountDTO accountDTO = AccountDTO.fromEntity(account);
-            UserDTO userDTO = UserDTO.fromEntity(account.getUser());
-            accountDTO.setUser(userDTO);
-            return accountDTO;
-        });
-    }
+//    @Override
+//    public Optional<Account> findByUsernameAndPassword(String username, String password) {
+//        Optional<AccountDTO> optionalAccount = accountRepository.findByUsername(username);
+//
+//        // Kiểm tra mật khẩu nếu tài khoản tồn tại
+//        if (optionalAccount.isPresent()) {
+//            Account account = optionalAccount.get().toEntity();
+//            if (account.getPassword().equals(password)) { // So sánh mật khẩu
+//                return Optional.of(account);
+//            }
+//        }
+//
+//        return Optional.empty();
+
+//    }
 }

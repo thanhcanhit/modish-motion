@@ -9,7 +9,10 @@ import fit.iuh.modish_motion.servicesImpl.UserServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,15 +41,37 @@ public class LoginController {
                         HttpSession session,
                         Model model) {
 
-        boolean isAuthenticated = accountService.authenticate(username, password);
+//        boolean isAuthenticated = accountService.authenticate(username, password);
+//
+//        if (isAuthenticated) {
+//            Optional<AccountDTO> accountDTO = accountService.findByUserNameAndPassword(username, password);
+//            if (accountDTO.isPresent()) {
+//                // Lưu thông tin người dùng vào session
+//                session.setAttribute("currentUser", accountDTO.get());
+//            }
+//            return "redirect:/admin";  // Redirect to the homepage or dashboard
+//        } else {
+//            model.addAttribute("error", "Invalid username or password");
+//            return "login";
+//        }
+        Optional<AccountDTO> accountDTO = accountService.findByUserNameAndPassword(username, password);
+        if (accountDTO.isPresent()) {
+            AccountDTO account = accountDTO.get();
 
-        if (isAuthenticated) {
-            Optional<AccountDTO> accountDTO = accountService.findByUserNameAndPassword(username, password);
-            if (accountDTO.isPresent()) {
-                // Lưu thông tin người dùng vào session
-                session.setAttribute("currentUser", accountDTO.get());
-            }
-            return "redirect:/";  // Redirect to the homepage or dashboard
+            // Tạo đối tượng Authentication
+            List<GrantedAuthority> authorities = Collections.singletonList(
+                    new SimpleGrantedAuthority(account.isAdmin() ? "ADMIN" : "USER")
+            );
+            Authentication auth = new UsernamePasswordAuthenticationToken(username, password, authorities);
+
+            // Lưu Authentication vào SecurityContextHolder
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
+            // Lưu thông tin vào session nếu cần thiết
+            //session.setAttribute("currentUser", account);
+            System.out.println("User logged in: " + account);
+
+            return "redirect:/admin"; // Chuyển hướng đến /admin
         } else {
             model.addAttribute("error", "Invalid username or password");
             return "login";
@@ -61,15 +87,11 @@ public class LoginController {
         return "login";  // Hiển thị trang đăng nhập nếu chưa đăng nhập
     }
 
-    @GetMapping("/admin")
-    public String adminPage(Model model) {
-        return "redirect:/admin";
-    }
-
-    @GetMapping("/logout")
-    public String logout(Model model) {
-        return "login";
-    }
+//    @GetMapping("/logout")
+//    public String logout(Model model) {
+//
+//        return "login";
+//    }
 
     @GetMapping("/user")
     public String userPage(Model model) {
