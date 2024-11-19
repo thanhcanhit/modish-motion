@@ -25,4 +25,19 @@ public interface ItemRepository extends JpaRepository<Item, String> {
 
     Page<Item> findByCategoryId(int categoryId, Pageable pageable);
     List<Item> findByNameContaining(String name);
+    long countByCategoryId(int categoryId);
+    @Query("SELECT i FROM Item i JOIN i.variants v WHERE i.category.id = :categoryId " +
+            "AND (:colors IS NULL OR v.color.color IN :colors) " +
+            "AND (:sizes IS NULL OR v.size.size IN :sizes)")
+    Page<Item> findByCategoryIdAndFilter(@Param("categoryId") int categoryId,
+                                         @Param("colors") List<String> colors,
+                                         @Param("sizes") List<String> sizes,
+                                         Pageable pageable);
+
+    @Query("SELECT COUNT(DISTINCT i) FROM Item i JOIN i.variants v WHERE i.category.id = :categoryId " +
+            "AND (:colors IS NULL OR v.color.color IN :colors) " +
+            "AND (:sizes IS NULL OR v.size.size IN :sizes)")
+    long countByCategoryIdAndFilter(@Param("categoryId") int categoryId,
+                                    @Param("colors") List<String> colors,
+                                    @Param("sizes") List<String> sizes);
 }

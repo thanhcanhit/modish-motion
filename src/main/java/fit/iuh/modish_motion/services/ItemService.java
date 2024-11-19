@@ -4,7 +4,6 @@ import fit.iuh.modish_motion.dto.ItemDTO;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Map;
 
 public interface ItemService {
     List<ItemDTO> findAll();
@@ -12,7 +11,10 @@ public interface ItemService {
     ItemDTO save(ItemDTO item);
     void deleteById(String id);
     List<ItemDTO> findRandomItemsByCategory(int categoryId, int count);
+    List<ItemDTO> findByCategoryId(int categoryId, int page, int size);
     List<ItemDTO> findByCategoryId(int categoryId);
+    List<ItemDTO> findByCategoryIdAndFilter(int categoryId, List<String> colors, List<String> sizes, int page, int size);
     List<ItemDTO> searchItemsByName(String name);
-    List<ItemDTO> findByFilters(Map<String, List<String>> filters);
+    long countByCategoryId(int categoryId);
+    long countByCategoryIdAndFilter(int categoryId, List<String> colors, List<String> sizes);
 }

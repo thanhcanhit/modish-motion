@@ -183,7 +183,7 @@
                                     </div>
                                     <div class="pl-4 submenu">
                                         ${groupedCategories[group][subgroup].map(category => `
-                                            <a href="/categories/${category.categoryName}" class="block px-4 py-2 hover:bg-gray-100 text-[#31495e]">${category.categoryName}</a>
+                                            <a href="/categories/${category.categoryName}?page=0" class="block px-4 py-2 hover:bg-gray-100 text-[#31495e]">${category.categoryName}</a>
                                         `).join('')}
                                     </div>
                                 </div>
@@ -235,4 +235,4 @@
         }
     </script>
 </header>
-</html>  
+</html>

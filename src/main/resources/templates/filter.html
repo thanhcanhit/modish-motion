@@ -1,205 +1,230 @@
-<!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="filter"
-     class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 transition-opacity duration-300 hidden"
-     id="filterOverlay">
-    <div class="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl transform translate-y-full transition-transform duration-300"
-         id="filterPanel"
-         style="max-height: 90vh; overflow-y: auto;">
-        <!-- Close Button -->
-        <button onclick="closeFilter()" class="absolute top-4 right-4 bg-black text-white rounded-full p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+<div
+  th:fragment="filter"
+  id="filterPanel"
+  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden"
+>
+  <div
+    class="bg-white w-full h-full rounded-none overflow-hidden transform transition-all duration-300 ease-in-out absolute bottom-0 sm:relative sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2"
+  >
+    <div class="p-6 h-full flex flex-col">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Bộ lọc</h2>
+        <button
+          onclick="closeFilter()"
+          class="text-gray-500 hover:text-gray-700"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
-        <!-- Filter Content -->
-        <div class="container mx-auto px-4 py-6">
-            <!-- Colors Section -->
-            <div class="mb-8">
-                <h3 class="text-lg font-medium text-[#31495e] mb-4">Màu sắc</h3>
-                <div class="flex flex-wrap gap-4" th:if="${groupedColors != null}">
-                    <div th:each="colorGroup : ${groupedColors}" class="text-center">
-                        <input type="checkbox"
-                               th:id="${'color-' + colorGroup.key}"
-                               th:name="colors"
-                               th:value="${colorGroup.key}"
-                               class="hidden"
-                               th:data-color="${colorGroup.key}">
-                        <label th:for="${'color-' + colorGroup.key}"
-                               class="flex flex-col items-center gap-2 cursor-pointer">
-                            <span class="w-8 h-8 rounded-full border border-gray-200 transition-transform hover:scale-110"
-                                  th:style="${'background-color: ' + colorGroup.value.hex}"></span>
-                            <span class="text-sm text-[#31495e]" th:text="${colorGroup.key}">Màu</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sizes Section -->
-            <div class="mb-8">
-                <h3 class="text-lg font-medium text-[#31495e] mb-4">Kích thước</h3>
-                <div class="grid grid-cols-3 gap-4" th:if="${groupedSizes != null}">
-                    <div th:each="sizeGroup : ${groupedSizes}">
-                        <input type="checkbox"
-                               th:id="${'size-' + sizeGroup.key}"
-                               th:name="sizes"
-                               th:value="${sizeGroup.key}"
-                               class="hidden">
-                        <label th:for="${'size-' + sizeGroup.key}"
-                               class="block w-full py-2 text-center border border-gray-200 rounded-lg text-[#31495e] cursor-pointer hover:border-[#31495e] transition-colors">
-                            <span th:text="${sizeGroup.key}">Size</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Price Range Section -->
-            <div class="mb-8">
-                <h3 class="text-lg font-medium text-[#31495e] mb-4">Theo giá</h3>
-                <div class="space-y-3">
-                    <div class="flex items-center">
-                        <input type="radio"
-                               id="price-1"
-                               name="price-range"
-                               value="0-350000"
-                               class="hidden">
-                        <label for="price-1"
-                               class="flex items-center gap-2 text-[#31495e] cursor-pointer">
-                            <span class="w-4 h-4 border border-gray-300 rounded-full flex items-center justify-center">
-                                <span class="w-2 h-2 bg-[#31495e] rounded-full hidden"></span>
-                            </span>
-                            Dưới 350.000đ
-                        </label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="radio"
-                               id="price-2"
-                               name="price-range"
-                               value="350000-750000"
-                               class="hidden">
-                        <label for="price-2"
-                               class="flex items-center gap-2 text-[#31495e] cursor-pointer">
-                            <span class="w-4 h-4 border border-gray-300 rounded-full flex items-center justify-center">
-                                <span class="w-2 h-2 bg-[#31495e] rounded-full hidden"></span>
-                            </span>
-                            Từ 350.000đ - 750.000đ
-                        </label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="radio"
-                               id="price-3"
-                               name="price-range"
-                               value="750000-999999999"
-                               class="hidden">
-                        <label for="price-3"
-                               class="flex items-center gap-2 text-[#31495e] cursor-pointer">
-                            <span class="w-4 h-4 border border-gray-300 rounded-full flex items-center justify-center">
-                                <span class="w-2 h-2 bg-[#31495e] rounded-full hidden"></span>
-                            </span>
-                            Trên 750.000đ
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex gap-4 sticky bottom-0 bg-white py-4 border-t">
-                <button onclick="clearFilters()"
-                        class="flex-1 py-3 px-4 border border-gray-200 rounded-lg text-[#31495e] hover:bg-gray-50 transition-colors">
-                    Xóa bộ lọc
-                </button>
-                <button onclick="applyFilters()"
-                        class="flex-1 py-3 px-4 bg-[#ffd800] rounded-lg text-[#31495e] hover:bg-[#ffd800]/90 transition-colors">
-                    Áp dụng
-                </button>
-            </div>
+      </div>
+      <div class="space-y-4 flex-1 overflow-auto">
+        <div>
+          <h3 class="font-medium mb-2">Màu sắc</h3>
+          <div id="colorFilters" class="grid grid-cols-3 gap-2">
+            <!-- Filters will be populated here by JavaScript -->
+          </div>
         </div>
+        <div>
+          <h3 class="font-medium mb-2">Kích thước</h3>
+          <div id="sizeFilters" class="grid grid-cols-3 gap-2">
+            <!-- Filters will be populated here by JavaScript -->
+          </div>
+        </div>
+        <div>
+          <h3 class="font-medium mb-2">Giá</h3>
+          <div id="priceFilters" class="space-y-2">
+            <label class="flex items-center space-x-2">
+              <input
+                type="radio"
+                name="priceRange"
+                value="0-350000"
+                class="form-radio"
+              />
+              <span>Dưới 350,000đ</span>
+            </label>
+            <label class="flex items-center space-x-2">
+              <input
+                type="radio"
+                name="priceRange"
+                value="350000-750000"
+                class="form-radio"
+              />
+              <span>350,000đ - 750,000đ</span>
+            </label>
+            <label class="flex items-center space-x-2">
+              <input
+                type="radio"
+                name="priceRange"
+                value="750000"
+                class="form-radio"
+              />
+              <span>Trên 750,000đ</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="mt-6 flex gap-4">
+        <button
+          id="clearFiltersBtn"
+          class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+        >
+          Xóa bộ lọc
+        </button>
+        <button
+          id="applyFiltersBtn"
+          class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+        >
+          Áp dụng
+        </button>
+      </div>
     </div>
+  </div>
 </div>
 
+<input type="hidden" id="totalItems" value="[[${totalItems}]]" />
+<input type="hidden" id="hasMore" value="[[${hasMore}]]" />
+<input type="hidden" id="selectedColors" name="selectedColors" />
+<input type="hidden" id="selectedSizes" name="selectedSizes" />
+
 <script th:inline="javascript">
+    let selectedColors = [];
+    let selectedSizes = [];
+    let selectedPriceRange = [];
+
+    // checked (tức là đã kiểm tra rồi)
     function openFilter() {
-        const overlay = document.getElementById('filterOverlay');
-        const panel = document.getElementById('filterPanel');
+      document.getElementById("filterPanel").classList.remove("hidden");
 
-        overlay.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        requestAnimationFrame(() => {
-            panel.classList.remove('translate-y-full');
-        });
     }
 
+    // checked
     function closeFilter() {
-        const overlay = document.getElementById('filterOverlay');
-        const panel = document.getElementById('filterPanel');
-
-        panel.classList.add('translate-y-full');
-        document.body.style.overflow = '';
-        setTimeout(() => {
-            overlay.classList.add('hidden');
-        }, 300);
+      document.getElementById("filterPanel").classList.add("hidden");
     }
 
-    function clearFilters() {
-        // Clear all checkboxes and radio buttons
-        document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(input => {
-            input.checked = false;
-        });
+    // checked
+    function toggleFilter(type, value) {
+      // type sẽ là color hoặc size
+      const array = type === "color" ? selectedColors : selectedSizes;
+      // kiểm tra xem value đã được chọn chưa
+      const index = array.indexOf(value);
+      if (index === -1) {
+        // nếu chưa được chọn thì thêm vào mảng
+        array.push(value);
+      } else {
+        // nếu đã được chọn thì xóa khỏi mảng
+        array.splice(index, 1);
+      }
+
+      updateFilterUI();
+    }
+
+    // // thêm và selectedPriceRange khi click vào radio button
+    // function togglePriceFilter(value) {
+    //   selectedPriceRange = value;
+    // }
+
+    // checked
+    function updateFilterUI() {
+      document.querySelectorAll(".filter-btn").forEach((btn) => {
+        // type sẽ là color hoặc size
+        const type = btn.getAttribute("data-type");
+        // value sẽ là {id, name, hex} hoặc {id, size}
+        const value = btn.getAttribute("data-value");
+
+        // check nếu value đã được chọn thì thực hiện active
+        if (
+          (type === "color" && selectedColors.includes(value)) ||
+          (type === "size" && selectedSizes.includes(value))
+        ) {
+          btn.classList.add("bg-blue-500");
+          // thêm class list là selected
+          btn.classList.add("selected");
+        } else {
+          btn.classList.remove("bg-blue-500");
+          // xóa class list là selected
+          btn.classList.remove("selected");
+        }
+      });
     }
 
     function applyFilters() {
-        // Collect selected filters
-        const selectedColors = Array.from(document.querySelectorAll('input[name="colors"]:checked'))
-            .map(input => input.value);
-        const selectedSizes = Array.from(document.querySelectorAll('input[name="sizes"]:checked'))
-            .map(input => input.value);
-        const selectedPriceRange = document.querySelector('input[name="price-range"]:checked')?.value;
+      /*
+        Đây là code của productItems: <th:block th:fragment="productItems">
+      <div th:each="item : ${items}" class="product-item" th:attr="data-id=${item.id}">
+          <div th:replace="components/productItem :: productItem(${item})"></div>
+      </div>
+      <input type="hidden" id="hasMore" th:value="${hasMore}">
+      <input type="hidden" id="totalItems" th:value="${totalItems}">
+      <input type="hidden" id="currentPage" th:value="${currentPage}">
+      <div th:attr="data-colors=${#strings.listJoin(item.colors, ',')}, data-sizes=${#strings.listJoin(item.sizes, ',')}"></div>
+  </th:block>
+      */
+      const items = /*[[${items}]]*/ [];
+      const itemsAfterFilter = [];
+        items.forEach((item) => {
+          const variants = item.displayVariants;
+          variants.forEach((variant) => {
+            const sizeID = variant.size.id;
+            const size = variant.size.size;
+            const colorID = variant.color.id;
+            const name = variant.color.color;
+            const hex = variant.color.hex;
+            const isColorMatched = selectedColors.length === 0 || selectedColors.includes(colorID);
+            const isSizeMatched = selectedSizes.length === 0 || selectedSizes.includes(sizeID);
 
-        // Build query parameters
-        const params = new URLSearchParams(window.location.search);
-        if (selectedColors.length) params.set('colors', selectedColors.join(','));
-        if (selectedSizes.length) params.set('sizes', selectedSizes.join(','));
-        if (selectedPriceRange) params.set('priceRange', selectedPriceRange);
+            if (isColorMatched && isSizeMatched) {
+          itemsAfterFilter.push(item);
+        }
+          });
+        });
 
-        // Redirect with filters
-        window.location.href = `${window.location.pathname}?${params.toString()}`;
+
+
+        // const isPriceMatched = selectedPriceRange
+        //   ? selectedPriceRange === "0-350000"
+        //     ? price < 350000
+        //     : selectedPriceRange === "350000-750000"
+        //     ? price >= 350000 && price < 750000
+        //     : price >= 750000
+        //   : true;
+
+
+
+        // clear toàn bộ items trong productGrid
+        document.getElementById("productGrid").innerHTML = "";
+        // thêm lại các items đã lọc vào productGrid
+        itemsAfterFilter.forEach((item) => {
+          document.getElementById("productGrid").appendChild(item);
+        });
+
+        // ẩn filter panel
+        closeFilter();
+
     }
 
-    // Style radio buttons
-    document.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            // Hide all dots
-            document.querySelectorAll('input[type="radio"] + label span span').forEach(dot => {
-                dot.classList.add('hidden');
-            });
-            // Show dot for checked radio
-            if (this.checked) {
-                this.nextElementSibling.querySelector('span span').classList.remove('hidden');
-            }
-        });
-    });
+    function clearFilters() {
+      updateFilterUI();
+    }
 
-    // Highlight selected filters
-    document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(input => {
-        input.addEventListener('change', function() {
-            if (this.checked) {
-                this.nextElementSibling.classList.add('border-[#31495e]');
-            } else {
-                this.nextElementSibling.classList.remove('border-[#31495e]');
-            }
-        });
-    });
-
-    // Close filter when clicking outside
-    document.getElementById('filterOverlay').addEventListener('click', function(event) {
-        if (event.target === this) {
-            closeFilter();
-        }
-    });
-
-    // Close filter when clicking outside the panel
-    document.getElementById('filterPanel').addEventListener('click', function(event) {
-        event.stopPropagation();
+    document.addEventListener("DOMContentLoaded", () => {
+      document
+        .getElementById("applyFiltersBtn")
+        .addEventListener("click", applyFilters);
+      document
+        .getElementById("clearFiltersBtn")
+        .addEventListener("click", clearFilters);
     });
 </script>
-</html>

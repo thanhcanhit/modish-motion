@@ -1,0 +1,10 @@
+<th:block th:fragment="productItems">
+    <div th:each="item : ${items}" class="product-item" th:attr="data-id=${item.id}">
+        <div th:replace="components/productItem :: productItem(${item})"></div>
+    </div>
+    <input type="hidden" id="hasMore" th:value="${hasMore}">
+    <input type="hidden" id="totalItems" th:value="${totalItems}">
+    <input type="hidden" id="currentPage" th:value="${currentPage}">
+    <input type="hidden" id="allColors" th:value="${allColors}">
+    <input type="hidden" id="allSizes" th:value="${allSizes}">
+</th:block>
