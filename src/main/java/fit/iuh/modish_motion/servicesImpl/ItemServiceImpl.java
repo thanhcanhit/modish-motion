@@ -83,18 +83,6 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
-//    @Override
-//    public List<ItemDTO> findByCategoryIdAndFilter(int categoryId, List<String> colors, List<String> sizes, int page, int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        Page<Item> itemsPage = itemRepository.findByCategoryId(categoryId, pageable);
-//        return itemsPage.stream()
-//                .filter(item -> item.getVariants() != null && !item.getVariants().isEmpty())
-//                .filter(item -> colors.isEmpty() || item.getVariants().stream().anyMatch(variant -> colors.contains(variant.getColor().getColor())))
-//                .filter(item -> sizes.isEmpty() || item.getVariants().stream().anyMatch(variant -> sizes.contains(variant.getSize().getSize())))
-//                .map(ItemDTO::fromEntity)
-//                .collect(Collectors.toList());
-//    }
-
     @Override
     public List<ItemDTO> searchItemsByName(String name) {
         List<Item> items = itemRepository.findByNameContaining(name);

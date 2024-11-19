@@ -1,14 +1,47 @@
-<div
-  th:fragment="filter"
-  id="filterPanel"
-  class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden"
->
+<input type="hidden" id="totalItems" value="[[${totalItems}]]" />
+<input type="hidden" id="hasMore" value="[[${hasMore}]]" />
+<input type="hidden" id="selectedColors" name="selectedColors" />
+<input type="hidden" id="selectedSizes" name="selectedSizes" />
+
+<style>
+  #filterPanel {
+    position: fixed;
+    bottom: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    transition: bottom 0.3s ease-in-out;
+    z-index: 1000;
+    padding: 46px; /* Added padding */
+  }
+  #filterPanel.visible {
+    bottom: 0;
+  }
+  #filterPanel .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  .filter-btn:hover {
+    background-color: #f2f5f8;
+  }
+  .filter-title {
+    font-weight: bold; /* Make text bolder */
+  }
+</style>
+
+<div id="filterPanel" class="hidden">
   <div
     class="bg-white w-full h-full rounded-none overflow-hidden transform transition-all duration-300 ease-in-out absolute bottom-0 sm:relative sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2"
   >
     <div class="p-6 h-full flex flex-col">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold">Bộ lọc</h2>
+        <h2 class="text-xl font-semibold filter-title">Bộ lọc</h2> <!-- Added filter-title class -->
         <button
           onclick="closeFilter()"
           class="text-gray-500 hover:text-gray-700"
@@ -31,19 +64,19 @@
       </div>
       <div class="space-y-4 flex-1 overflow-auto">
         <div>
-          <h3 class="font-medium mb-2">Màu sắc</h3>
-          <div id="colorFilters" class="grid grid-cols-3 gap-2">
+          <h3 class="font-medium mb-2 filter-title">Màu sắc</h3> <!-- Added filter-title class -->
+          <div id="colorFilters" class="grid grid-cols-3 gap-6">
             <!-- Filters will be populated here by JavaScript -->
           </div>
         </div>
         <div>
-          <h3 class="font-medium mb-2">Kích thước</h3>
-          <div id="sizeFilters" class="grid grid-cols-3 gap-2">
+          <h3 class="font-medium mb-2 filter-title">Kích thước</h3> <!-- Added filter-title class -->
+          <div id="sizeFilters" class="grid grid-cols-3 gap-6">
             <!-- Filters will be populated here by JavaScript -->
           </div>
         </div>
         <div>
-          <h3 class="font-medium mb-2">Giá</h3>
+          <h3 class="font-medium mb-2 filter-title">Giá</h3> <!-- Added filter-title class -->
           <div id="priceFilters" class="space-y-2">
             <label class="flex items-center space-x-2">
               <input
@@ -51,6 +84,7 @@
                 name="priceRange"
                 value="0-350000"
                 class="form-radio"
+                onclick="selectedPriceRange = '0-350000'"
               />
               <span>Dưới 350,000đ</span>
             </label>
@@ -60,6 +94,7 @@
                 name="priceRange"
                 value="350000-750000"
                 class="form-radio"
+                onclick="selectedPriceRange = '350000-750000'"
               />
               <span>350,000đ - 750,000đ</span>
             </label>
@@ -69,8 +104,9 @@
                 name="priceRange"
                 value="750000"
                 class="form-radio"
+                onclick="selectedPriceRange = '750000'"
               />
-              <span>Trên 750,000đ</span>
+              <span on>Trên 750,000đ</span>
             </label>
           </div>
         </div>
@@ -79,12 +115,14 @@
         <button
           id="clearFiltersBtn"
           class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+          onclick="clearFilters()"
         >
           Xóa bộ lọc
         </button>
         <button
           id="applyFiltersBtn"
           class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          onclick="apllyFilters()"
         >
           Áp dụng
         </button>
@@ -93,138 +131,112 @@
   </div>
 </div>
 
-<input type="hidden" id="totalItems" value="[[${totalItems}]]" />
-<input type="hidden" id="hasMore" value="[[${hasMore}]]" />
-<input type="hidden" id="selectedColors" name="selectedColors" />
-<input type="hidden" id="selectedSizes" name="selectedSizes" />
-
 <script th:inline="javascript">
-    let selectedColors = [];
-    let selectedSizes = [];
-    let selectedPriceRange = [];
+  const selectedColors = [];
+  const selectedSizes = [];
+  let selectedPriceRange = "";
 
-    // checked (tức là đã kiểm tra rồi)
-    function openFilter() {
-      document.getElementById("filterPanel").classList.remove("hidden");
-
-    }
-
-    // checked
-    function closeFilter() {
-      document.getElementById("filterPanel").classList.add("hidden");
-    }
-
-    // checked
-    function toggleFilter(type, value) {
-      // type sẽ là color hoặc size
-      const array = type === "color" ? selectedColors : selectedSizes;
-      // kiểm tra xem value đã được chọn chưa
-      const index = array.indexOf(value);
+  function toggleFilter(type, filter, btn) {
+    if (type === "color") {
+      const index = selectedColors.indexOf(filter);
       if (index === -1) {
-        // nếu chưa được chọn thì thêm vào mảng
-        array.push(value);
+        selectedColors.push(filter);
       } else {
-        // nếu đã được chọn thì xóa khỏi mảng
-        array.splice(index, 1);
+        selectedColors.splice(index, 1);
       }
-
-      updateFilterUI();
+      document.getElementById("selectedColors").value =
+        selectedColors.join(",");
+    } else if (type === "size") {
+      const index = selectedSizes.indexOf(filter);
+      if (index === -1) {
+        selectedSizes.push(filter);
+      } else {
+        selectedSizes.splice(index, 1);
+      }
+      document.getElementById("selectedSizes").value = selectedSizes.join(",");
     }
+    btn.classList.toggle("border");
+    btn.classList.toggle("border-gray-300");
+    console.log(selectedColors, selectedSizes);
+    console.log(selectedPriceRange);
+  }
 
-    // // thêm và selectedPriceRange khi click vào radio button
-    // function togglePriceFilter(value) {
-    //   selectedPriceRange = value;
-    // }
+  function apllyFilters() {}
 
-    // checked
-    function updateFilterUI() {
-      document.querySelectorAll(".filter-btn").forEach((btn) => {
-        // type sẽ là color hoặc size
-        const type = btn.getAttribute("data-type");
-        // value sẽ là {id, name, hex} hoặc {id, size}
-        const value = btn.getAttribute("data-value");
+  function clearFilters() {
+    selectedColors = [];
+    selectedSizes = [];
+    selectedPriceRange = "";
+  }
 
-        // check nếu value đã được chọn thì thực hiện active
-        if (
-          (type === "color" && selectedColors.includes(value)) ||
-          (type === "size" && selectedSizes.includes(value))
-        ) {
-          btn.classList.add("bg-blue-500");
-          // thêm class list là selected
-          btn.classList.add("selected");
-        } else {
-          btn.classList.remove("bg-blue-500");
-          // xóa class list là selected
-          btn.classList.remove("selected");
-        }
-      });
-    }
+  function openFilter() {
+    const filterPanel = document.getElementById("filterPanel");
+    filterPanel.classList.remove("hidden");
+    setTimeout(() => {
+      filterPanel.classList.add("visible");
+    }, 10); // Slight delay to ensure the transition effect
+  }
 
-    function applyFilters() {
-      /*
-        Đây là code của productItems: <th:block th:fragment="productItems">
-      <div th:each="item : ${items}" class="product-item" th:attr="data-id=${item.id}">
-          <div th:replace="components/productItem :: productItem(${item})"></div>
-      </div>
-      <input type="hidden" id="hasMore" th:value="${hasMore}">
-      <input type="hidden" id="totalItems" th:value="${totalItems}">
-      <input type="hidden" id="currentPage" th:value="${currentPage}">
-      <div th:attr="data-colors=${#strings.listJoin(item.colors, ',')}, data-sizes=${#strings.listJoin(item.sizes, ',')}"></div>
-  </th:block>
-      */
-      const items = /*[[${items}]]*/ [];
-      const itemsAfterFilter = [];
-        items.forEach((item) => {
-          const variants = item.displayVariants;
-          variants.forEach((variant) => {
-            const sizeID = variant.size.id;
-            const size = variant.size.size;
-            const colorID = variant.color.id;
-            const name = variant.color.color;
-            const hex = variant.color.hex;
-            const isColorMatched = selectedColors.length === 0 || selectedColors.includes(colorID);
-            const isSizeMatched = selectedSizes.length === 0 || selectedSizes.includes(sizeID);
+  function closeFilter() {
+    const filterPanel = document.getElementById("filterPanel");
+    filterPanel.classList.remove("visible");
+    setTimeout(() => {
+      filterPanel.classList.add("hidden");
+    }, 300); // Match the transition duration
+  }
 
-            if (isColorMatched && isSizeMatched) {
-          itemsAfterFilter.push(item);
-        }
-          });
-        });
+  function renderFilters(colors, sizes) {
+    const colorFilters = document.getElementById("colorFilters");
+    const sizeFilters = document.getElementById("sizeFilters");
 
+    colors.forEach((color) => {
+      const btn = document.createElement("button");
+      btn.classList.add(
+        "filter-btn",
+        "h-[74px]",
+        "rounded-[5px]",
+        "flex",
+        "flex-col",
+        "items-center",
+        "justify-center",
+        "p-2"
+      );
+      btn.setAttribute("data-type", "color");
+      btn.setAttribute("data-value", color.id);
+      btn.onclick = () => toggleFilter("color", color.id, btn);
+      btn.style.backgroundColor = "#fff"; // Set background color
 
+      const span1 = document.createElement("span");
+      span1.style.width = "35px"; // Tăng kích thước
+      span1.style.height = "37px"; // Tăng kích thước
+      span1.style.borderRadius = "50%";
+      span1.style.backgroundColor = color.hex;
+      span1.style.display = "inline-block";
+      span1.style.border = "1px solid #ccc";
+      span1.style.marginBottom = "4px"; // Thêm khoảng cách dưới span1
 
-        // const isPriceMatched = selectedPriceRange
-        //   ? selectedPriceRange === "0-350000"
-        //     ? price < 350000
-        //     : selectedPriceRange === "350000-750000"
-        //     ? price >= 350000 && price < 750000
-        //     : price >= 750000
-        //   : true;
+      const span2 = document.createElement("span");
+      span2.textContent = color.color;
 
+      btn.appendChild(span1);
+      btn.appendChild(span2);
 
-
-        // clear toàn bộ items trong productGrid
-        document.getElementById("productGrid").innerHTML = "";
-        // thêm lại các items đã lọc vào productGrid
-        itemsAfterFilter.forEach((item) => {
-          document.getElementById("productGrid").appendChild(item);
-        });
-
-        // ẩn filter panel
-        closeFilter();
-
-    }
-
-    function clearFilters() {
-      updateFilterUI();
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      document
-        .getElementById("applyFiltersBtn")
-        .addEventListener("click", applyFilters);
-      document
-        .getElementById("clearFiltersBtn")
-        .addEventListener("click", clearFilters);
+      colorFilters.appendChild(btn);
     });
+
+    sizes.forEach((size) => {
+      const btn = document.createElement("button");
+      btn.classList.add("filter-btn");
+      btn.setAttribute("data-type", "size");
+      btn.setAttribute("data-value", size.id);
+      btn.onclick = () => toggleFilter("size", size.id, btn);
+      btn.style.height = "50px"; // Set height
+      btn.style.borderRadius = "5px"; // Set border-radius
+      btn.style.border = "1px solid #d3d3d3"; // Set border color
+      const span = document.createElement("span");
+      span.textContent = size.size;
+      btn.appendChild(span);
+      sizeFilters.appendChild(btn);
+    });
+  }
 </script>

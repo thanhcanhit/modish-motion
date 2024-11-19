@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,5 +39,15 @@ public class ItemController {
         }
 
         return "itemDetail";
+    }
+
+    @GetMapping("/search")
+    public String searchItems(@RequestParam("query") String query, Model model) {
+        List<ItemDTO> items = itemService.searchItemsByName(query);
+        long totalItems = items.size();
+        model.addAttribute("items", items);
+        model.addAttribute("searchQuery", query);
+        model.addAttribute("totalItems", totalItems);
+        return "search";
     }
 }
