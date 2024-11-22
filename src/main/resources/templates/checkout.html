@@ -83,7 +83,7 @@
                 <div class="space-y-3">
                     <label class="flex items-center justify-between p-4 border rounded-lg">
                         <div class="flex items-center gap-2">
-                            <input type="radio" name="payment" class="radio" checked />
+                            <input type="radio" name="payment" value="COD" class="radio" checked />
                             <span>Tiền mặt (COD)</span>
                         </div>
                         <i data-lucide="banknote" class="w-5 h-5"></i>
@@ -91,7 +91,7 @@
 
                     <label class="flex items-center justify-between p-4 border rounded-lg">
                         <div class="flex items-center gap-2">
-                            <input type="radio" name="payment" class="radio" />
+                            <input type="radio" name="payment" value="ZALOPAY" class="radio" />
                             <span>Ví điện tử ZaloPay</span>
                         </div>
                         <img th:src="@{/images/detail_item/zalopay.webp}" class="h-6" alt="ZaloPay" />
@@ -99,7 +99,7 @@
 
                     <label class="flex items-center justify-between p-4 border rounded-lg">
                         <div class="flex items-center gap-2">
-                            <input type="radio" name="payment" class="radio" />
+                            <input type="radio" name="payment" value="MOMO" class="radio" />
                             <span>Ví điện tử Momo</span>
                         </div>
                         <img th:src="@{/images/detail_item/momo.webp}" class="h-6" alt="Momo" />
@@ -107,7 +107,7 @@
 
                     <label class="flex items-center justify-between p-4 border rounded-lg">
                         <div class="flex items-center gap-2">
-                            <input type="radio" name="payment" class="radio" />
+                            <input type="radio" name="payment" value="BANK_TRANSFER" class="radio" />
                             <span>Thẻ nội địa hoặc ngân hàng</span>
                         </div>
                         <i data-lucide="credit-card" class="w-5 h-5"></i>
@@ -115,7 +115,7 @@
 
                     <label class="flex items-center justify-between p-4 border rounded-lg">
                         <div class="flex items-center gap-2">
-                            <input type="radio" name="payment" class="radio" />
+                            <input type="radio" name="payment" value="CREDIT_CARD" class="radio" />
                             <span>Thẻ quốc tế</span>
                         </div>
                         <div class="flex gap-2">
@@ -126,7 +126,7 @@
 
                     <label class="flex items-center justify-between p-4 border rounded-lg">
                         <div class="flex items-center gap-2">
-                            <input type="radio" name="payment" class="radio" />
+                            <input type="radio" name="payment" value="VNPAY" class="radio" />
                             <span>Ví điện tử VNPAY</span>
                         </div>
                         <img th:src="@{/images/detail_item/vnpay-qr.webp}" class="h-6" alt="VNPAY" />
@@ -154,16 +154,6 @@
                     </div>
                 </div>
 
-                <!-- Mã giảm giá -->
-                <div class="flex items-center gap-2 py-4 border-b">
-                    <div class="flex items-center flex-1 gap-2">
-                        <i data-lucide="ticket" class="w-5 h-5 text-warning"></i>
-                        <input type="text" placeholder="Nhập mã giảm giá" 
-                               class="w-full input input-sm input-bordered" />
-                    </div>
-                    <button class="btn btn-warning btn-sm">Áp dụng</button>
-                </div>
-
                 <!-- Chi tiết thanh toán -->
                 <div class="py-4 space-y-3">
                     <div class="flex justify-between text-gray-600">
@@ -174,21 +164,20 @@
                         <span>Phí vận chuyển</span>
                         <span id="shipping-fee" class="font-medium">20.000 đ</span>
                     </div>
-                    <div class="flex justify-between text-gray-600">
-                        <span>Giảm giá</span>
-                        <span id="discount-amount" class="font-medium text-success">-0 đ</span>
-                    </div>
                     <div class="flex items-center justify-between pt-3 text-lg font-semibold border-t">
                         <span>Tổng thanh toán</span>
                         <span id="grand-total" class="text-xl text-warning">0 đ</span>
                     </div>
                 </div>
 
-                <!-- Nút đặt hàng -->
-                <button class="w-full gap-2 mt-4 text-white btn btn-warning">
-                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-                    Đặt hàng ngay
-                </button>
+                <!-- Form đặt hàng -->
+                <form id="order-form" class="space-y-4">
+                    <!-- Nút đặt hàng -->
+                    <button type="submit" class="w-full gap-2 mt-4 text-white btn btn-warning">
+                        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                        Đặt hàng ngay
+                    </button>
+                </form>
 
                 <!-- Payment methods -->
                 <div class="pt-4 mt-4 text-center border-t">

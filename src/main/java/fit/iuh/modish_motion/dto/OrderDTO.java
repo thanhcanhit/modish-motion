@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @ToString
 public class OrderDTO {
-    private int id;
+    private Integer id;
     private int status;
     private Date orderAt;
     private Date cancelledAt;
@@ -38,7 +38,9 @@ public class OrderDTO {
 
     public Order toEntity() {
         Order order = new Order();
-        order.setId(this.id);
+        if (this.id != null) {
+            order.setId(this.id);
+        }
         order.setStatus(this.status);
         order.setOrderAt(this.orderAt);
         order.setCancelledAt(this.cancelledAt);

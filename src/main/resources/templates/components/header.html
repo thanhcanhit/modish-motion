@@ -23,11 +23,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </button>
-                <a href="/cart" class="p-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
-                </a>
+                <div class="indicator">
+                    <a href="/cart">
+                        <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                    </a>
+                    <span class="indicator-item badge badge-warning badge-sm">
+                        <span id="cart-count">0</span>
+                    </span>
+                </div>
                 <div class="dropdown dropdown-hover dropdown-end">
                     <button tabindex="0" class="p-2">
                         <i data-lucide="user-round" class="w-6 h-6 font-semibold"></i>
@@ -86,7 +89,7 @@
                 </div>
 
                 <!-- Recent Searches -->
-                <div class="mt-6 pb-6">
+                <div class="pb-6 mt-6">
                     <div class="flex items-center justify-between">
                         <h3 class="text-gray-500">Tìm kiếm gần đây</h3>
                         <button class="text-gray-400 hover:text-gray-600">

@@ -1,5 +1,6 @@
 package fit.iuh.modish_motion.servicesImpl;
 
+import fit.iuh.modish_motion.services.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -14,17 +15,24 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import java.io.UnsupportedEncodingException;
 
 @Service
-public class EmailService {
+public class EmailServiceImpl implements EmailService {
+
+    private final JavaMailSender mailSender;
+    private final SpringTemplateEngine templateEngine;
+    private final String fromEmail;
 
     @Autowired
-    private JavaMailSender mailSender;
+    public EmailServiceImpl(
+            JavaMailSender mailSender,
+            SpringTemplateEngine templateEngine,
+            @Value("${spring.mail.username}") String fromEmail
+    ) {
+        this.mailSender = mailSender;
+        this.templateEngine = templateEngine;
+        this.fromEmail = fromEmail;
+    }
 
-    @Autowired
-    private SpringTemplateEngine templateEngine;
-
-    @Value("${spring.mail.username}")
-    private String fromEmail;
-
+    @Override
     public void sendHtmlEmail(String to, String subject, String templateName, Context context) 
             throws MessagingException {
         try {

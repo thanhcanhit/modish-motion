@@ -171,11 +171,11 @@
         </div>
     </div>
     </div>
-    
+
     <footer th:replace="components/footer"></footer>
     <div th:replace="/components/lucide_icons :: lucide_icon"></div>
     <script th:inline="javascript" type="module">
-        import { OrderDetailDTO, Cart } from '/js/cart.js';
+        import { CartAPI } from '/js/cart.js';
 
         /*<![CDATA[*/
         let variants = /*[[${product.variants}]]*/[];
@@ -339,7 +339,7 @@
                 cart.updateIndicator();
             }
 
-            addToCartBtn.addEventListener('click', function () {
+            addToCartBtn.addEventListener('click', async function () {
                 const quantityInput = document.getElementById('quantity');
                 const quantity = parseInt(quantityInput.value);
 
@@ -354,11 +354,16 @@
                 );
 
                 if (selectedVariant) {
-                    const orderDetail = new OrderDetailDTO(null, null, selectedVariant, quantity);
-                    const cart = new Cart();
-                    cart.addItem(orderDetail);
-                    showToast(`Đã thêm ${quantity} sản phẩm vào giỏ hàng`, 'success');
-                    updateCartIndicator();
+                    try {
+                        await CartAPI.addItem({
+                            variant: selectedVariant,
+                            quantity: quantity
+                        });
+                        showToast(`Đã thêm ${quantity} sản phẩm vào giỏ hàng`, 'success');
+                        window.dispatchEvent(new CustomEvent('cart-updated'));
+                    } catch (error) {
+                        showToast('Không thể thêm sản phẩm vào giỏ hàng', 'error');
+                    }
                 } else {
                     showToast('Không tìm thấy sản phẩm phù hợp', 'error');
                 }

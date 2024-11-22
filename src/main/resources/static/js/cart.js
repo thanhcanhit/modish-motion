@@ -1,100 +1,79 @@
-class OrderDetailDTO {
-    constructor(id, order, variant, quantity) {
-        this.id = id;
-        this.order = order;
-        this.variant = variant;
-        this.quantity = quantity;
+class CartAPI {
+    static async getCart() {
+        const response = await fetch('/api/cart');
+        return await response.json();
     }
 
-    static fromJSON(json) {
-        return new OrderDetailDTO(json.id, json.order, json.variant, json.quantity);
+    static async addItem(item) {
+        const response = await fetch('/api/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(item)
+        });
+        return await response.json();
+    }
+
+    static async removeItem(variantId) {
+        const response = await fetch(`/api/cart/${variantId}`, {
+            method: 'DELETE'
+        });
+        return await response.json();
+    }
+
+    static async updateQuantity(variantId, quantity) {
+        const response = await fetch(`/api/cart/${variantId}?quantity=${quantity}`, {
+            method: 'PUT'
+        });
+        return await response.json();
+    }
+
+    static async clearCart() {
+        await fetch('/api/cart', {
+            method: 'DELETE'
+        });
+    }
+
+    static async getTotalItems() {
+        const response = await fetch('/api/cart/count');
+        return await response.json();
     }
 }
 
+// Cart class for compatibility with existing code
 class Cart {
     constructor() {
-        this.items = this.loadCart();
-        this.indicatorElement = null;
-        this.initIndicator();
+        this.api = CartAPI;
     }
 
-    initIndicator() {
-        const cartLink = document.querySelector('a[href="/cart"]');
-        if (cartLink) {
-            const indicator = document.createElement('div');
-            indicator.classList.add('indicator');
-            cartLink.parentNode.replaceChild(indicator, cartLink);
-            indicator.appendChild(cartLink);
-
-            const badge = document.createElement('span');
-            badge.classList.add('indicator-item', 'badge', 'badge-warning', 'badge-sm');
-            badge.style.width = '8px';
-            badge.style.height = '8px';
-            badge.style.padding = '0';
-            indicator.appendChild(badge);
-
-            this.indicatorElement = badge;
-            this.updateIndicator();
-        }
+    async addItem(item) {
+        await this.api.addItem(item);
+        this.notifyUpdate();
     }
 
-    updateIndicator() {
-        if (this.indicatorElement) {
-            this.indicatorElement.style.display = this.items.length > 0 ? 'block' : 'none';
-        }
+    async removeItem(variantId) {
+        await this.api.removeItem(variantId);
+        this.notifyUpdate();
     }
 
-    addItem(orderDetail) {
-        const existingItem = this.items.find(item => item.variant.id === orderDetail.variant.id);
-        if (existingItem) {
-            existingItem.quantity += orderDetail.quantity;
-        } else {
-            this.items.push(orderDetail);
-        }
-        this.saveCart();
-        this.notifyChange();
+    async updateQuantity(variantId, quantity) {
+        await this.api.updateQuantity(variantId, quantity);
+        this.notifyUpdate();
     }
 
-    removeItem(variantId) {
-        this.items = this.items.filter(item => item.variant.id !== variantId);
-        this.saveCart();
-        this.notifyChange();
+    async clearCart() {
+        await this.api.clearCart();
+        this.notifyUpdate();
     }
 
-    changeQuantity(variantId, quantity) {
-        const item = this.items.find(item => item.variant.id === variantId);
-        if (item) {
-            item.quantity = quantity;
-            this.saveCart();
-            this.notifyChange();
-        }
+    async getTotalItems() {
+        return await this.api.getTotalItems();
     }
 
-    notifyChange() {
-        this.updateIndicator();
-        if (this.onChange) {
-            this.onChange(this.items);
-        }
-    }
-
-    saveCart() {
-        localStorage.setItem('cart', JSON.stringify(this.items));
-    }
-
-    loadCart() {
-        const cart = localStorage.getItem('cart');
-        return cart ? JSON.parse(cart).map(OrderDetailDTO.fromJSON) : [];
-    }
-
-    clearCart() {
-        this.items = [];
-        this.saveCart();
-        this.notifyChange();
-    }
-
-    getCartItems() {
-        return this.items;
+    notifyUpdate() {
+        window.dispatchEvent(new CustomEvent('cart-updated'));
     }
 }
 
-export { OrderDetailDTO, Cart };
+export { CartAPI, Cart };

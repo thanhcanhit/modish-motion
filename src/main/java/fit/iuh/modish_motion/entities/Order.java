@@ -13,8 +13,8 @@ import java.util.Date;
 @Entity
 @Table(name = "orders")
 public class Order {
-    @Column(name = "id")
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(name = "status")
     private int status;

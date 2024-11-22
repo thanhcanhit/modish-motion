@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,5 +50,20 @@ public class VariantServiceImpl implements VariantService {
     public Page<VariantDTO> findByPage(Pageable pageable) {
         return variantRepository.findAll(pageable)
                 .map(VariantDTO::fromEntity);
+    }
+
+    @Override
+    @Transactional
+    public void updateQuantity(String variantId, int quantityChange) {
+        Variant variant = variantRepository.findById(variantId)
+                .orElseThrow(() -> new RuntimeException("Variant not found"));
+                
+        int newQuantity = variant.getAvailableQuantity() + quantityChange;
+        if (newQuantity < 0) {
+            throw new RuntimeException("Not enough stock");
+        }
+        
+        variant.setAvailableQuantity(newQuantity);
+        variantRepository.save(variant);
     }
 }
