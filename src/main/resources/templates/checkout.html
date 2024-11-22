@@ -25,6 +25,7 @@
                             <span class="label-text">Họ tên</span>
                         </label>
                         <input type="text" id="customer-name" 
+                               th:value="${auth.user.name}"
                                class="w-full input input-bordered" 
                                readonly />
                     </div>
@@ -34,6 +35,7 @@
                             <span class="label-text">Số điện thoại</span>
                         </label>
                         <input type="tel" id="customer-phone"
+                               th:value="${auth.user.phoneNumber}"
                                class="w-full input input-bordered" 
                                readonly />
                     </div>
@@ -43,48 +45,19 @@
                             <span class="label-text">Email</span>
                         </label>
                         <input type="email" id="customer-email"
+                               th:value="${auth.user.email}"
                                class="w-full input input-bordered" 
                                readonly />
                     </div>
-                </div>
-            </div>
 
-            <!-- Hình thức nhận hàng -->
-            <div class="p-6 bg-white rounded-lg shadow-sm">
-                <h2 class="mb-4 text-xl font-semibold">Hình thức nhận hàng</h2>
-                <div class="flex gap-4">
-                    <div class="flex-1 p-4 border rounded-lg cursor-pointer hover:border-primary">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="truck" class="w-5 h-5"></i>
-                            <span>Giao tới nhà</span>
-                        </div>
-                    </div>
-                    <div class="flex-1 p-4 border rounded-lg cursor-pointer hover:border-primary">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="store" class="w-5 h-5"></i>
-                            <span>Lấy tại cửa hàng</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Địa chỉ -->
-                <div class="mt-4 space-y-4">
                     <div class="form-control">
                         <label class="label">
                             <span class="label-text">Địa chỉ</span>
                         </label>
                         <input type="text" id="customer-address"
+                               th:value="${auth.user.address}"
                                class="w-full input input-bordered" 
                                readonly />
-                    </div>
-                    
-                    <div class="form-control">
-                        <label class="label">
-                            <span class="label-text">Ghi chú</span>
-                        </label>
-                        <textarea id="order-note" 
-                                  class="w-full textarea textarea-bordered" 
-                                  placeholder="Ghi chú về đơn hàng, ví dụ: thời gian hay chỉ dẫn địa điểm giao hàng chi tiết hơn"></textarea>
                     </div>
                 </div>
             </div>
@@ -110,7 +83,7 @@
                 <div class="space-y-3">
                     <label class="flex items-center justify-between p-4 border rounded-lg">
                         <div class="flex items-center gap-2">
-                            <input type="radio" name="payment" class="radio" checked />
+                            <input type="radio" name="payment" value="COD" class="radio" checked />
                             <span>Tiền mặt (COD)</span>
                         </div>
                         <i data-lucide="banknote" class="w-5 h-5"></i>
@@ -118,7 +91,7 @@
 
                     <label class="flex items-center justify-between p-4 border rounded-lg">
                         <div class="flex items-center gap-2">
-                            <input type="radio" name="payment" class="radio" />
+                            <input type="radio" name="payment" value="ZALOPAY" class="radio" />
                             <span>Ví điện tử ZaloPay</span>
                         </div>
                         <img th:src="@{/images/detail_item/zalopay.webp}" class="h-6" alt="ZaloPay" />
@@ -126,7 +99,7 @@
 
                     <label class="flex items-center justify-between p-4 border rounded-lg">
                         <div class="flex items-center gap-2">
-                            <input type="radio" name="payment" class="radio" />
+                            <input type="radio" name="payment" value="MOMO" class="radio" />
                             <span>Ví điện tử Momo</span>
                         </div>
                         <img th:src="@{/images/detail_item/momo.webp}" class="h-6" alt="Momo" />
@@ -134,7 +107,7 @@
 
                     <label class="flex items-center justify-between p-4 border rounded-lg">
                         <div class="flex items-center gap-2">
-                            <input type="radio" name="payment" class="radio" />
+                            <input type="radio" name="payment" value="BANK_TRANSFER" class="radio" />
                             <span>Thẻ nội địa hoặc ngân hàng</span>
                         </div>
                         <i data-lucide="credit-card" class="w-5 h-5"></i>
@@ -142,7 +115,7 @@
 
                     <label class="flex items-center justify-between p-4 border rounded-lg">
                         <div class="flex items-center gap-2">
-                            <input type="radio" name="payment" class="radio" />
+                            <input type="radio" name="payment" value="CREDIT_CARD" class="radio" />
                             <span>Thẻ quốc tế</span>
                         </div>
                         <div class="flex gap-2">
@@ -153,7 +126,7 @@
 
                     <label class="flex items-center justify-between p-4 border rounded-lg">
                         <div class="flex items-center gap-2">
-                            <input type="radio" name="payment" class="radio" />
+                            <input type="radio" name="payment" value="VNPAY" class="radio" />
                             <span>Ví điện tử VNPAY</span>
                         </div>
                         <img th:src="@{/images/detail_item/vnpay-qr.webp}" class="h-6" alt="VNPAY" />
@@ -181,16 +154,6 @@
                     </div>
                 </div>
 
-                <!-- Mã giảm giá -->
-                <div class="flex items-center gap-2 py-4 border-b">
-                    <div class="flex items-center flex-1 gap-2">
-                        <i data-lucide="ticket" class="w-5 h-5 text-warning"></i>
-                        <input type="text" placeholder="Nhập mã giảm giá" 
-                               class="w-full input input-sm input-bordered" />
-                    </div>
-                    <button class="btn btn-warning btn-sm">Áp dụng</button>
-                </div>
-
                 <!-- Chi tiết thanh toán -->
                 <div class="py-4 space-y-3">
                     <div class="flex justify-between text-gray-600">
@@ -201,21 +164,20 @@
                         <span>Phí vận chuyển</span>
                         <span id="shipping-fee" class="font-medium">20.000 đ</span>
                     </div>
-                    <div class="flex justify-between text-gray-600">
-                        <span>Giảm giá</span>
-                        <span id="discount-amount" class="font-medium text-success">-0 đ</span>
-                    </div>
                     <div class="flex items-center justify-between pt-3 text-lg font-semibold border-t">
                         <span>Tổng thanh toán</span>
                         <span id="grand-total" class="text-xl text-warning">0 đ</span>
                     </div>
                 </div>
 
-                <!-- Nút đặt hàng -->
-                <button class="w-full gap-2 mt-4 text-white btn btn-warning">
-                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-                    Đặt hàng ngay
-                </button>
+                <!-- Form đặt hàng -->
+                <form id="order-form" class="space-y-4">
+                    <!-- Nút đặt hàng -->
+                    <button type="submit" class="w-full gap-2 mt-4 text-white btn btn-warning">
+                        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                        Đặt hàng ngay
+                    </button>
+                </form>
 
                 <!-- Payment methods -->
                 <div class="pt-4 mt-4 text-center border-t">
@@ -230,7 +192,7 @@
                 </div>
 
                 <!-- Thêm vào phần bên phải sau danh sách sản phẩm -->
-                <div class="space-y-4 mt-8">
+                <div class="mt-8 space-y-4">
                     <div class="flex items-center gap-2">
                         <i data-lucide="users" class="w-5 h-5 text-gray-600"></i>
                         <div>

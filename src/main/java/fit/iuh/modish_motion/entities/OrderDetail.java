@@ -12,7 +12,7 @@ import lombok.*;
 @Table(name = "order_details")
 public class OrderDetail {
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @ManyToOne
     @JoinColumn(name = "order_id")

@@ -1,6 +1,7 @@
 package fit.iuh.modish_motion.services;
 
 import fit.iuh.modish_motion.dto.OrderDTO;
+import fit.iuh.modish_motion.dto.OrderDetailDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,4 +14,5 @@ public interface OrderService {
     OrderDTO save(OrderDTO order);
     void deleteById(Integer id);
     Page<OrderDTO> findByPage(Pageable pageable);
+    OrderDTO createOrder(OrderDTO orderDTO, List<OrderDetailDTO> orderDetails);
 }

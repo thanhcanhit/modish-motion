@@ -282,24 +282,20 @@
     </div>
     <div class="join flex items-center justify-center w-full pt-10 pb-10">
         <!-- Nút "«" -->
-        <a th:if="${selectedItemId != null and !selectedItemId.isEmpty()}"
-           th:href="@{/admin/products/{id}(id=${selectedItemId}, page=${currentPage - 1})}"
-           th:classappend="${currentPage == 0} ? 'btn-disabled' : ''"
-           class="join-item btn btn-sm">«</a>
-        <a th:if="${selectedItemId == null or selectedItemId.isEmpty()}"
+        <a
            th:href="@{/admin/products(page=${currentPage - 1})}"
            th:classappend="${currentPage == 0} ? 'btn-disabled' : ''"
            class="join-item btn btn-sm">«</a>
 
         <!-- Hiển thị số trang -->
-        <a th:if="${selectedItemId == null or selectedItemId.isEmpty()}"
+        <a
            th:href="@{/admin/products(page=${0})}" class="join-item btn btn-sm" th:value="${1}" th:text="${1}"></a>
         <button class="join-item btn btn-sm" th:value="${currentPage + 1}" th:text="${currentPage + 1}"></button>
         <button class="join-item btn btn-sm btn-disabled">...</button>
-        <a th:if="${selectedItemId == null or selectedItemId.isEmpty()}"
+        <a
            th:href="@{/admin/products(page=${totalPages - 1})}" class="join-item btn btn-sm" th:value="${totalPages - 1}" th:text="${totalPages}"></a>
         <!-- Nút "»" -->
-        <a th:if="${selectedItemId == null or selectedItemId.isEmpty()}"
+        <a
            th:href="@{/admin/products(page=${currentPage + 1})}"
            th:classappend="${currentPage == totalPages - 1} ? 'btn-disabled' : ''"
            class="join-item btn btn-sm">»</a>

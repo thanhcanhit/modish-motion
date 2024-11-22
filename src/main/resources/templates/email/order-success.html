@@ -3,97 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <title>Đặt hàng thành công</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f3f4f6;
+            padding: 32px;
+        }
+
+        .container {
+            max-width: 768px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2563eb;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #10b981;
+            color: white;
+            border-radius: 16px;
+            font-size: 14px;
+        }
+
+        .section {
+            padding: 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .section-title {
+            font-size: 18px;
+            color: #1f2937;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .customer-info {
+            color: #4b5563;
+            line-height: 1.5;
+        }
+
+        .order-items {
+            margin-top: 16px;
+        }
+
+        .order-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .item-image {
+            width: 80px;
+            height: 96px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .item-details {
+            flex: 1;
+            margin-left: 8px;
+        }
+
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #1f2937;
+            display: flex;
+            gap: 8px;
+        }
+
+        .item-meta {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .item-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .quantity {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .order-summary {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            color: #4b5563;
+        }
+
+        .total-row {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 18px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 16px;
+            margin-top: 8px;
+        }
+
+        .total-amount {
+            color: #f59e0b;
+        }
+
+        .shipping-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .info-box {
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .info-label {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .footer p {
+            margin-bottom: 8px;
+        }
+
+        .contact-email {
+            color: #2563eb;
+            font-weight: 600;
+        }
+    </style>
 </head>
-<body class="p-8 bg-gray-100">
-    <div class="max-w-3xl mx-auto">
-        <div class="border mockup-window bg-base-300">
-            <div class="p-8 bg-base-200">
-                <!-- Header -->
-                <div class="mb-8 text-center">
-                    <h1 class="mb-2 text-3xl font-bold text-primary">Modish Motion</h1>
-                    <div class="badge badge-success badge-lg">Đơn hàng đã xác nhận</div>
-                </div>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Modish Motion</h1>
+            <div class="status-badge">Đơn hàng đã xác nhận</div>
+        </div>
 
-                <!-- Thông tin khách hàng -->
-                <div class="mb-6 shadow-xl card bg-base-100">
-                    <div class="card-body">
-                        <h2 class="gap-2 card-title">
-                            <span>Xin chào</span>
-                            <span class="text-primary" th:text="${customerName}"></span>
-                        </h2>
-                        <p>Cảm ơn bạn đã đặt hàng tại Modish Motion. Đơn hàng của bạn đã được xác nhận!</p>
-                    </div>
-                </div>
+        <div class="section">
+            <h2 class="section-title">Xin chào <span th:text="${customerName}" style="color: #2563eb; margin-left: 4px;"></span></h2>
+            <div class="customer-info">
+                <p>Cảm ơn bạn đã đặt hàng tại Modish Motion. Đơn hàng của bạn đã được xác nhận!</p>
+                <p style="margin-top: 16px;">
+                    Ngày đặt hàng: <span style="margin-left: 4px;" th:text="${#dates.format(orderDate, 'dd/MM/yyyy HH:mm')}"></span><br>
+                    Phương thức thanh toán: <span style="margin-left: 4px;" th:text="${paymentMethod}"></span>
+                </p>
+            </div>
+        </div>
 
-                <!-- Chi tiết đơn hàng -->
-                <div class="mb-6 shadow-xl card bg-base-100">
-                    <div class="card-body">
-                        <h3 class="flex items-center gap-2 text-lg font-bold">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                            </svg>
-                            Đơn hàng #<span th:text="${orderId}"></span>
-                        </h3>
+        <div class="section">
+            <h2 class="section-title">
+                Đơn hàng #<span style="margin-left: 4px;" th:text="${orderId}"></span>
+            </h2>
 
-                        <div class="overflow-x-auto">
-                            <table class="table table-zebra">
-                                <thead>
-                                    <tr>
-                                        <th>Sản phẩm</th>
-                                        <th class="text-right">Số lượng</th>
-                                        <th class="text-right">Giá</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="item : ${orderItems}">
-                                        <td th:text="${item.productName}"></td>
-                                        <td class="text-right" th:text="${item.quantity}"></td>
-                                        <td class="text-right" th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="2" class="font-bold text-right">Tổng cộng:</td>
-                                        <td class="font-bold text-right text-primary" th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+            <div class="order-items">
+                <div th:each="item : ${orderItems}" class="order-item">
+                    <img th:src="${item.imageUrl}" class="item-image" th:alt="${item.productName}"/>
+                    <div class="item-details">
+                        <div class="item-name" th:text="${item.productName}"></div>
+                        <div class="item-meta">
+                            Màu: <span style="margin-left: 4px; margin-right: 8px;" th:text="${item.color}"></span>
+                            Size: <span style="margin-left: 4px;" th:text="${item.size}"></span>
+                        </div>
+                        <div class="item-price">
+                            <span class="price" th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                            <span class="quantity">x<span style="margin-left: 2px;" th:text="${item.quantity}"></span></span>
                         </div>
                     </div>
-                </div>
-
-                <!-- Thông tin giao hàng -->
-                <div class="shadow-xl card bg-base-100">
-                    <div class="card-body">
-                        <h3 class="flex items-center gap-2 text-lg font-bold">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            Thông tin giao hàng
-                        </h3>
-                        
-                        <div class="shadow stats stats-vertical lg:stats-horizontal">
-                            <div class="stat">
-                                <div class="stat-title">Địa chỉ</div>
-                                <div class="text-lg stat-value" th:text="${shippingAddress}"></div>
-                            </div>
-                            <div class="stat">
-                                <div class="stat-title">Số điện thoại</div>
-                                <div class="text-lg stat-value" th:text="${phoneNumber}"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer -->
-                <div class="mt-8 text-sm text-center opacity-70">
-                    <p>Nếu bạn có bất kỳ câu hỏi nào về đơn hàng, vui lòng liên hệ với chúng tôi qua email</p>
-                    <p class="font-semibold">support@modishmotion.com</p>
                 </div>
             </div>
+
+            <div class="order-summary">
+                <div class="summary-row">
+                    <span>Tổng tiền hàng:</span>
+                    <span style="margin-left: 8px;" th:text="${#numbers.formatDecimal(totalAmount - shippingFee, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển:</span>
+                    <span style="margin-left: 8px;" th:text="${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                </div>
+                <div class="summary-row total-row">
+                    <span>Tổng thanh toán:</span>
+                    <span class="total-amount" style="margin-left: 8px;" th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Thông tin giao hàng</h2>
+            <div class="shipping-info">
+                <div class="info-box">
+                    <div class="info-label">Địa chỉ</div>
+                    <div class="info-value" style="margin-top: 8px;" th:text="${shippingAddress}"></div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Số điện thoại</div>
+                    <div class="info-value" style="margin-top: 8px;" th:text="${phoneNumber}"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Nếu bạn có bất kỳ câu hỏi nào về đơn hàng, vui lòng liên hệ với chúng tôi qua email</p>
+            <p class="contact-email">support@modishmotion.com</p>
         </div>
     </div>
 </body>

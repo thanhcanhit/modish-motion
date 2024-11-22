@@ -15,4 +15,5 @@ public interface VariantService {
     void update(VariantDTO variant);
     void deleteById(String id);
     Page<VariantDTO> findByPage(Pageable pageable);
+    void updateQuantity(String variantId, int quantityChange);
 }
