@@ -1,4 +1,4 @@
-package fit.iuh.modish_motion.services;
+package fit.iuh.modish_motion.servicesImpl;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;

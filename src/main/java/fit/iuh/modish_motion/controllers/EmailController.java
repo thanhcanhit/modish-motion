@@ -1,6 +1,6 @@
 package fit.iuh.modish_motion.controllers;
 
-import fit.iuh.modish_motion.services.EmailService;
+import fit.iuh.modish_motion.servicesImpl.EmailService;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

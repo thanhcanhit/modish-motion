@@ -107,30 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     }
 
-    // Lấy thông tin người dùng từ server
-    async function loadUserInfo() {
-        try {
-            const response = await fetch('/api/user/info');
-            if (!response.ok) {
-                throw new Error('Failed to load user info');
-            }
-            const userInfo = await response.json();
-            
-            // Điền thông tin vào form
-            document.getElementById('customer-name').value = userInfo.fullName || '';
-            document.getElementById('customer-phone').value = userInfo.phone || '';
-            document.getElementById('customer-email').value = userInfo.email || '';
-            document.getElementById('customer-address').value = userInfo.address || '';
-            
-        } catch (error) {
-            console.error('Error loading user info:', error);
-            showToast('Không thể tải thông tin người dùng', 'error');
-        }
-    }
-
-    // Load user info when page loads
-    loadUserInfo();
-
     // Xử lý nút đặt hàng
     document.querySelector('.btn-warning').addEventListener('click', async () => {
         // Lấy thông tin từ form
