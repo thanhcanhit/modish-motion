@@ -1,129 +1,120 @@
 package fit.iuh.modish_motion.controllers;
 
-import fit.iuh.modish_motion.dto.*;
-import fit.iuh.modish_motion.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import fit.iuh.modish_motion.dto.AccountDTO;
+import fit.iuh.modish_motion.dto.UserDTO;
+import fit.iuh.modish_motion.entities.User;
+import fit.iuh.modish_motion.services.AccountService;
+import fit.iuh.modish_motion.services.UserService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+
 
 @Controller
-@RequestMapping("/adminFake")
 public class AdminController {
-    @Autowired
-    private ItemService itemService;
 
     @Autowired
-    private VariantService variantService;
+    private UserService userService;
+    private AccountService accountService;
 
-    @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private SizeService sizeService;
-    @Autowired
-    private ColorService colorService;
-
-    // Hiển thị trang quản lý sản phẩm
-    @GetMapping
-    public String getAdminPage(Model model, @RequestParam(defaultValue = "") String search) {
-        List<ItemDTO> items = search.isEmpty()
-                ? itemService.findRandomItems(10)
-                : itemService.findByCategoryId(Integer.parseInt(search));
-
-        // Đảm bảo items không null
-        if (items == null) items = List.of();
-
-        model.addAttribute("items", items);
-        model.addAttribute("variants", List.of()); // Biến thể rỗng khi không chọn sản phẩm
-        model.addAttribute("categories", categoryService.findAll());
-        model.addAttribute("sizes", sizeService.findAll());
-        model.addAttribute("colors", colorService.findAll());
-        model.addAttribute("search", search);
-
-        return "admin/admin";
+    public AdminController(AccountService accountService, UserService userService) {
+        this.accountService = accountService;
+        this.userService = userService;
     }
 
-    @GetMapping("/{id}")
-    public String getItemWithVariants(@PathVariable String id, Model model, @RequestParam(defaultValue = "") String search) {
-        List<ItemDTO> items = search.isEmpty()
-                ? itemService.findRandomItems(10)
-                : itemService.findByCategoryId(Integer.parseInt(search));
+    @GetMapping("/admin")
+    public String adminRedirect() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        List<VariantDTO> variants = variantService.findByItemId(id);
-
-        // Đảm bảo items và variants không null
-        if (items == null) items = List.of();
-        if (variants == null) variants = List.of();
-
-        model.addAttribute("items", items);
-        model.addAttribute("variants", variants);
-        model.addAttribute("selectedItemId", id);
-        model.addAttribute("search", search);
-        model.addAttribute("categories", categoryService.findAll());
-        model.addAttribute("sizes", sizeService.findAll());
-        model.addAttribute("colors", colorService.findAll());
-
-        return "admin/admin";
-    }
-
-
-
-    // Lấy thông tin sản phẩm để mở modal
-    @GetMapping("/get")
-    @ResponseBody
-    public ItemDTO getProduct(@RequestParam String id) {
-        return itemService.findById(id).orElse(new ItemDTO());
-    }
-
-    // Lấy danh sách biến thể cho một sản phẩm
-    @GetMapping("/{id}/variants")
-    @ResponseBody
-    public List<VariantDTO> getVariants(@PathVariable String id) {
-         return variantService.findByItemId(id).stream().toList();
-    }
-
-
-    // Lưu sản phẩm
-    @PostMapping("/save")
-    @ResponseBody
-    public String saveProduct(@RequestBody ItemDTO itemDTO) {
-        if (itemDTO.getId() == null || itemDTO.getId().isEmpty()) {
-            itemService.save(itemDTO); // Thêm sản phẩm mới
-        } else {
-            itemService.save(itemDTO); // Sửa sản phẩm
+        if (authentication != null && authentication.isAuthenticated()) {
+            // Kiểm tra quyền của người dùng
+            boolean isAdmin = authentication.getAuthorities()
+                    .stream()
+                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ADMIN"));
+            if (isAdmin) {
+                return "redirect:/admin/dashboard"; // Điều hướng tới dashboard nếu là admin
+            } else {
+                return "redirect:/not-found"; // Điều hướng tới not-found nếu không phải admin
+            }
         }
-        return "success";
+
+        return "redirect:/login"; // Điều hướng tới login nếu chưa đăng nhập
     }
 
-    // Xóa sản phẩm
-    @PostMapping("/delete")
-    @ResponseBody
-    public String deleteProduct(@RequestParam String id) {
-        itemService.deleteById(id);
-        return "success";
-    }
+    @GetMapping("/admin/dashboard")
+    public String dashboard(@RequestParam(value = "tab", defaultValue = "products") String tab,
+                            Model model) {
+        model.addAttribute("selectedTab", tab);
 
-    // Lưu biến thể
-    @PostMapping("/{id}/variants/save")
-    @ResponseBody
-    public String saveVariant(@PathVariable String id, @RequestBody VariantDTO variantDTO) {
-        variantDTO.setItemId(id);
-        if (variantDTO.getId() == null || variantDTO.getId().isEmpty()) {
-            variantService.save(variantDTO); // Thêm biến thể mới
-        } else {
-            variantService.save(variantDTO); // Sửa biến thể
+        if ("users".equals(tab)) {
+            // Thêm danh sách tài khoản vào model
+            List<AccountDTO> accounts = accountService.findAll();
+            model.addAttribute("accounts", accounts);
         }
-        return "success";
+        return "dashboard";
+    }
+    @GetMapping("/admin/check-auth")
+    public ResponseEntity<?> checkAuthentication() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return ResponseEntity.ok("Authentication details: " + auth);
+    }
+    @GetMapping("/admin/dashboard/users")
+    public String getAccountList(Model model) {
+        List<AccountDTO> accounts = accountService.findAll();
+        model.addAttribute("accounts", accounts);
+        return "dashboard-users";
     }
 
-    // Xóa biến thể
-    @PostMapping("/{id}/variants/delete")
-    @ResponseBody
-    public String deleteVariant(@PathVariable String id, @RequestParam String variantId) {
-        variantService.deleteById(variantId);
-        return "success";
+    @GetMapping("/users")
+    public String listUsers(Model model) {
+        List<UserDTO> users = userService.findAll();
+        model.addAttribute("users", users);
+        return "admin/users";
     }
+
+    // Trang thêm người dùng mới
+    @GetMapping("/users/add")
+    public String addUserForm(Model model) {
+        model.addAttribute("user", new User());
+        return "admin/add-user";
+    }
+
+    // Xử lý thêm người dùng
+    @PostMapping("/users/add")
+    public String addUser(@ModelAttribute("user") User user) {
+        Optional<UserDTO> userDTO = userService.findById(user.getId());
+        userService.save(userDTO.get());
+        return "redirect:/admin/users";
+    }
+
+    // Trang chỉnh sửa thông tin người dùng
+    @GetMapping("/users/edit/{id}")
+    public String editUserForm(@PathVariable Integer id, Model model) {
+        Optional<UserDTO> user = userService.findById(id);
+        model.addAttribute("user", user);
+        return "admin/edit-user";
+    }
+
+    // Xử lý cập nhật thông tin người dùng
+    @PostMapping("/users/edit/{id}")
+    public String updateUser(@PathVariable Integer id, @ModelAttribute("user") User user) {
+        userService.updateUser(id, UserDTO.fromEntity(user));
+        return "redirect:/admin/users";
+    }
+
+    // Xóa người dùng
+    @GetMapping("/users/delete/{id}")
+    public String deleteUser(@PathVariable Integer id) {
+        userService.deleteById(id);
+        return "redirect:/admin/users";
+    }
+
 }

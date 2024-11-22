@@ -81,5 +81,8 @@ public class ItemDTO {
 
         return item;
     }
+    public double getSortingPrice() {
+        return (this.promotionPrice > 0) ? this.promotionPrice : this.variants.stream().mapToDouble(VariantDTO::getPrice).min().orElse(Double.MAX_VALUE);
+    }
 
 }

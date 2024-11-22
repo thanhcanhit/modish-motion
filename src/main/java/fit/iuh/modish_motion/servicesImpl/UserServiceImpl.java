@@ -51,4 +51,19 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(pageable)
                 .map(UserDTO::fromEntity);
     }
+
+    @Override
+    public void updateUser(Integer id, UserDTO user) {
+        Optional<UserDTO> userDTO = findById(id);
+        if (userDTO.isPresent()) {
+            userDTO.get().setName(user.getName());
+            userDTO.get().setEmail(user.getEmail());
+            userDTO.get().setDob(user.getDob());
+            userDTO.get().setGender(user.isGender());
+            userDTO.get().setAddress(user.getAddress());
+            userDTO.get().setPhoneNumber(user.getPhoneNumber());
+            userRepository.save(userDTO.get().toEntity());
+        }
+    }
+
 }

@@ -1,5 +1,3 @@
-// cart.js
-
 class OrderDetailDTO {
     constructor(id, order, variant, quantity) {
         this.id = id;
@@ -16,6 +14,34 @@ class OrderDetailDTO {
 class Cart {
     constructor() {
         this.items = this.loadCart();
+        this.indicatorElement = null;
+        this.initIndicator();
+    }
+
+    initIndicator() {
+        const cartLink = document.querySelector('a[href="/cart"]');
+        if (cartLink) {
+            const indicator = document.createElement('div');
+            indicator.classList.add('indicator');
+            cartLink.parentNode.replaceChild(indicator, cartLink);
+            indicator.appendChild(cartLink);
+
+            const badge = document.createElement('span');
+            badge.classList.add('indicator-item', 'badge', 'badge-warning', 'badge-sm');
+            badge.style.width = '8px';
+            badge.style.height = '8px';
+            badge.style.padding = '0';
+            indicator.appendChild(badge);
+
+            this.indicatorElement = badge;
+            this.updateIndicator();
+        }
+    }
+
+    updateIndicator() {
+        if (this.indicatorElement) {
+            this.indicatorElement.style.display = this.items.length > 0 ? 'block' : 'none';
+        }
     }
 
     addItem(orderDetail) {
@@ -26,11 +52,13 @@ class Cart {
             this.items.push(orderDetail);
         }
         this.saveCart();
+        this.notifyChange();
     }
 
     removeItem(variantId) {
         this.items = this.items.filter(item => item.variant.id !== variantId);
         this.saveCart();
+        this.notifyChange();
     }
 
     changeQuantity(variantId, quantity) {
@@ -38,6 +66,14 @@ class Cart {
         if (item) {
             item.quantity = quantity;
             this.saveCart();
+            this.notifyChange();
+        }
+    }
+
+    notifyChange() {
+        this.updateIndicator();
+        if (this.onChange) {
+            this.onChange(this.items);
         }
     }
 
@@ -53,6 +89,7 @@ class Cart {
     clearCart() {
         this.items = [];
         this.saveCart();
+        this.notifyChange();
     }
 
     getCartItems() {
@@ -60,5 +97,4 @@ class Cart {
     }
 }
 
-// Export the classes for use in other templates
 export { OrderDetailDTO, Cart };

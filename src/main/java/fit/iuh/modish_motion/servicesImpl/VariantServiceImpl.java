@@ -51,6 +51,17 @@ public class VariantServiceImpl implements VariantService {
     }
 
     @Override
+    public void update(VariantDTO variant) {
+        Variant existingVariant = variantRepository.findById(variant.getId())
+                .orElseThrow(() -> new RuntimeException("Variant not found"));
+        existingVariant.setColor(variant.getColor().toEntity());
+        existingVariant.setSize(variant.getSize().toEntity());
+        existingVariant.setPrice(variant.getPrice());
+        existingVariant.setAvailableQuantity(variant.getAvailableQuantity());
+        variantRepository.save(existingVariant);
+    }
+
+    @Override
     public void deleteById(String id) {
         variantRepository.deleteById(id);
     }

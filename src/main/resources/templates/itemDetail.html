@@ -1,391 +1,420 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Product Detail</title>
     <div th:replace="components/head :: head"></div>
 </head>
+
 <body>
-<header th:replace="components/header"></header>
+    <header th:replace="components/header"></header>
 
-<div data-theme="light" class="container mx-auto px-24 pt-24 pb-32">
-    <!-- Breadcrumbs -->
-    <div class="breadcrumbs text-md text-gray-500 mb-4">
-        <ul>
-            <li><a href="/">Trang chủ</a></li>
-            <li><a th:text="${product?.gender ?: 'Unisex'}"></a></li>
-            <li><a th:text="${product?.category?.categoryName ?: 'General Category'}"></a></li>
-            <li class="text-gray-600" th:text="${product?.name ?: 'Product name'}">Product name</li>
-        </ul>
-    </div>
+    <div class="container px-24 pt-20 pb-32 mx-auto">
+        <!-- Breadcrumbs -->
+        <div class="mb-4 text-gray-500 breadcrumbs text-md">
+            <ul>
+                <li><a href="/">Trang chủ</a></li>
+                <li><a th:text="${product?.gender ?: 'Unisex'}"></a></li>
+                <li><a th:text="${product?.category?.categoryName ?: 'General Category'}"></a></li>
+                <li class="text-gray-600" th:text="${product?.name ?: 'Product name'}">Product name</li>
+            </ul>
+        </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16">
-        <!-- Product Image Carousel and Thumbnails -->
-        <section class="flex gap-2 col-span-5">
-            <!-- Thumbnails for Selected Color -->
-            <div class="flex flex-col w-fit justify-start gap-2" id="variant-thumbnails">
-                <!-- Thumbnails will be dynamically updated based on selected color -->
-            </div>
-
-            <!-- Carousel for Main Images -->
-            <div class="carousel w-full relative ">
-                <div id="carousel-images" class="carousel-item w-full">
-                    <!-- Images will be dynamically updated based on selected color -->
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-16">
+            <!-- Product Image Carousel and Thumbnails -->
+            <section class="flex col-span-5 gap-2">
+                <!-- Thumbnails for Selected Color -->
+                <div class="flex flex-col justify-start gap-2 w-fit" id="variant-thumbnails">
+                    <!-- Thumbnails will be dynamically updated based on selected color -->
                 </div>
-            </div>
-        </section>
 
-        <!-- Product Information -->
-        <section class="flex flex-col gap-2 col-span-7">
-            <h1 class="text-xl font-semibold" th:text="${product.name ?: 'Product Name'}">Product Name</h1>
-            <p class="text-sm text-gray-500">Mã sản phẩm: <span th:text="${product.id ?: 'Unknown ID'}">ID</span></p>
+                <!-- Carousel for Main Images -->
+                <div class="relative w-full carousel ">
+                    <div id="carousel-images" class="w-full carousel-item">
+                        <!-- Images will be dynamically updated based on selected color -->
+                    </div>
+                </div>
+            </section>
 
-            <!-- Static Rating and Sales -->
-            <div class="flex items-center gap-2 text-gray-500">
-
-                <i data-lucide="star" class="w-4 fill-amber-500 text-amber-500"></i>
-                <p id="rating" class="font-semibold text-lg">4.8 <span class="text-gray-600">(120)</span></p>
-                <p> | Đã bán <span th:text="${product.quantitySold ?: 0}">0</span></p>
-            </div>
-
-            <!-- Price and Discount -->
-            <div class="flex items-center gap-2">
-                <p class="font-semibold flex gap-4 text-lg items-center">
-                    <!-- Display Promotion Price if Available -->
-                    <span th:if="${product.promotionPrice > 0}"
-                          class="text-red-500"
-                          th:text="${#numbers.formatDecimal(product.promotionPrice, 0, 'POINT', 0, 'COMMA')} + 'đ'">
-        </span>
-                    <!-- Display Original Price with Strikethrough -->
-                    <span th:if="${product.promotionPrice > 0}"
-                          class="line-through text-gray-400 text-xs"
-                          th:text="${product.variants != null and !product.variants.isEmpty() ?
-                    #numbers.formatDecimal(product.variants[0].price, 0, 'POINT', 0, 'COMMA') : '0'} + 'đ'">
-        </span>
-                    <!-- Display Only Original Price if No Promotion -->
-                    <span th:if="${product.promotionPrice == 0}"
-                          th:text="${product.variants != null and !product.variants.isEmpty() ?
-                    #numbers.formatDecimal(product.variants[0].price, 0, 'POINT', 0, 'COMMA') : '0'} + 'đ'">
-        </span>
+            <!-- Product Information -->
+            <section class="flex flex-col col-span-7 gap-2">
+                <h1 class="text-xl font-semibold" th:text="${product.name ?: 'Product Name'}">Product Name</h1>
+                <p class="text-sm text-gray-500">Mã sản phẩm: <span th:text="${product.id ?: 'Unknown ID'}">ID</span>
                 </p>
-            </div>
 
-            <!-- Color Options -->
-            <div>
-                <p class="font-semibold mb-2">Màu sắc:</p>
-                <div class="flex gap-2" id="color-options">
-                    <button th:each="variant : ${product.displayVariants}"
-                            th:data-color-id="${variant.color.id}"
-                            class="btn btn-sm btn-outline min-w-20 overflow-hidden py-1 h-fit color-option">
-                        <span class="flex gap-1 flex-col items-center">
-                            <span
-                                    th:style="|background-color: ${variant.color.hex}|"
-                                    class="w-5 h-5 rounded-full border"
-                            >
+                <!-- Static Rating and Sales -->
+                <div class="flex items-center gap-2 text-gray-500">
 
-                        </span>
-                        <span
-                                th:text="${variant.color.color}"
-                                style="font-size: 10px"
-                                class="text-nowrap"
-                        ></span>
-                        </span>
-                    </button>
+                    <i data-lucide="star" class="w-4 fill-amber-500 text-amber-500"></i>
+                    <p id="rating" class="text-lg font-semibold">4.8 <span class="text-gray-600">(120)</span></p>
+                    <p> | Đã bán <span th:text="${product.quantitySold ?: 0}">0</span></p>
                 </div>
-            </div>
 
-            <!-- Size Options -->
-            <div>
-                <p class="font-semibold mb-2">Kích thước:</p>
-                <div class="flex gap-2" id="size-options">
-                    <!-- Size buttons will be dynamically updated based on selected color -->
+                <!-- Price and Discount -->
+                <div class="flex items-center gap-2">
+                    <p class="flex items-center gap-4 text-lg font-semibold">
+                        <!-- Display Promotion Price if Available -->
+                        <span th:if="${product.promotionPrice > 0}" class="text-red-500"
+                            th:text="${#numbers.formatDecimal(product.promotionPrice, 0, 'POINT', 0, 'COMMA')} + 'đ'">
+                        </span>
+                        <!-- Display Original Price with Strikethrough -->
+                        <span th:if="${product.promotionPrice > 0}" class="text-xs text-gray-400 line-through" th:text="${product.variants != null and !product.variants.isEmpty() ?
+                    #numbers.formatDecimal(product.variants[0].price, 0, 'POINT', 0, 'COMMA') : '0'} + 'đ'">
+                        </span>
+                        <!-- Display Only Original Price if No Promotion -->
+                        <span th:if="${product.promotionPrice == 0}" th:text="${product.variants != null and !product.variants.isEmpty() ?
+                    #numbers.formatDecimal(product.variants[0].price, 0, 'POINT', 0, 'COMMA') : '0'} + 'đ'">
+                        </span>
+                    </p>
                 </div>
-            </div>
 
-            <!-- Quantity Selector -->
-            <div class="flex gap-4 mt-4 items-end w-full">
+                <!-- Color Options -->
                 <div>
-                    <p class="font-semibold mb-2">Số lượng:</p>
-                    <div class="flex items-center gap-2">
-                        <button id="decrease-quantity-btn" class="btn border">-</button>
-                        <input type="text" class="input w-12 text-center" value="1" id="quantity">
-                        <button id="increase-quantity-btn" class="btn border">+</button>
+                    <p class="mb-2 font-semibold">Màu sắc:</p>
+                    <div class="flex gap-2" id="color-options">
+                        <button th:each="variant : ${product.displayVariants}" th:data-color-id="${variant.color.id}"
+                            class="py-1 overflow-hidden bg-white btn btn-sm btn-outline hover:bg-white hover:text-amber-500 hover:border-amber-500 min-w-20 h-fit color-option">
+                            <span class="flex flex-col items-center gap-1">
+                                <span th:style="|background-color: ${variant.color.hex}|"
+                                    class="w-5 h-5 border rounded-full">
+
+                                </span>
+                                <span th:text="${variant.color.color}" style="font-size: 10px"
+                                    class="text-nowrap"></span>
+                            </span>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Add to Cart and Buy Now Buttons -->
-                <button id="add-to-cart-btn" class="btn btn-warning flex-1">Thêm vào giỏ</button>
-            </div>
+                <!-- Size Options -->
+                <div>
+                    <p class="mb-2 font-semibold">Kích thước:</p>
+                    <div class="flex gap-2" id="size-options">
+                        <!-- Size buttons will be dynamically updated based on selected color -->
+                    </div>
+                </div>
 
-            <div class="bg-gray-50 grid place-items-center p-4 py-6">
-                <div class="flex gap-2">
-                    <img class="h-8 object-cover" th:src="@{/images/detail_item/zalopay.webp}"/>
-                    <img class="h-8 object-cover" th:src="@{/images/detail_item/visa-card.webp}"/>
-                    <img class="h-8 object-cover" th:src="@{/images/detail_item/master-card.webp}"/>
-                    <img class="h-8 object-cover" th:src="@{/images/detail_item/vnpay-qr.webp}"/>
-                    <img class="h-8 object-cover" th:src="@{/images/detail_item/momo.webp}"/>
-                </div>
-                <p class="font-semibold text-sm">Đảm bảo thanh toán an toàn và bảo mật
-                </p>
-            </div>
+                <!-- Quantity Selector -->
+                <div class="flex items-end w-full gap-4 mt-4">
+                    <div>
+                        <p class="mb-2 font-semibold">Số lượng:</p>
+                        <div class="flex items-center gap-2">
+                            <button id="decrease-quantity-btn" class="border btn">-</button>
+                            <input type="text" class="w-12 text-center input" value="1" id="quantity">
+                            <button id="increase-quantity-btn" class="border btn">+</button>
+                        </div>
+                    </div>
 
-            <div class="space-y-2 text-sm">
-                <div class="flex gap-2 items-center">
-                    <i data-lucide="truck" class="w-5 h-5 text-gray-600"></i>
-                    <p><b>Miễn phí vận chuyển</b>: Đơn hàng từ <span class="font-bold text-amber-500">498K</span></p>
+                    <!-- Add to Cart and Buy Now Buttons -->
+                    <button id="add-to-cart-btn" class="flex-1 btn btn-warning">Thêm vào giỏ</button>
                 </div>
-                <div class="flex gap-2">
-                    <i data-lucide="timer" class="w-5 h-5 text-gray-600"></i>
-                    <p><b>Giao hàng</b>: Từ 3 - 5 ngày trên cả nước</p>
-                </div>
-                <div class="flex gap-2">
-                    <i data-lucide="repeat" class="w-5 h-5 text-gray-600"></i>
-                    <p><b>Miễn phí đổi trả</b>: Tại 267+ cửa hàng trong 15 ngày</p>
-                </div>
-                <div class="flex gap-2">
-                    <i data-lucide="tag" class="w-5 h-5 text-gray-600"></i>
-                    <p>Sử dụng mã giảm giá ở bước thanh toán</p>
-                </div>
-                <div class="flex gap-2">
-                    <i data-lucide="shield-check" class="w-5 h-5 text-gray-600"></i>
-                    <p>Thông tin bảo mật và mã hoá</p>
-                </div>
-            </div>
 
-            <div th:text="${product.characteristic}" class="text-sm font-semibold mt-8">
+                <div class="grid p-4 py-6 bg-gray-50 place-items-center">
+                    <div class="flex flex-wrap gap-2">
+                        <img alt="" class="object-cover h-8" th:src="@{/images/detail_item/zalopay.webp}" />
+                        <img alt="" class="object-cover h-8" th:src="@{/images/detail_item/visa-card.webp}" />
+                        <img alt="" class="object-cover h-8" th:src="@{/images/detail_item/master-card.webp}" />
+                        <img alt="" class="object-cover h-8" th:src="@{/images/detail_item/vnpay-qr.webp}" />
+                        <img alt="" class="object-cover h-8" th:src="@{/images/detail_item/momo.webp}" />
+                    </div>
+                    <p class="text-sm font-semibold">Đảm bảo thanh toán an toàn và bảo mật
+                    </p>
+                </div>
 
-            </div>
-        </section>
-    </div>
-</div>
+                <div class="space-y-2 text-sm">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="truck" class="w-5 h-5 text-gray-600"></i>
+                        <p><b>Miễn phí vận chuyển</b>: Đơn hàng từ <span class="font-bold text-amber-500">498K</span>
+                        </p>
+                    </div>
+                    <div class="flex gap-2">
+                        <i data-lucide="timer" class="w-5 h-5 text-gray-600"></i>
+                        <p><b>Giao hàng</b>: Từ 3 - 5 ngày trên cả nước</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <i data-lucide="repeat" class="w-5 h-5 text-gray-600"></i>
+                        <p><b>Miễn phí đổi trả</b>: Tại 267+ cửa hàng trong 15 ngày</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <i data-lucide="tag" class="w-5 h-5 text-gray-600"></i>
+                        <p>Sử dụng mã giảm giá ở bước thanh toán</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <i data-lucide="shield-check" class="w-5 h-5 text-gray-600"></i>
+                        <p>Thông tin bảo mật và mã hoá</p>
+                    </div>
+                </div>
 
-<div class="toast-container fixed bottom-4 right-4 z-50">
-    <div id="toast" class="toast hidden" role="alert">
-        <div class="alert shadow-md">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                 class="stroke-info h-6 w-6 shrink-0">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span id="toast-message">Item added to cart!</span>
+                <div th:text="${product.characteristic}" class="mt-8 text-sm font-semibold">
+
+                </div>
+            </section>
         </div>
     </div>
-</div>
 
-<footer th:replace="components/footer"></footer>
-<div th:replace="/components/lucide_icons :: lucide_icon"></div>
-<script th:inline="javascript" type="module">
-    import {OrderDetailDTO, Cart} from '/js/cart.js';
+    <div id="toast" class="z-50 toast toast-end">
+        <div id="alert-toast" class="hidden alert">
+            <span id="toast-message"></span>
+        </div>
+    </div>
 
-    /*<![CDATA[*/
-    let variants = /*[[${product.variants}]]*/ [];
-    let selectedColorId = null;
-    let selectedSizeId = null;
+    <div class="container px-24 py-16 pt-4 mx-auto">
+        <!-- Related Products Section -->
+        <div th:if="${relatedProducts != null and !relatedProducts.empty}">
+            <h2 class="mb-8 text-2xl font-semibold">Sản phẩm liên quan</h2>
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4">
+                <!-- Sử dụng component productItem -->
+                <div th:each="item : ${relatedProducts}">
+                    <div th:replace="components/productItem :: productItem(item=${item})"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    <footer th:replace="components/footer"></footer>
+    <div th:replace="/components/lucide_icons :: lucide_icon"></div>
+    <script th:inline="javascript" type="module">
+        import { OrderDetailDTO, Cart } from '/js/cart.js';
 
-    const randomRating = Math.floor(Math.random() * 5) + 1;
-    const randomQuantity = Math.floor(Math.random() * 200) + 1;
-    updateRating(randomRating, randomQuantity);
+        /*<![CDATA[*/
+        let variants = /*[[${product.variants}]]*/[];
+        let selectedColorId = null;
+        let selectedSizeId = null;
 
-    function updateRating(rating, quantity) {
-        document.querySelector('#rating').textContent = `${rating}.0 (${quantity})`;
-    }
+        const randomRating = Math.floor(Math.random() * 5) + 1;
+        const randomQuantity = Math.floor(Math.random() * 200) + 1;
+        updateRating(randomRating, randomQuantity);
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const colorOptions = document.querySelectorAll('.color-option');
-        const sizeOptionsContainer = document.getElementById('size-options');
-        const carouselImagesContainer = document.getElementById('carousel-images');
-        const variantThumbnailsContainer = document.getElementById('variant-thumbnails');
-        const addToCartBtn = document.getElementById('add-to-cart-btn');
-
-
-        // Default selection of first color and size
-        if (colorOptions.length > 0) {
-            selectedColorId = colorOptions[0].getAttribute('data-color-id');
-            updateSizes();
-            updateImages();
-            updateThumbnails();
-            highlightSelectedColor();
+        function updateRating(rating, quantity) {
+            document.querySelector('#rating').textContent = `${rating}.0 (${quantity})`;
         }
 
-        colorOptions.forEach(button => {
-            button.addEventListener('click', function () {
-                selectedColorId = this.getAttribute('data-color-id');
+        document.addEventListener('DOMContentLoaded', function () {
+            const colorOptions = document.querySelectorAll('.color-option');
+            const sizeOptionsContainer = document.getElementById('size-options');
+            const carouselImagesContainer = document.getElementById('carousel-images');
+            const variantThumbnailsContainer = document.getElementById('variant-thumbnails');
+            const addToCartBtn = document.getElementById('add-to-cart-btn');
+
+            if (colorOptions.length > 0) {
+                selectedColorId = colorOptions[0].getAttribute('data-color-id');
                 updateSizes();
                 updateImages();
                 updateThumbnails();
                 highlightSelectedColor();
+            }
+
+            colorOptions.forEach(button => {
+                button.addEventListener('click', function () {
+                    selectedColorId = this.getAttribute('data-color-id');
+                    updateSizes();
+                    updateImages();
+                    updateThumbnails();
+                    highlightSelectedColor();
+                });
             });
-        });
 
-        function updateSizes() {
-            sizeOptionsContainer.innerHTML = '';
-            let sizesForColor = [];
+            function updateSizes() {
+                sizeOptionsContainer.innerHTML = '';
+                let sizesForColor = [];
 
-            variants.forEach(variant => {
-                if (variant.color && variant.color.id == selectedColorId) {
-                    if (variant.size) {
-                        // Check if size is already added
-                        if (!sizesForColor.some(size => size.id === variant.size.id)) {
-                            sizesForColor.push(variant.size);
+                variants.forEach(variant => {
+                    if (variant.color && variant.color.id == selectedColorId) {
+                        if (variant.size) {
+                            if (!sizesForColor.some(size => size.id === variant.size.id)) {
+                                sizesForColor.push(variant.size);
+                            }
                         }
                     }
-                }
-            });
-
-            if (sizesForColor.length > 0) {
-                sizesForColor.forEach(size => {
-                    const sizeButton = document.createElement('button');
-                    sizeButton.textContent = size.size;
-                    sizeButton.className = 'btn btn-sm btn-outline min-w-10 h-10 size-option';
-                    sizeButton.setAttribute('data-size-id', size.id);
-                    sizeOptionsContainer.appendChild(sizeButton);
-
-                    sizeButton.addEventListener('click', function () {
-                        selectedSizeId = this.getAttribute('data-size-id');
-                        updateImages();
-                        updateThumbnails();
-                        highlightSelectedSize();
-                    });
                 });
 
-                // Default selection of first size
-                selectedSizeId = sizesForColor[0].id;
-                updateImages();
-                updateThumbnails();
-                highlightSelectedSize();
-            } else {
-                selectedSizeId = null;
-                updateImages();
-                updateThumbnails();
-            }
-        }
+                if (sizesForColor.length > 0) {
+                    sizesForColor.forEach(size => {
+                        const sizeButton = document.createElement('button');
+                        sizeButton.textContent = size.size;
+                        sizeButton.className = 'btn btn-sm btn-outline bg-white hover:bg-white hover:text-amber-500 hover:border-amber-500  min-w-10 h-10 size-option';
+                        sizeButton.setAttribute('data-size-id', size.id);
+                        sizeOptionsContainer.appendChild(sizeButton);
 
-        function updateImages() {
-            carouselImagesContainer.innerHTML = '';
-            let imagesForVariant = new Set();
+                        sizeButton.addEventListener('click', function () {
+                            selectedSizeId = this.getAttribute('data-size-id');
+                            updateImages();
+                            updateThumbnails();
+                            highlightSelectedSize();
+                        });
+                    });
 
-            variants.forEach(variant => {
-                if (variant.color && variant.color.id == selectedColorId && (!selectedSizeId || (variant.size && variant.size.id == selectedSizeId))) {
-                    if (variant.imageUrls && variant.imageUrls.length > 0) {
-                        variant.imageUrls.forEach(imgUrl => imagesForVariant.add(imgUrl));
-                    }
+                    selectedSizeId = sizesForColor[0].id;
+                    updateImages();
+                    updateThumbnails();
+                    highlightSelectedSize();
+                } else {
+                    selectedSizeId = null;
+                    updateImages();
+                    updateThumbnails();
                 }
-            });
+            }
 
-            imagesForVariant = Array.from(imagesForVariant);
+            function updateImages() {
+                carouselImagesContainer.innerHTML = '';
+                let imagesForVariant = new Set();
 
-            imagesForVariant.forEach(imgUrl => {
+                variants.forEach(variant => {
+                    if (variant.color && variant.color.id == selectedColorId && (!selectedSizeId || (variant.size && variant.size.id == selectedSizeId))) {
+                        if (variant.imageUrls && variant.imageUrls.length > 0) {
+                            variant.imageUrls.forEach(imgUrl => imagesForVariant.add(imgUrl));
+                        }
+                    }
+                });
+
+                imagesForVariant = Array.from(imagesForVariant);
+
+                imagesForVariant.forEach(imgUrl => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = imgUrl;
+                    imgElement.alt = 'Product Image';
+                    imgElement.className = 'w-full object-cover';
+                    carouselImagesContainer.appendChild(imgElement);
+                });
+            }
+
+            function updateThumbnails() {
+                variantThumbnailsContainer.innerHTML = '';
+                let thumbnailsForVariant = new Set();
+
+                variants.forEach(variant => {
+                    if (variant.color && variant.color.id == selectedColorId && (!selectedSizeId || (variant.size && variant.size.id == selectedSizeId))) {
+                        if (variant.imageUrls && variant.imageUrls.length > 0) {
+                            variant.imageUrls.forEach(imgUrl => thumbnailsForVariant.add(imgUrl));
+                        }
+                    }
+                });
+
+                thumbnailsForVariant = Array.from(thumbnailsForVariant);
+
+                thumbnailsForVariant.forEach(imgUrl => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = imgUrl;
+                    imgElement.alt = 'Thumbnail';
+                    imgElement.className = 'w-12 h-12 object-cover cursor-pointer rounded-md border';
+
+                    variantThumbnailsContainer.appendChild(imgElement);
+
+                    imgElement.addEventListener('click', function (event) {
+                        event.preventDefault();
+                        updateMainImage(imgUrl);
+                    });
+                });
+            }
+
+            function updateMainImage(imgUrl) {
+                carouselImagesContainer.innerHTML = '';
                 const imgElement = document.createElement('img');
                 imgElement.src = imgUrl;
                 imgElement.alt = 'Product Image';
                 imgElement.className = 'w-full object-cover';
                 carouselImagesContainer.appendChild(imgElement);
-            });
-        }
+            }
 
-        function updateThumbnails() {
-            variantThumbnailsContainer.innerHTML = '';
-            let thumbnailsForVariant = new Set();
+            function highlightSelectedColor() {
+                colorOptions.forEach(button => {
+                    button.classList.remove('border-amber-500', 'text-amber-500');
+                });
+                document.querySelector(`.color-option[data-color-id="${selectedColorId}"]`).classList.add('border-amber-500', 'text-amber-500');
+            }
 
-            variants.forEach(variant => {
-                if (variant.color && variant.color.id == selectedColorId && (!selectedSizeId || (variant.size && variant.size.id == selectedSizeId))) {
-                    if (variant.imageUrls && variant.imageUrls.length > 0) {
-                        variant.imageUrls.forEach(imgUrl => thumbnailsForVariant.add(imgUrl));
-                    }
+            function highlightSelectedSize() {
+                const sizeOptions = document.querySelectorAll('.size-option');
+                sizeOptions.forEach(button => {
+                    button.classList.remove('border-amber-500', 'text-amber-500');
+                });
+                if (selectedSizeId) {
+                    document.querySelector(`.size-option[data-size-id="${selectedSizeId}"]`).classList.add('border-amber-500', 'text-amber-500');
+                }
+            }
+
+            function updateCartIndicator() {
+                const cart = new Cart();
+                cart.updateIndicator();
+            }
+
+            addToCartBtn.addEventListener('click', function () {
+                const quantityInput = document.getElementById('quantity');
+                const quantity = parseInt(quantityInput.value);
+
+                if (!selectedColorId || !selectedSizeId) {
+                    showToast('Vui lòng chọn màu sắc và kích thước', 'warning');
+                    return;
+                }
+
+                const selectedVariant = variants.find(variant =>
+                    variant.color && variant.color.id == selectedColorId &&
+                    variant.size && variant.size.id == selectedSizeId
+                );
+
+                if (selectedVariant) {
+                    const orderDetail = new OrderDetailDTO(null, null, selectedVariant, quantity);
+                    const cart = new Cart();
+                    cart.addItem(orderDetail);
+                    showToast(`Đã thêm ${quantity} sản phẩm vào giỏ hàng`, 'success');
+                    updateCartIndicator();
+                } else {
+                    showToast('Không tìm thấy sản phẩm phù hợp', 'error');
                 }
             });
 
-            thumbnailsForVariant = Array.from(thumbnailsForVariant);
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('alert-toast');
+                const toastMessage = document.getElementById('toast-message');
 
-            thumbnailsForVariant.forEach(imgUrl => {
+                // Xóa các class cũ
+                toast.className = 'alert';
 
-                const imgElement = document.createElement('img');
-                imgElement.src = imgUrl;
-                imgElement.alt = 'Thumbnail';
-                imgElement.className = 'w-12 h-12 object-cover cursor-pointer rounded-md border';
+                // Thêm class mới dựa vào type
+                switch (type) {
+                    case 'success':
+                        toast.classList.add('alert-success');
+                        break;
+                    case 'error':
+                        toast.classList.add('alert-error');
+                        break;
+                    case 'warning':
+                        toast.classList.add('alert-warning');
+                        break;
+                    default:
+                        toast.classList.add('alert-info');
+                }
 
-                variantThumbnailsContainer.appendChild(imgElement);
+                toastMessage.textContent = message;
+                toast.classList.remove('hidden');
 
-                imgElement.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    updateMainImage(imgUrl);
-                });
-            });
-        }
-
-        function updateMainImage(imgUrl) {
-            carouselImagesContainer.innerHTML = '';
-            const imgElement = document.createElement('img');
-            imgElement.src = imgUrl;
-            imgElement.alt = 'Product Image';
-            imgElement.className = 'w-full object-cover';
-            carouselImagesContainer.appendChild(imgElement);
-        }
-
-        function highlightSelectedColor() {
-            colorOptions.forEach(button => {
-                button.classList.remove('btn-active');
-            });
-            document.querySelector(`.color-option[data-color-id="${selectedColorId}"]`).classList.add('btn-active');
-        }
-
-        function highlightSelectedSize() {
-            const sizeOptions = document.querySelectorAll('.size-option');
-            sizeOptions.forEach(button => {
-                button.classList.remove('btn-active');
-            });
-            if (selectedSizeId) {
-                document.querySelector(`.size-option[data-size-id="${selectedSizeId}"]`).classList.add('btn-active');
-            }
-        }
-
-        addToCartBtn.addEventListener('click', function () {
-            const quantityInput = document.getElementById('quantity');
-            const quantity = parseInt(quantityInput.value);
-
-            const selectedVariant = variants.find(variant =>
-                variant.color && variant.color.id == selectedColorId &&
-                variant.size && variant.size.id == selectedSizeId
-            );
-
-            if (selectedVariant) {
-                const orderDetail = new OrderDetailDTO(null, null, selectedVariant, quantity);
-                const cart = new Cart();
-                cart.addItem(orderDetail);
-                showToast(`Added ${quantity} of ${selectedVariant.name} to cart!`);
-            } else {
-                showToast('Please select a valid color and size.');
+                // Ẩn toast sau 3 giây
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
             }
         });
 
-        function showToast(message) {
-            const toastMessage = document.getElementById('toast-message');
-            toastMessage.textContent = message;
-            const toast = document.getElementById('toast');
-            toast.classList.remove('hidden');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 3000);
+        function decreaseQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            let quantity = parseInt(quantityInput.value);
+            if (quantity > 1) {
+                quantityInput.value = quantity - 1;
+            }
         }
-    });
 
-
-    function decreaseQuantity() {
-        const quantityInput = document.getElementById('quantity');
-        let quantity = parseInt(quantityInput.value);
-        if (quantity > 1) {
-            quantityInput.value = quantity - 1;
+        function increaseQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            let quantity = parseInt(quantityInput.value);
+            quantityInput.value = quantity + 1;
         }
-    }
 
-    function increaseQuantity() {
-        const quantityInput = document.getElementById('quantity');
-        let quantity = parseInt(quantityInput.value);
-        quantityInput.value = quantity + 1;
-    }
+        document.getElementById('decrease-quantity-btn').addEventListener('click', decreaseQuantity);
+        document.getElementById('increase-quantity-btn').addEventListener('click', increaseQuantity);
+        /*]]>*/
+    </script>
 
-    document.getElementById('decrease-quantity-btn').addEventListener('click', decreaseQuantity);
-    document.getElementById('increase-quantity-btn').addEventListener('click', increaseQuantity);
-    /*]]>*/
-</script>
 </body>
+
 </html>

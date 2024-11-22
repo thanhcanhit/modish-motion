@@ -6,13 +6,13 @@
 <body>
 <header th:replace="components/header"></header>
 
-<div data-theme="light" th:fragment="content" class="bg-white pt-20 pb-80 px-2.5">
+<div data-theme="light" th:fragment="content" class="bg-white max-w-screen-xl min-h-screen px-4 py-12 pt-24 mx-auto">
     <h1 class="text-2xl font-bold text-gray-800 mb-6">Quản lý sản phẩm</h1>
     <div class="flex justify-between mt-2.5">
         <div class="w-[70%] mr-2.5 border-r">
             <div class="flex justify-between items-center mr-2.5">
-                <form th:action="@{/adminFake}" method="get" class="flex input input-bordered items-center py-2.5 w-[60%]">
-                    <input type="text" class="grow" placeholder="Search" th:value="${search}" />
+                <form  class="flex input input-bordered items-center py-2.5 w-[60%]">
+                    <input type="text" class="grow" placeholder="Search"  />
                     <button>
                         <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -43,8 +43,8 @@
                 <tr th:if="${items == null || items.isEmpty()}">
                     <td colspan="5" class="text-center">Không có sản phẩm nào được tìm thấy.</td>
                 </tr>
-                <tr th:each="item, iterStat : ${items}" th:classappend="${selectedItemId == item.id} ? 'bg-gray-200' : ''"
-                    th:data-url="@{/adminFake/{id}(id=${item.id}, search=${search})}"
+                <tr th:id="${item.id}" th:each="item, iterStat : ${items}" th:classappend="${selectedItemId == item.id} ? 'bg-gray-200' : ''"
+                    th:data-url="@{/admin/products/{id}(id=${item.id}, page=${currentPage})}"
                     class="cursor-pointer hover:bg-gray-100" onclick="navigateToItem(this)">
                     <td th:text="${item.id}"></td>
                     <td th:text="${item.name}"></td>
@@ -65,6 +65,7 @@
         </div>
 
 
+
         <div class="w-[30%] ml-2.5 ">
             <h2 class="text-lg font-bold text-gray-800 mb-4">Danh sách biến thể</h2>
 
@@ -80,21 +81,21 @@
                 <tr th:if="${variants == null || variants.isEmpty()}">
                     <td colspan="4" class="text-center">Chọn sản phẩm để xem danh sách biến thể.</td>
                 </tr>
-                <tr th:each="variant : ${variants}" class="hover:bg-gray-100">
+                <tr th:id="${variant.id}" th:each="variant : ${variants}" class="hover:bg-gray-100">
                     <td th:text="${variant.name}"></td>
                     <td th:text="${variant.availableQuantity}"></td>
                     <td class="flex justify-end">
                         <button class="btn btn-sm mx-1"
                                 th:attr="data-item-id=${variant.itemId}"
                                 th:attrappend="data-variant-id=${variant.id}"
-                                onclick="editVariant(this.getAttribute('data-item-id'), this.getAttribute('data-variant-id'))">
+                                onclick="editVariant(this.getAttribute('data-item-id'), this.getAttribute('data-variant-id')); event.stopPropagation();">
                             <i data-lucide="Pencil" class="h-4 w-4"></i>
                         </button>
                         <button class="btn btn-sm mx-1"
                                 th:attr="data-item-id=${variant.itemId}"
                                 th:attrappend="data-variant-id=${variant.id}"
-                                onclick="deleteVariant(this.getAttribute('data-item-id'), this.getAttribute('data-variant-id'))">
-                            <i data-lucide="Trash2" class="h-4 w-4"></i>
+                                onclick="deleteVariant(this.getAttribute('data-item-id'), this.getAttribute('data-variant-id')); event.stopPropagation();">
+                            <i data-lucide="Trash2" class="h-4 w-4 text-red-600"></i>
                         </button>
                     </td>
                 </tr>
@@ -113,6 +114,7 @@
     <div id="item-modal" class="mt-12 fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center hidden">
         <div class="bg-white p-6 rounded shadow w-full max-w-lg">
             <h2 id="product-modal-title" class="text-lg font-bold mb-4">Add Product</h2>
+            <input id="product-id" type="hidden" />
             <form id="product-form">
                 <div class="m-1">
                     <label class="form-control">
@@ -155,7 +157,7 @@
                         <div class="label">
                             <span class="label-text">Characteristic: </span>
                         </div>
-                        <textarea class="textarea textarea-bordered h-24" placeholder=""></textarea>
+                        <textarea id="item-characteristic" class="textarea textarea-bordered h-24" placeholder=""></textarea>
 
                     </label>
                 </div>
@@ -167,27 +169,28 @@
 
                         <div class="form-control">
                             <label class="label cursor-pointer">
-                                <span class="label-text pr-2.5">Nam:</span>
+                                <span class="label-text pr-2.5">Nam</span>
                                 <input type="radio" name="gender" class="radio checked:bg-gray-500 pr-2"
-                                       checked="checked"/>
+                                       checked="checked" value="Nam"/>
                             </label>
                         </div>
                         <div class="form-control">
                             <label class="label cursor-pointer">
-                                <span class="label-text pr-2.5">Nữ:</span>
+                                <span class="label-text pr-2.5">Nữ</span>
                                 <input type="radio" name="gender" class="radio checked:bg-gray-500 pr-2"
-                                       checked="checked"/>
+                                       checked="checked" value="Nữ"/>
                             </label>
                         </div>
                         <div class="form-control">
                             <label class="label cursor-pointer">
-                                <span class="label-text pr-2.5">Unisex:</span>
+                                <span class="label-text pr-2.5">Unisex</span>
                                 <input type="radio" name="gender" class="radio checked:bg-gray-500 pr-2"
-                                       checked="checked"/>
+                                       checked="checked" value="Unisex" />
                             </label>
                         </div>
                     </div>
                 </div>
+
                 <div class="flex justify-end gap-2">
                     <button type="button" onclick="closeItemModal()"
                             class="btn  px-4 py-2 rounded">
@@ -205,6 +208,8 @@
     <div id="variant-modal" class="mt-10 fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center hidden">
         <div class="bg-white p-6 rounded shadow w-full max-w-lg">
             <h2 id="variant-modal-title" class="text-lg font-bold mb-4">Add Variant</h2>
+            <input id="variant-id" type="hidden"/>
+            <input id="selected-item-id" type="hidden" th:value="${selectedItemId}"/>
             <form  id="variant-form">
                 <div class="m-1">
                     <label class="form-control">
@@ -255,11 +260,11 @@
                     </label>
                 </div>
                 <div class="m-1">
-                    <label class="form-control w-full mt-2">
+                    <label class="form-control">
                         <div class="label">
-                            <span class="label-text">Pick a image: </span>
+                            <span class="label-text">Link for image: </span>
                         </div>
-                        <input type="file" class="file-input file-input-ghost file-input-sm w-full "/>
+                        <input id="variant-images" type="text" class="input input-bordered w-full " placeholder=""/>
                     </label>
                 </div>
 
@@ -275,6 +280,31 @@
             </form>
         </div>
     </div>
+    <div class="join flex items-center justify-center w-full pt-10 pb-10">
+        <!-- Nút "«" -->
+        <a th:if="${selectedItemId != null and !selectedItemId.isEmpty()}"
+           th:href="@{/admin/products/{id}(id=${selectedItemId}, page=${currentPage - 1})}"
+           th:classappend="${currentPage == 0} ? 'btn-disabled' : ''"
+           class="join-item btn btn-sm">«</a>
+        <a th:if="${selectedItemId == null or selectedItemId.isEmpty()}"
+           th:href="@{/admin/products(page=${currentPage - 1})}"
+           th:classappend="${currentPage == 0} ? 'btn-disabled' : ''"
+           class="join-item btn btn-sm">«</a>
+
+        <!-- Hiển thị số trang -->
+        <a th:if="${selectedItemId == null or selectedItemId.isEmpty()}"
+           th:href="@{/admin/products(page=${0})}" class="join-item btn btn-sm" th:value="${1}" th:text="${1}"></a>
+        <button class="join-item btn btn-sm" th:value="${currentPage + 1}" th:text="${currentPage + 1}"></button>
+        <button class="join-item btn btn-sm btn-disabled">...</button>
+        <a th:if="${selectedItemId == null or selectedItemId.isEmpty()}"
+           th:href="@{/admin/products(page=${totalPages - 1})}" class="join-item btn btn-sm" th:value="${totalPages - 1}" th:text="${totalPages}"></a>
+        <!-- Nút "»" -->
+        <a th:if="${selectedItemId == null or selectedItemId.isEmpty()}"
+           th:href="@{/admin/products(page=${currentPage + 1})}"
+           th:classappend="${currentPage == totalPages - 1} ? 'btn-disabled' : ''"
+           class="join-item btn btn-sm">»</a>
+    </div>
+
 </div>
 
 

@@ -12,6 +12,7 @@ public interface VariantService {
     List<VariantDTO> findByItemId(String itemId);
     Optional<VariantDTO> findById(String id);
     VariantDTO save(VariantDTO variant);
+    void update(VariantDTO variant);
     void deleteById(String id);
     Page<VariantDTO> findByPage(Pageable pageable);
 }

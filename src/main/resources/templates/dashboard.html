@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="components/head :: head"></div>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body class="bg-gray-100 font-sans">
+
+<!-- Header -->
+<header th:replace="components/header"></header>
+
+
+<!-- Dashboard Content -->
+<div class="container mx-auto pt-32 mb-40">
+    <div class="font-semibold flex justify-center items-center">
+        <h1 class="text-4xl font-semibold mb-12">Dashboard</h1>
+    </div>
+
+
+    <!-- Grid Các Mục -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 gap-x-0">
+        <!-- Quản lý sản phẩm -->
+        <a href="#" th:onclick="|window.location.href='@{/admin/products}'|"
+           class="card bg-white hover:shadow-lg border cursor-pointer flex flex-col justify-center items-center w-72 h-72 rounded-lg mx-auto">
+            <div class="card-body items-center text-center">
+                <div class="text-secondary">
+                <img th:src="@{/svg/clothes.svg}" alt="clothes" class="w-32 h-32">
+            </div>
+            <h2 class="card-title text-gray-700 mt-4 text-lg font-semibold">Quản lý sản phẩm</h2>
+            <p class="text-gray-500 text-sm text-center">Quản lý danh sách và thông tin sản phẩm.</p>
+            </div>
+        </a>
+
+        <!-- Quản lý người dùng -->
+        <a th:href="@{/admin/dashboard/users}"
+           class="card bg-white hover:shadow-lg border cursor-pointer flex flex-col justify-center items-center w-72 h-72 rounded-lg mx-auto">
+            <div class="card-body items-center text-center">
+                <div class="text-secondary">
+                    <img th:src="@{/svg/user.svg}" alt="user" class="w-32 h-32">
+                </div>
+                <h2 class="card-title text-gray-700 mt-2 font-semibold">Quản lý người dùng</h2>
+                <p class="text-gray-500 text-sm">Quản lý thông tin tài khoản người dùng.</p>
+            </div>
+        </a>
+
+        <!-- Quản lý đơn hàng -->
+        <a href="#" th:onclick="|window.location.href='@{/admin/dashboard?tab=orders}'|"
+           class="card bg-white hover:shadow-lg border cursor-pointer flex flex-col justify-center items-center w-72 h-72 rounded-lg mx-auto">
+            <div class="card-body items-center text-center">
+                <div class="text-secondary">
+                    <img th:src="@{/svg/order.svg}" alt="order" class="w-32 h-32">
+                </div>
+                <h2 class="card-title text-gray-700 mt-4 text-lg font-semibold">Quản lý đơn hàng</h2>
+                <p class="text-gray-500 text-sm text-center">Kiểm tra và xử lý các đơn hàng.</p>
+            </div>
+        </a>
+
+        <!-- Thống kê -->
+        <a href="#" th:onclick="|window.location.href='@{/admin/dashboard?tab=statistics}'|"
+           class="card bg-white hover:shadow-lg border cursor-pointer flex flex-col justify-center items-center w-72 h-72 rounded-lg mx-auto">
+            <div class="card-body items-center text-center">
+                <div class="text-secondary">
+                <img th:src="@{/svg/statistics.svg}" alt="statistics" class="w-32 h-32">
+            </div>
+            <h2 class="card-title text-gray-700 mt-4 text-lg font-semibold">Thống kê</h2>
+            <p class="text-gray-500 text-sm text-center">Xem báo cáo và thống kê hiệu suất.</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<footer th:replace="components/footer"></footer>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package fit.iuh.modish_motion.entities;
 
+import fit.iuh.modish_motion.dto.AccountDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
