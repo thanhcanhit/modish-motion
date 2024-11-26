@@ -75,7 +75,7 @@ public class CheckoutController {
                         .orElseThrow(() -> new RuntimeException("Variant not found"));
 
                 OrderDetailDTO detail = new OrderDetailDTO();
-                detail.setVariant(variant.toEntity());
+                detail.setVariant(variant);
                 detail.setQuantity(item.getQuantity());
                 orderDetails.add(detail);
             }
@@ -107,7 +107,7 @@ public class CheckoutController {
                             item.put("price", detail.getVariant().getPrice() * detail.getQuantity());
                             item.put("color", detail.getVariant().getColor().getColor());
                             item.put("size", detail.getVariant().getSize().getSize());
-                            item.put("imageUrl", VariantDTO.fromEntity(detail.getVariant()).getImageUrls().get(0));
+                            item.put("imageUrl", detail.getVariant().getImageUrls().get(0));
                             return item;
                         })
                         .collect(Collectors.toList());
