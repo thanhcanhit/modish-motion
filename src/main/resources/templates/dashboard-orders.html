@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="components/head :: head"></div>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        input:focus, select:focus {
+            outline: none;
+            border-color: transparent;
+        }
+        .border-gray-300 {
+            border-color: #d1d5db;
+        }
+        .text-sm {
+            font-size: 0.875rem; /* 14px */
+        }
+        .text-xs {
+            font-size: 0.75rem; /* 12px */
+        }
+        .full-height {
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .fixed-width {
+            width: 100%;
+        }
+        .max-width-1-3 {
+            max-width: 33.33%;
+        }
+        .pagination-button {
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pagination-container {
+            display: flex;
+            align-items: center;
+        }
+        .selected-row {
+            background-color: #e2e8f0; /* Tailwind CSS gray-200 */
+        }
+        .fixed-width-detail {
+            width: 320px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-sm">
+<header th:replace="components/header"></header>
+<div class="flex flex-col min-h-screen pt-10">
+    <div class="flex-1">
+        <div class="flex h-full">
+            <!-- Main Content -->
+            <main class="flex-1 p-8">
+                <div>
+                    <div th:if="${selectedTab == 'orders'}">
+                        <div class="flex space-x-4">
+                            <!-- Order List Table -->
+                            <div class="w-7/10 bg-white rounded-lg shadow-lg p-6 full-height">
+                                <!-- Date Filter Form -->
+                                <form th:action="@{/admin/dashboard/orders}" method="get" class="mb-4">
+                                    <div class="flex space-x-4">
+                                        <div>
+                                            <label for="startDate" class="block text-sm font-medium text-gray-700">Từ ngày</label>
+                                            <input type="date" id="startDate" name="startDate" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                                   th:value="${startDate != null ? startDate : #dates.format(new java.util.Date(), 'yyyy-MM-dd')}">
+                                        </div>
+                                        <div>
+                                            <label for="endDate" class="block text-sm font-medium text-gray-700">Đến ngày</label>
+                                            <input type="date" id="endDate" name="endDate" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                                   th:value="${endDate != null ? endDate : #dates.format(new java.util.Date(), 'yyyy-MM-dd')}">
+                                        </div>
+                                        <div>
+                                            <label for="searchType" class="block text-sm font-medium text-gray-700">Tìm kiếm theo</label>
+                                            <select id="searchType" name="searchType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm border">
+                                                <option value="id" th:selected="${searchType == 'id'}">ID</option>
+                                                <option value="name" th:selected="${searchType == 'name'}">Tên người mua</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label for="searchValue" class="block text-sm font-medium text-gray-700">Giá trị tìm kiếm</label>
+                                            <input type="text" id="searchValue" name="searchValue" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm border" th:value="${searchValue}">
+                                        </div>
+                                        <div class="flex items-end space-x-2">
+                                            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">Lọc</button>
+                                            <button type="button" class="px-4 py-2 bg-gray-500 text-white rounded-md" onclick="resetFilters()">Reset</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="w-full fixed-width">
+                                    <table class="w-full border text-left border-gray-300">
+                                        <thead>
+                                        <tr>
+                                            <th class="border px-4 py-2 border-gray-300">Người mua</th>
+                                            <th class="border px-4 py-2 border-gray-300">
+                                                <a href="#" th:href="@{/admin/dashboard/orders(sort='orderAt', order=${sortOrder == 'asc' ? 'desc' : 'asc'}, startDate=${startDate}, endDate=${endDate})}">
+                                                    Ngày mua <span th:text="${sortOrder == 'asc' ? '▲' : '▼'}"></span>
+                                                </a>
+                                            </th>
+                                            <th class="border px-4 py-2 border-gray-300">Ngày hủy</th>
+                                            
+                                            <th class="border px-4 py-2 border-gray-300">Tổng tiền</th>
+                                            <th class="border px-4 py-2 border-gray-300">Trạng thái</th>
+                                            
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="order : ${orders}" th:attr="data-order-id=${order.id}" onclick="showOrderDetails(this.getAttribute('data-order-id'))" class="cursor-pointer">
+                                                <td class="border px-4 py-2 border-gray-300" th:text="${order.customer.name}" ></td>
+                                                <td class="border px-4 py-2 border-gray-300" th:text="${#dates.format(order.orderAt, 'dd/MM/yyyy')}"></td>
+                                                <td class="border px-4 py-2 border-gray-300" th:text="${order.cancelledAt != null ? #dates.format(order.cancelledAt, 'dd/MM/yyyy') : ''}"></td>
+                                                <td class="border px-4 py-2 border-gray-300" th:text="${#numbers.formatDecimal(order.totalDue, 0, 'COMMA', 0, 'POINT') + ' VND'}"></td>
+                                                <td class="border px-4 py-2 border-gray-300" th:text="${order.status == 0 ? 'Chưa hoàn thành' : 'Đã hoàn thành'}"></td>
+                                                
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <!-- Pagination -->
+                                    <div class="mt-4 flex justify-center pagination-container">
+                                        <button class="px-4 py-2 bg-gray-300 rounded-md pagination-button" onclick="prevPage()">&#60;</button>
+                                        <span id="pagination" class="px-4 py-2 flex"></span>
+                                        <button class="px-4 py-2 bg-gray-300 rounded-md pagination-button" onclick="nextPage()">&#62;</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Order Details Section -->
+                            <div id="orderDetailSection" class="w-3/10 bg-white rounded-lg shadow-lg p-6 full-height fixed-width-detail">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h2 class="text-xl font-bold">Chi tiết đơn hàng</h2>
+                                </div>
+                                <div>
+                                    <p><strong>Mã đơn hàng:</strong> <span id="detailId"></span></p>
+                                    <p><strong>Khách hàng:</strong> <span id="detailCustomer"></span></p>
+                                    <p><strong>Ngày đặt hàng:</strong> <span id="detailOrderAt"></span></p>
+                                    <p><strong>Ngày hủy đơn:</strong> <span id="detailCancelledAt"></span></p>
+                                    <p><strong>Tổng tiền:</strong> <span id="detailTotalDue"></span></p>
+                                    <p><strong>Trạng thái:</strong> <span id="detailStatus"></span></p>
+                                </div>
+                                <h3 class="text-lg font-bold mt-4">Danh sách mặt hàng</h3>
+                                <div id="orderItems" class="space-y-4">
+                                    <!-- Items will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+<div th:replace="/components/lucide_icons :: lucide_icon"></div>
+<footer th:replace="components/footer"></footer>
+<script th:inline="javascript">
+    const orders = /*[[${orders}]]*/ [];
+    let currentPage = 1;
+    const itemsPerPage = 10;
+    let selectedOrderId = null;
+
+    function showPage(page) {
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const paginatedOrders = orders.slice(start, end);
+        const tbody = document.querySelector('tbody');
+        tbody.innerHTML = '';
+        paginatedOrders.forEach(order => {
+            const row = document.createElement('tr');
+            row.setAttribute('data-order-id', order.id);
+            row.classList.add('cursor-pointer');
+            if (order.id == selectedOrderId) {
+                row.classList.add('selected-row');
+            }
+            row.onclick = () => showOrderDetails(order.id);
+            row.innerHTML = `
+                <td class="border px-4 py-2 border-gray-300">${order.customer.name}</td>
+                <td class="border px-4 py-2 border-gray-300">${new Date(order.orderAt).toLocaleDateString('vi-VN')}</td>
+                <td class="border px-4 py-2 border-gray-300">${order.cancelledAt ? new Date(order.cancelledAt).toLocaleDateString('vi-VN') : ''}</td>
+                <td class="border px-4 py-2 border-gray-300">${order.totalDue.toLocaleString('vi-VN')} VND</td>
+                <td class="border px-4 py-2 border-gray-300">${order.status == 0 ? 'Chưa hoàn thành' : 'Đã hoàn thành'}</td>
+            `;
+            tbody.appendChild(row);
+        });
+        updatePagination();
+    }
+
+    function updatePagination() {
+        const totalPages = Math.ceil(orders.length / itemsPerPage);
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.classList.add('px-2', 'py-1', 'mx-1', 'rounded-md', 'bg-gray-300', 'pagination-button');
+            if (i === currentPage) {
+                pageButton.classList.add('bg-blue-500', 'text-white');
+            }
+            pageButton.textContent = i;
+            pageButton.onclick = () => {
+                currentPage = i;
+                showPage(currentPage);
+            };
+            pagination.appendChild(pageButton);
+        }
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            showPage(currentPage);
+        }
+    }
+
+    function nextPage() {
+        const totalPages = Math.ceil(orders.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            showPage(currentPage);
+        }
+    }
+
+    // Hiển thị chi tiết người dùng khi nhấn nút "Chi tiết"
+    function showDetails(userId) {
+        const userRow = document.querySelector(`[data-user-id="${userId}"]`);
+        if (userRow) {
+            document.getElementById('detailId').textContent = userRow.dataset.userId;
+            document.getElementById('detailName').textContent = userRow.dataset.name;
+            document.getElementById('detailPhone').textContent = userRow.dataset.phoneNumber;
+            document.getElementById('detailEmail').textContent = userRow.dataset.email;
+            document.getElementById('detailAddress').textContent = userRow.dataset.address;
+            document.getElementById('detailDob').textContent = userRow.dataset.dob;
+        }
+    }
+
+    // Hiển thị chi tiết đơn hàng khi nhấn vào hàng
+    function showOrderDetails(orderId) {
+        selectedOrderId = orderId;
+        const orderToRender = orders.find(order => order.id == orderId);
+        if (orderToRender) {
+            document.getElementById('detailId').textContent = orderToRender.id;
+            const formatedDate = new Date(orderToRender.orderAt).toLocaleDateString('vi-VN');
+            document.getElementById('detailOrderAt').textContent = formatedDate;
+            document.getElementById('detailCancelledAt').textContent = orderToRender.cancelledAt != null ? orderToRender.cancelledAt : 'Không có';
+            document.getElementById('detailCustomer').textContent = orderToRender.customer.name;
+            document.getElementById('detailTotalDue').textContent = orderToRender.totalDue + ' VND';
+            document.getElementById('detailStatus').textContent = orderToRender.status == 0 ? 'Chưa hoàn thành' : 'Đã hoàn thành';
+            const orderItems = orderToRender.orderDetails;
+            const orderItemsContainer = document.getElementById('orderItems');
+            orderItemsContainer.innerHTML = '';
+            orderItems.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.classList.add('flex', 'items-center', 'gap-4', 'pt-4', 'bg-white', 'rounded-md', 'shadow-sm');
+                itemElement.innerHTML = `
+                    <a href="/product/${item.variant.itemId}" class="flex items-center gap-4 h-16">
+                        <img src="${item.variant.imageUrls[0]}" alt="${item.variant.name}" class="w-16 h-16 object-cover">
+                        <div class="flex-1 h-16">
+                            <h3 class="text-xs font-semibold text-gray-700">${item.variant.name}</h3>
+                            <div class="flex justify-between h-16 items-center">
+                                <p class="text-xs text-gray-500">Số lượng: ${item.quantity}</p>
+                                <p class="text-xs font-semibold text-gray-700">${item.variant.price} VND</p>
+                            </div>
+                        </div>
+                    </a>
+                `;
+                orderItemsContainer.appendChild(itemElement);
+            });
+            document.getElementById('orderDetailSection').classList.remove('hidden');
+            showPage(currentPage); // Update the page to highlight the selected row
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('orderDetailModal').classList.add('hidden');
+    }
+
+    function resetFilters() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').value = today;
+        document.getElementById('endDate').value = today;
+        document.getElementById('searchType').value = 'id';
+        document.getElementById('searchValue').value = '';
+        window.location.href = '/admin/dashboard/orders';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        showPage(currentPage);
+    });
+</script>
+</body>
+</html>  
+

@@ -13,14 +13,14 @@ import fit.iuh.modish_motion.entities.OrderDetail;
 public class OrderDetailDTO {
     private int id;
     private Order order;
-    private Variant variant;
+    private VariantDTO variant;
     private int quantity;
 
     public static OrderDetailDTO fromEntity(OrderDetail orderDetail) {
         return new OrderDetailDTO(
             orderDetail.getId(),
             orderDetail.getOrder(),
-            orderDetail.getVariant(),
+            new VariantDTO().fromEntity(orderDetail.getVariant()),
             orderDetail.getQuantity()
         );
     }
@@ -29,7 +29,7 @@ public class OrderDetailDTO {
         OrderDetail orderDetail = new OrderDetail();
         orderDetail.setId(this.id);
         orderDetail.setOrder(this.order);
-        orderDetail.setVariant(this.variant);
+        orderDetail.setVariant(this.variant.toEntity());
         orderDetail.setQuantity(this.quantity);
         return orderDetail;
     }

@@ -1,6 +1,4 @@
 package fit.iuh.modish_motion.repositories;
-
-import fit.iuh.modish_motion.dto.ItemDTO;
 import fit.iuh.modish_motion.entities.Item;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

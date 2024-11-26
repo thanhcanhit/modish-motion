@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
   <head>
+      <div th:replace="components/head :: head"></div>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kết quả tìm kiếm</title>
@@ -77,14 +78,15 @@
   <body class="bg-white">
     <header th:replace="components/header :: header"></header>
 
-    <main class="pt-16">
-      <div class="container mx-auto px-4 lg:px-6">
-        <nav class="flex items-center gap-2 text-sm text-gray-500 py-4">
-          <a href="/" class="hover:text-[#31495e]">Trang chủ</a>
-          <span>></span>
-          <span class="text-[#31495e]">Kết quả tìm kiếm</span>
-        </nav>
 
+
+<main class="pt-16">
+    <div class="container mx-auto px-4 lg:px-6">
+        <nav class="flex items-center gap-2 text-sm text-gray-500 py-4">
+            <a href="/" class="hover:text-[#31495e]">Trang chủ</a>
+            <span>></span>
+            <span class="text-[#31495e]">Kết quả tìm kiếm</span>
+        </nav>
         <h1 class="text-2xl font-semibold text-[#31495e] mb-4">
           Kết quả tìm kiếm cho
         </h1>
@@ -160,6 +162,7 @@
     </main>
     <div th:replace="filter"></div>
     <footer th:replace="components/footer"></footer>
+    <div th:replace="/components/lucide_icons :: lucide_icon"></div>
 
     <script th:inline="javascript">
       document.addEventListener("DOMContentLoaded", function () {
@@ -283,5 +286,6 @@
       });
     </script>
     <script th:src="@{/js/filter.js}"></script>
+    
   </body>
 </html>

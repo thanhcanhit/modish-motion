@@ -2,6 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
+      <div th:replace="components/head :: head"></div>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nam - YODY</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -202,9 +203,8 @@
         </div>
       </div>
     </main>
-    <div th:replace="filter"></div>
     <footer th:replace="components/footer"></footer>
-
+    <div th:replace="/components/lucide_icons :: lucide_icon"></div>
     <script th:inline="javascript">
       document.addEventListener("DOMContentLoaded", function () {
         const productGrid = document.getElementById("productGrid");
@@ -213,7 +213,6 @@
         const productCountElement = document.getElementById("productCount");
         const items = Array.from(productGrid.children);
         const totalItems = /*[[${totalItems}]]*/ 0;
-        const itemsFilter = /*[[${items}]]*/ [];
         let itemsToShow = 18;
         let currentIndex = itemsToShow;
 
@@ -221,64 +220,6 @@
         function updateProductCount() {
           productCountElement.textContent = `${totalItems} sản phẩm`;
         }
-        let { colors, sizes } = getFilterItems(itemsFilter);
-        
-        // console.log(colors);
-        // console.log(sizes);
-        // Check xem color có trong mảng chưa
-        function checkColor(color, colors) {
-          colors.forEach((c) => {
-            if (c.id == color.id) {
-              // console.log("false");
-              return false;
-            }
-          });
-          // console.log("true");
-          return true;
-        }
-
-        // Check xem size có trong mảng chưa
-        function checkSize(size, sizes) {
-          sizes.forEach((s) => {
-            if (s.id == size.id) {
-              // console.log("false");
-              return false;
-            }
-          });
-          // console.log("true");
-          return true;
-        }
-
-        // Lấy thông tin về các color và size trong danh sách sản phẩm
-        function getFilterItems(items) {
-          let colors = [];
-          let sizes = [];
-          items.forEach((item) => {
-            const variants = item.displayVariants;
-            variants.forEach((variant) => {
-              let bool1 = checkColor(variant.color, colors);
-              if (bool1) {
-                colors.push(variant.color); // color có dạng {id, color, hex}
-              }
-              let bool2 = checkSize(variant.size, sizes);
-              if (bool2) {
-                sizes.push(variant.size); // {id, size}
-              }
-            });
-          });
-          // lọc các phần tử trùng lặp
-          colors = colors.filter((color, index, self) => {
-            return index === self.findIndex((t) => t.id === color.id);
-          });
-          sizes = sizes.filter((size, index, self) => {
-            return index === self.findIndex((t) => t.id === size.id);
-          });
-          return { colors, sizes };
-        }
-
-        // Đưa data vào filter
-        renderFilters(colors, sizes);
-
         updateProductCount();
 
         // Ẩn các sản phẩm ban đầu
