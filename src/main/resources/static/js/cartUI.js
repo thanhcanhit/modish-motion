@@ -26,7 +26,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             cartItemsContainer.classList.remove('hidden');
         }
 
-        cart.items.forEach(item => {
+        let quantityUpdated = false;
+
+        for (const item of cart.items) {
+            // Check if cart quantity exceeds available quantity
+            if (item.quantity > item.variant.availableQuantity) {
+                await CartAPI.updateQuantity(item.variant.id, item.variant.availableQuantity);
+                showToast(`Số lượng sản phẩm "${item.variant.name}" đã được điều chỉnh do vượt quá số lượng có sẵn`, 'warning');
+                quantityUpdated = true;
+                continue; // Skip this iteration and let the next render handle it
+            }
+
             const row = document.createElement('div');
             row.classList.add('flex', 'gap-4', 'border-b', 'border-gray-300', 'items-start', 'bg-white', 'p-4');
 
@@ -69,11 +79,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             size.textContent = `Size: ${item.variant.size.size}`;
             optionsDiv.appendChild(size);
 
+            // Add remaining quantity display
+            const remainingQuantity = document.createElement('p');
+            remainingQuantity.classList.add('text-xs', 'flex', 'items-center', 'gap-1', 'text-gray-500', 'ml-2');
+            remainingQuantity.textContent = `Còn lại: ${item.variant.availableQuantity} sản phẩm`;
+            optionsDiv.appendChild(remainingQuantity);
+
             detailsDiv.appendChild(optionsDiv);
 
-            // Add quantity controls
+            // Update the quantity controls section to show warning when near max quantity
             const quantityDiv = document.createElement('div');
-            quantityDiv.classList.add('flex', 'items-center', 'gap-2', 'mt-2');
+            quantityDiv.classList.add('flex', 'flex-col', 'gap-1', 'mt-2');
+
+            const quantityControls = document.createElement('div');
+            quantityControls.classList.add('flex', 'items-center', 'gap-2');
 
             const decreaseButton = document.createElement('button');
             decreaseButton.textContent = '-';
@@ -95,15 +114,29 @@ document.addEventListener('DOMContentLoaded', async () => {
             const increaseButton = document.createElement('button');
             increaseButton.textContent = '+';
             increaseButton.classList.add('btn', 'border', 'btn-sm');
+            increaseButton.disabled = item.quantity >= item.variant.availableQuantity;
             increaseButton.addEventListener('click', async () => {
-                await CartAPI.updateQuantity(item.variant.id, item.quantity + 1);
-                await renderCartItems();
-                await updateTotalPrice();
+                if (item.quantity < item.variant.availableQuantity) {
+                    await CartAPI.updateQuantity(item.variant.id, item.quantity + 1);
+                    await renderCartItems();
+                    await updateTotalPrice();
+                } else {
+                    showToast('Đã đạt số lượng tối đa có sẵn', 'warning');
+                }
             });
 
-            quantityDiv.appendChild(decreaseButton);
-            quantityDiv.appendChild(quantityInput);
-            quantityDiv.appendChild(increaseButton);
+            // Add warning message if quantity is close to maximum
+            if (item.quantity >= item.variant.availableQuantity) {
+                const warningMessage = document.createElement('p');
+                warningMessage.classList.add('text-xs', 'text-warning');
+                warningMessage.textContent = 'Đã đạt số lượng tối đa';
+                quantityDiv.appendChild(warningMessage);
+            }
+
+            quantityControls.appendChild(decreaseButton);
+            quantityControls.appendChild(quantityInput);
+            quantityControls.appendChild(increaseButton);
+            quantityDiv.appendChild(quantityControls);
 
             detailsDiv.appendChild(quantityDiv);
             row.appendChild(detailsDiv);
@@ -120,7 +153,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             row.appendChild(removeButton);
             cartItemsContainer.appendChild(row);
-        });
+        }
+
+        // If any quantities were updated, re-render to show correct quantities
+        if (quantityUpdated) {
+            await renderCartItems();
+        }
 
         await updateTotalPrice();
     }
@@ -148,6 +186,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         const shippingFee = progressValue >= 100 ? 0 : SHIPPING_FEE;
         const grandTotal = totalAmount + shippingFee;
         grandTotalElement.textContent = `${grandTotal.toLocaleString()} đ`;
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('alert-toast');
+        const toastMessage = document.getElementById('toast-message');
+
+        toast.className = 'alert';
+        switch (type) {
+            case 'success':
+                toast.classList.add('alert-success');
+                break;
+            case 'error':
+                toast.classList.add('alert-error');
+                break;
+            case 'warning':
+                toast.classList.add('alert-warning');
+                break;
+            default:
+                toast.classList.add('alert-info');
+        }
+
+        toastMessage.textContent = message;
+        toast.classList.remove('hidden');
+
+        setTimeout(() => {
+            toast.classList.add('hidden');
+        }, 3000);
     }
 
     // Initialize

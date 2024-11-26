@@ -10,4 +10,5 @@ public interface CartService {
     void updateQuantity(String variantId, int quantity);
     void clearCart();
     int getTotalItems();
+    boolean validateQuantity(String variantId, int newQuantity);
 } 

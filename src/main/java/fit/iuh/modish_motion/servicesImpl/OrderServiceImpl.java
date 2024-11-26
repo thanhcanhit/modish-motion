@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;

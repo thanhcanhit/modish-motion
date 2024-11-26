@@ -5,6 +5,14 @@ class CartAPI {
     }
 
     static async addItem(item) {
+        const cart = await this.getCart();
+        const existingItem = cart.items.find(cartItem => cartItem.variant.id === item.variant.id);
+        const totalQuantity = (existingItem ? existingItem.quantity : 0) + item.quantity;
+        
+        if (totalQuantity > item.variant.availableQuantity) {
+            throw new Error(`Giỏ hàng của bạn đã đạt số lượng sản phẩm còn lại: ${item.variant.availableQuantity}`);
+        }
+
         const response = await fetch('/api/cart/add', {
             method: 'POST',
             headers: {
@@ -12,6 +20,11 @@ class CartAPI {
             },
             body: JSON.stringify(item)
         });
+
+        if (!response.ok) {
+            throw new Error('Failed to add item to cart');
+        }
+
         return await response.json();
     }
 

@@ -1,4 +1,3 @@
-
 package fit.iuh.modish_motion.repositories;
 
 import fit.iuh.modish_motion.entities.Variant;
