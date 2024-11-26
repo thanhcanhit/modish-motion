@@ -82,7 +82,7 @@ public class OrderServiceImpl implements OrderService {
         // Save the order first
         Order order = orderDTO.toEntity();
         Order savedOrder = orderRepository.save(order);
-        
+
         // Update order details with the saved order
         List<OrderDetailDTO> updatedDetails = orderDetails.stream()
                 .map(detail -> {
@@ -90,10 +90,10 @@ public class OrderServiceImpl implements OrderService {
                     String variantId = detail.getVariant().getId();
                     int quantity = detail.getQuantity();
                     variantService.updateQuantity(variantId, -quantity);
-                    
+
                     // Set order reference
                     detail.setOrder(savedOrder);
-                    
+
                     // Save order detail
                     return orderDetailService.save(detail);
                 })
@@ -101,6 +101,7 @@ public class OrderServiceImpl implements OrderService {
 
         // Return complete order with details
         return OrderDTO.fromEntity(savedOrder, updatedDetails);
+    }
     public List<OrderDTO> findByDateRange(Date startDate, Date endDate, Sort sort) {
         // Adjust endDate to include the entire day
         Date adjustedEndDate = new Date(endDate.getTime() + (1000 * 60 * 60 * 24) - 1);
