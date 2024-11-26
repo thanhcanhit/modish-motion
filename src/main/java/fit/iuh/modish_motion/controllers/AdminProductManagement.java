@@ -35,19 +35,32 @@ public class AdminProductManagement {
     // Hiển thị trang quản lý sản phẩm
     @GetMapping
     public String getAdminPage(@RequestParam(defaultValue = "0") int page,
+                               @RequestParam(required = false) String search,
+                               @RequestParam(required = false) String selectedItemId,
                                Model model) {
-        // Tạo Pageable cho phân trang
         Pageable pageable = PageRequest.of(page, 10);
-        Page<ItemDTO> items = itemService.findByPage(pageable);
 
+        // Tìm kiếm hoặc phân trang sản phẩm
+        Page<ItemDTO> items;
+        if (search != null && !search.isEmpty()) {
+            items = itemService.searchByName(search, pageable);
+        } else {
+            items = itemService.findByPage(pageable);
+        }
 
-        // Đảm bảo items không null
-//        if (items == null) items = ;
-        model.addAttribute("items", items.getContent()); // Danh sách các item
-        model.addAttribute("totalPages", items.getTotalPages()); // Tổng số trang
-        model.addAttribute("items", items);
+        // Lấy danh sách biến thể nếu có sản phẩm được chọn
+        List<VariantDTO> variants = List.of(); // Mặc định danh sách biến thể rỗng
+        if (selectedItemId != null && !selectedItemId.isEmpty()) {
+            variants = variantService.findByItemId(selectedItemId);
+        }
+
+        // Thêm dữ liệu vào model
+        model.addAttribute("items", items.getContent()); // Danh sách sản phẩm
+        model.addAttribute("totalPages", items.getTotalPages()); // Tổng số trang sản phẩm
         model.addAttribute("currentPage", page); // Trang hiện tại
-        model.addAttribute("variants", List.of()); // Biến thể rỗng khi không chọn sản phẩm
+        model.addAttribute("search", search); // Giá trị tìm kiếm
+        model.addAttribute("selectedItemId", selectedItemId); // ID sản phẩm được chọn
+        model.addAttribute("variants", variants); // Danh sách biến thể
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("sizes", sizeService.findAll());
         model.addAttribute("colors", colorService.findAll());
@@ -55,28 +68,6 @@ public class AdminProductManagement {
         return "admin/admin";
     }
 
-    @GetMapping("/{id}")
-    public String getItemWithVariants(@PathVariable String id,
-                                      @RequestParam int page,
-                                      Model model) {
-        // Tạo Pageable cho phân trang
-        Pageable pageable = PageRequest.of(page, 10);
-        Page<ItemDTO> items = itemService.findByPage(pageable);
-        List<VariantDTO> variants = variantService.findByItemId(id);
-
-        if (variants == null) variants = List.of();
-
-        model.addAttribute("items", items.getContent()); // Danh sách các item
-        model.addAttribute("totalPages", items.getTotalPages()); // Tổng số trang
-        model.addAttribute("currentPage", page); // Trang hiện tại
-        model.addAttribute("variants", variants);
-        model.addAttribute("selectedItemId", id);
-        model.addAttribute("categories", categoryService.findAll());
-        model.addAttribute("sizes", sizeService.findAll());
-        model.addAttribute("colors", colorService.findAll());
-
-        return "admin/admin";
-    }
     @GetMapping("/{id}/variants/get")
     @ResponseBody
     public VariantDTO getVariant(@PathVariable String id, @RequestParam String variantId) {
@@ -89,7 +80,7 @@ public class AdminProductManagement {
     @GetMapping("/get")
     @ResponseBody
     public ItemDTO getProduct(@RequestParam String id) {
-        return itemService.findById(id).orElse(new ItemDTO());
+        return itemService.findByIdWithoutVariant(id).orElse(new ItemDTO());
     }
 
 

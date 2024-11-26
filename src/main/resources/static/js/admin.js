@@ -1,3 +1,30 @@
+const container = document.getElementById('image-links-container');
+const newLinkInput = document.getElementById('new-link-input');
+const template = document.getElementById('link-template').content;
+
+/** Add new link to the list */
+function addLink() {
+    const value = newLinkInput.value.trim();
+    if (!value) return;
+    createLinkElement(value);
+    newLinkInput.value = '';
+}
+
+/** Remove link from the list */
+function removeLink(button) {
+    const linkElement = button.parentNode;
+    container.removeChild(linkElement);
+}
+
+/** Create a link element in the UI */
+function createLinkElement(value) {
+    const clone = template.cloneNode(true);
+    const img = clone.querySelector('img');
+    const input = clone.querySelector('input');
+    input.value = value;
+    img.src = value;
+    container.appendChild(clone);
+}
 
 function navigateToItem(rowElement) {
     const url = rowElement.getAttribute('data-url');
@@ -7,6 +34,8 @@ function navigateToItem(rowElement) {
         console.error("No URL found in data attribute");
     }
 }
+
+
 
 
 function openItemModal(isAdd) {
@@ -30,7 +59,7 @@ function saveProduct() {
         tags: document.getElementById('product-tags').value,
         category: { id: document.getElementById('product-category').value },
         characteristic: document.getElementById('item-characteristic').value,
-        gender: document.querySelector('input[name="gender"]:checked').value,
+        gender: document.getElementById('product-gender').value,
     };
     fetch('/admin/products/save', {
         method: 'POST',
@@ -49,17 +78,17 @@ function editProduct(productId) {
     fetch(`/admin/products/get?id=${productId}`)
         .then(response => response.json())
         .then(product => {
-            document.getElementById('product-id').value = product.id || ''; // Set giá trị id
-            document.getElementById('product-name').value = product.name || '';
-            document.getElementById('product-price').value = product.promotionPrice || 0;
-            document.getElementById('product-category').value = product.category?.id || '';
-            document.querySelector('textarea').value = product.characteristic || '';
-
+            document.getElementById('product-id').value = product.id ;
+            document.getElementById('product-name').value = product.name ;
+            document.getElementById('product-price').value = product.promotionPrice ;
+            document.getElementById('product-category').value = product.category?.id ;
+            document.querySelector('textarea').value = product.characteristic ;
+            document.getElementById('product-gender').value = product.gender ;
             // Set gender radio button
-            if (product.gender) {
-                const genderInput = document.querySelector(`input[name="gender"][value="${product.gender}"]`);
-                if (genderInput) genderInput.checked = true;
-            }
+            // if (product.gender) {
+            //     const genderInput = document.querySelector(`input[name="gender"][value="${product.gender}"]`);
+            //     if (genderInput) genderInput.checked = true;
+            // }
 
             document.getElementById('product-modal-title').innerText = 'Update Product';
             openItemModal(false);
@@ -79,33 +108,46 @@ function deleteProduct(productId) {
 
 
 function openVariantModal(isAdd) {
-    if(isAdd){
+    const container = document.getElementById('image-links-container'); // Lấy container chứa các link
+
+    if (isAdd) {
+        // Đặt tiêu đề modal là "Add Variant"
         document.getElementById('variant-modal-title').innerText = 'Add Variant';
-        document.getElementById('variant-form').reset()
-        document.getElementById('variant-modal').classList.remove('hidden');
+
+        // Reset form
+        document.getElementById('variant-form').reset();
+
+        // Xóa hết các link ảnh trong container
+        container.innerHTML = '';
     }
+
+    // Hiển thị modal
     document.getElementById('variant-modal').classList.remove('hidden');
 }
 
 function closeVariantModal() {
     document.getElementById('variant-modal').classList.add('hidden');
-}const imageLinksInput = document.getElementById('variant-images').value;
+}
 function saveVariant() {
     const itemId = document.getElementById('selected-item-id').value;
     if (!itemId) {
         console.error('Item ID is missing');
         return;
     }
-    const imageLinksInput = document.getElementById('variant-images').value;
+
+    // Thu thập các link ảnh từ giao diện
+    const imageLinks = Array.from(document.querySelectorAll('#image-links-container input')).map(input => input.value.trim());
+
     const variant = {
-        id: document.getElementById('variant-id').value, // Lấy id từ input ẩn
+        id: document.getElementById('variant-id').value,
         name: document.getElementById('variant-name').value,
         price: document.getElementById('variant-price').value,
         availableQuantity: document.getElementById('variant-quantity').value,
         color: { id: document.querySelector('#variant-modal select[name="color_id"]').value },
         size: { id: document.querySelector('#variant-modal select[name="size_id"]').value },
-        imageUrls: imageLinksInput.split(',').map(link => link.trim())
+        imageUrls: imageLinks,
     };
+
     fetch(`/admin/products/${itemId}/variants/save`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -117,23 +159,28 @@ function saveVariant() {
         })
         .catch(error => console.error('Error saving variant:', error));
 }
-
 function editVariant(itemId, variantId) {
     fetch(`/admin/products/${itemId}/variants/get?variantId=${variantId}`)
         .then(response => response.json())
         .then(variant => {
-            document.getElementById('variant-id').value = variant.id || ''; // Set giá trị id
-            document.getElementById('variant-name').value = variant.name || '';
-            document.getElementById('variant-price').value = variant.price || 0;
-            document.getElementById('variant-quantity').value = variant.availableQuantity || 0;
-            document.querySelector('#variant-modal select[name="color_id"]').value = variant.color?.id || '';
-            document.querySelector('#variant-modal select[name="size_id"]').value = variant.size?.id || '';
-            document.getElementById('variant-images').value = (variant.images || []).join(', ');
+            document.getElementById('variant-id').value = variant.id;
+            document.getElementById('variant-name').value = variant.name;
+            document.getElementById('variant-price').value = variant.price;
+            document.getElementById('variant-quantity').value = variant.availableQuantity;
+            document.querySelector('#variant-modal select[name="color_id"]').value = variant.color?.id;
+            document.querySelector('#variant-modal select[name="size_id"]').value = variant.size?.id;
+
+            // Làm sạch và thêm các link ảnh
+            const container = document.getElementById('image-links-container');
+            container.innerHTML = ''; // Xóa các link cũ
+            (variant.imageUrls || []).forEach(link => createLinkElement(link));
+
             document.getElementById('variant-modal-title').innerText = 'Update Variant';
             openVariantModal(false);
         })
         .catch(error => console.error('Error loading variant:', error));
 }
+
 
 
 

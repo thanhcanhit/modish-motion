@@ -44,4 +44,7 @@ public interface ItemRepository extends JpaRepository<Item, String> {
     long countByCategoryIdAndFilter(@Param("categoryId") int categoryId,
                                     @Param("colors") List<String> colors,
                                     @Param("sizes") List<String> sizes);
+    @Query("SELECT i FROM Item i WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+    Page<Item> searchByName(@Param("name") String name, Pageable pageable);
+
 }

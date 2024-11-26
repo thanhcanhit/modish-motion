@@ -59,6 +59,7 @@ public class VariantServiceImpl implements VariantService {
         existingVariant.setSize(variant.getSize().toEntity());
         existingVariant.setPrice(variant.getPrice());
         existingVariant.setAvailableQuantity(variant.getAvailableQuantity());
+        existingVariant.setImageUrl(variant.toEntity().getImageUrl());
         variantRepository.save(existingVariant);
     }
 

@@ -41,10 +41,22 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public Optional<ItemDTO> findByIdWithoutVariant(String id) {
+        return itemRepository.findById(id)
+                .map(ItemDTO::fromEntity);
+    }
+
+    @Override
     public ItemDTO save(ItemDTO itemDTO) {
         Item item = itemDTO.toEntity();
         Item savedItem = itemRepository.save(item);
         return ItemDTO.fromEntity(savedItem);
+    }
+
+    @Override
+    public Page<ItemDTO> searchByName(String name, Pageable pageable) {
+        return itemRepository.searchByName(name,pageable)
+                .map(ItemDTO::fromEntity);
     }
 
     @Override
