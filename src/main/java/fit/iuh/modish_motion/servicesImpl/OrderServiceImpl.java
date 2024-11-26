@@ -10,9 +10,11 @@ import fit.iuh.modish_motion.services.VariantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,6 +39,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDTO> findAll() {
         List<Order> orders = orderRepository.findAll();
+        return orders.stream()
+                .map(order -> OrderDTO.fromEntity(order, orderDetailService.findByOrderId(order.getId())))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderDTO> findAll(Sort sort) {
+        List<Order> orders = orderRepository.findAll(sort);
         return orders.stream()
                 .map(order -> OrderDTO.fromEntity(order, orderDetailService.findByOrderId(order.getId())))
                 .collect(Collectors.toList());
@@ -91,5 +101,12 @@ public class OrderServiceImpl implements OrderService {
 
         // Return complete order with details
         return OrderDTO.fromEntity(savedOrder, updatedDetails);
+    public List<OrderDTO> findByDateRange(Date startDate, Date endDate, Sort sort) {
+        // Adjust endDate to include the entire day
+        Date adjustedEndDate = new Date(endDate.getTime() + (1000 * 60 * 60 * 24) - 1);
+        List<Order> orders = orderRepository.findByOrderAtBetween(startDate, adjustedEndDate, sort);
+        return orders.stream()
+                .map(order -> OrderDTO.fromEntity(order, orderDetailService.findByOrderId(order.getId())))
+                .collect(Collectors.toList());
     }
 }

@@ -37,25 +37,25 @@
 
 <div id="filterPanel" class="hidden">
   <div
-    class="bg-white w-full h-full rounded-none overflow-hidden transform transition-all duration-300 ease-in-out absolute bottom-0 sm:relative sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2"
+          class="bg-white w-full h-full rounded-none overflow-hidden transform transition-all duration-300 ease-in-out absolute bottom-0 sm:relative sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2"
   >
     <div class="p-6 h-full flex flex-col">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-semibold filter-title">Bộ lọc</h2> <!-- Added filter-title class -->
         <button
-          onclick="closeFilter()"
-          class="text-gray-500 hover:text-gray-700"
+                onclick="closeFilter()"
+                class="text-gray-500 hover:text-gray-700"
         >
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
           >
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -80,31 +80,31 @@
           <div id="priceFilters" class="space-y-2">
             <label class="flex items-center space-x-2">
               <input
-                type="radio"
-                name="priceRange"
-                value="0-350000"
-                class="form-radio"
-                onclick="selectedPriceRange = '0-350000'"
+                      type="radio"
+                      name="priceRange"
+                      value="0-350000"
+                      class="form-radio"
+                      onclick="selectedPriceRange = '0-350000'"
               />
               <span>Dưới 350,000đ</span>
             </label>
             <label class="flex items-center space-x-2">
               <input
-                type="radio"
-                name="priceRange"
-                value="350000-750000"
-                class="form-radio"
-                onclick="selectedPriceRange = '350000-750000'"
+                      type="radio"
+                      name="priceRange"
+                      value="350000-750000"
+                      class="form-radio"
+                      onclick="selectedPriceRange = '350000-750000'"
               />
               <span>350,000đ - 750,000đ</span>
             </label>
             <label class="flex items-center space-x-2">
               <input
-                type="radio"
-                name="priceRange"
-                value="750000"
-                class="form-radio"
-                onclick="selectedPriceRange = '750000'"
+                      type="radio"
+                      name="priceRange"
+                      value="750000"
+                      class="form-radio"
+                      onclick="selectedPriceRange = '750000'"
               />
               <span on>Trên 750,000đ</span>
             </label>
@@ -113,16 +113,16 @@
       </div>
       <div class="mt-6 flex gap-4">
         <button
-          id="clearFiltersBtn"
-          class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-          onclick="clearFilters()"
+                id="clearFiltersBtn"
+                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                onclick="clearFilters()"
         >
           Xóa bộ lọc
         </button>
         <button
-          id="applyFiltersBtn"
-          class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-          onclick="apllyFilters()"
+                id="applyFiltersBtn"
+                class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                onclick="apllyFilters()"
         >
           Áp dụng
         </button>
@@ -132,9 +132,16 @@
 </div>
 
 <script th:inline="javascript">
-  const selectedColors = [];
-  const selectedSizes = [];
-  let selectedPriceRange = "";
+  let selectedColors = JSON.parse(localStorage.getItem('selectedColors')) || [];
+  let selectedSizes = JSON.parse(localStorage.getItem('selectedSizes')) || [];
+  let selectedPriceRange = localStorage.getItem('selectedPriceRange') || "";
+
+  //
+  function saveFiltersToLocalStorage() {
+    localStorage.setItem('selectedColors', JSON.stringify(selectedColors));
+    localStorage.setItem('selectedSizes', JSON.stringify(selectedSizes));
+    localStorage.setItem('selectedPriceRange', selectedPriceRange);
+  }
 
   function toggleFilter(type, filter, btn) {
     if (type === "color") {
@@ -145,7 +152,7 @@
         selectedColors.splice(index, 1);
       }
       document.getElementById("selectedColors").value =
-        selectedColors.join(",");
+              selectedColors.join(",");
     } else if (type === "size") {
       const index = selectedSizes.indexOf(filter);
       if (index === -1) {
@@ -157,16 +164,20 @@
     }
     btn.classList.toggle("border");
     btn.classList.toggle("border-gray-300");
+    saveFiltersToLocalStorage();
     console.log(selectedColors, selectedSizes);
     console.log(selectedPriceRange);
   }
 
-  function apllyFilters() {}
+  function apllyFilters() {
+    saveFiltersToLocalStorage();
+  }
 
   function clearFilters() {
     selectedColors = [];
     selectedSizes = [];
     selectedPriceRange = "";
+    saveFiltersToLocalStorage();
   }
 
   function openFilter() {
@@ -192,14 +203,14 @@
     colors.forEach((color) => {
       const btn = document.createElement("button");
       btn.classList.add(
-        "filter-btn",
-        "h-[74px]",
-        "rounded-[5px]",
-        "flex",
-        "flex-col",
-        "items-center",
-        "justify-center",
-        "p-2"
+              "filter-btn",
+              "h-[74px]",
+              "rounded-[5px]",
+              "flex",
+              "flex-col",
+              "items-center",
+              "justify-center",
+              "p-2"
       );
       btn.setAttribute("data-type", "color");
       btn.setAttribute("data-value", color.id);
