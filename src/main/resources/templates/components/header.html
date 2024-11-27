@@ -30,8 +30,17 @@
                 </a>
                 <div class="dropdown dropdown-hover dropdown-end">
                     <button tabindex="0" class="p-2">
-                        <i data-lucide="user-round" class="w-6 h-6 font-semibold"></i>
+                        <!-- Hiển thị avatar nếu người dùng đã đăng nhập -->
+                        <img th:if="${#authentication.name != 'anonymousUser'}"
+                             th:src="@{/images/profile/hamburmeo.jfif}"
+                             class="w-10 h-10 rounded-full object-cover"
+                             alt="User Avatar" />
+                        <!-- Hiển thị icon nếu chưa đăng nhập -->
+                        <i data-lucide="user" class="w-6 h-6 font-semibold" th:if="${#authentication.name == 'anonymousUser'}"></i>
                     </button>
+<!--                    <button tabindex="0" class="p-2">-->
+<!--                        <i data-lucide="user-round" class="w-6 h-6 font-semibold"></i>-->
+<!--                    </button>-->
                     <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                         <li th:each="authority : ${#authentication.authorities}" th:if="${authority.authority == 'ADMIN'}">
                             <a th:href="@{/admin/dashboard}" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
