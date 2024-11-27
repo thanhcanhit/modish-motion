@@ -6,9 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import fit.iuh.modish_motion.repositories.ItemRepository;
 import fit.iuh.modish_motion.dto.ItemDTO;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +53,6 @@ public class ItemServiceImpl implements ItemService {
                 .map(ItemDTO::fromEntity)
                 .collect(Collectors.toList());
     }
-
     @Override
     public List<ItemDTO> findRelatedItems(int categoryId, String itemId, int limit) {
         return itemRepository.findRelatedItems(categoryId, itemId, limit)
@@ -64,15 +60,7 @@ public class ItemServiceImpl implements ItemService {
                 .map(ItemDTO::fromEntity)
                 .collect(Collectors.toList());
     }
-    
-    public List<ItemDTO> findByCategoryId(int categoryId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Item> itemsPage = itemRepository.findByCategoryId(categoryId, pageable);
-        return itemsPage.stream()
-                .filter(item -> item.getVariants() != null && !item.getVariants().isEmpty())
-                .map(ItemDTO::fromEntity)
-                .collect(Collectors.toList());
-    }
+
 
     @Override
     public List<ItemDTO> findByCategoryId(int categoryId) {
@@ -82,18 +70,6 @@ public class ItemServiceImpl implements ItemService {
                 .map(ItemDTO::fromEntity)
                 .collect(Collectors.toList());
     }
-
-//    @Override
-//    public List<ItemDTO> findByCategoryIdAndFilter(int categoryId, List<String> colors, List<String> sizes, int page, int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        Page<Item> itemsPage = itemRepository.findByCategoryId(categoryId, pageable);
-//        return itemsPage.stream()
-//                .filter(item -> item.getVariants() != null && !item.getVariants().isEmpty())
-//                .filter(item -> colors.isEmpty() || item.getVariants().stream().anyMatch(variant -> colors.contains(variant.getColor().getColor())))
-//                .filter(item -> sizes.isEmpty() || item.getVariants().stream().anyMatch(variant -> sizes.contains(variant.getSize().getSize())))
-//                .map(ItemDTO::fromEntity)
-//                .collect(Collectors.toList());
-//    }
 
     @Override
     public List<ItemDTO> searchItemsByName(String name) {
@@ -108,24 +84,5 @@ public class ItemServiceImpl implements ItemService {
     public long countByCategoryId(int categoryId) {
         return itemRepository.countByCategoryId(categoryId);
     }
-
-    @Override
-    public List<ItemDTO> findByCategoryIdAndFilter(int categoryId, List<String> colors, List<String> sizes, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        // Check xem có phần tử nào trong colors và sizes không
-
-        if (colors.isEmpty() && sizes.isEmpty()) {
-            return findByCategoryId(categoryId, page, size);
-        }
-
-        return itemRepository.findByCategoryIdAndFilter(categoryId, colors, sizes, pageable)
-                .stream()
-                .map(ItemDTO::fromEntity)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public long countByCategoryIdAndFilter(int categoryId, List<String> colors, List<String> sizes) {
-        return itemRepository.countByCategoryIdAndFilter(categoryId, colors, sizes);
-    }
+    // Remove methods related to filtering by size and color
 }

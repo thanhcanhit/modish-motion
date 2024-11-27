@@ -92,6 +92,7 @@
                     <div class="flex gap-2" id="size-options">
                         <!-- Size buttons will be dynamically updated based on selected color -->
                     </div>
+                    <p class="mt-2 text-sm text-gray-500">Còn lại: <span id="available-quantity">0</span> sản phẩm</p>
                 </div>
 
                 <!-- Quantity Selector -->
@@ -171,16 +172,17 @@
         </div>
     </div>
     </div>
-    
+
     <footer th:replace="components/footer"></footer>
     <div th:replace="/components/lucide_icons :: lucide_icon"></div>
     <script th:inline="javascript" type="module">
-        import { OrderDetailDTO, Cart } from '/js/cart.js';
+        import { CartAPI } from '/js/cart.js';
 
         /*<![CDATA[*/
         let variants = /*[[${product.variants}]]*/[];
         let selectedColorId = null;
         let selectedSizeId = null;
+        let currentVariant = null;
 
         const randomRating = Math.floor(Math.random() * 5) + 1;
         const randomQuantity = Math.floor(Math.random() * 200) + 1;
@@ -242,6 +244,7 @@
                             updateImages();
                             updateThumbnails();
                             highlightSelectedSize();
+                            updateAvailableQuantity();
                         });
                     });
 
@@ -249,6 +252,7 @@
                     updateImages();
                     updateThumbnails();
                     highlightSelectedSize();
+                    updateAvailableQuantity();
                 } else {
                     selectedSizeId = null;
                     updateImages();
@@ -339,7 +343,7 @@
                 cart.updateIndicator();
             }
 
-            addToCartBtn.addEventListener('click', function () {
+            addToCartBtn.addEventListener('click', async function () {
                 const quantityInput = document.getElementById('quantity');
                 const quantity = parseInt(quantityInput.value);
 
@@ -348,19 +352,25 @@
                     return;
                 }
 
-                const selectedVariant = variants.find(variant =>
-                    variant.color && variant.color.id == selectedColorId &&
-                    variant.size && variant.size.id == selectedSizeId
-                );
-
-                if (selectedVariant) {
-                    const orderDetail = new OrderDetailDTO(null, null, selectedVariant, quantity);
-                    const cart = new Cart();
-                    cart.addItem(orderDetail);
-                    showToast(`Đã thêm ${quantity} sản phẩm vào giỏ hàng`, 'success');
-                    updateCartIndicator();
-                } else {
+                if (!currentVariant) {
                     showToast('Không tìm thấy sản phẩm phù hợp', 'error');
+                    return;
+                }
+
+                if (quantity > currentVariant.availableQuantity) {
+                    showToast(`Chỉ còn ${currentVariant.availableQuantity} sản phẩm có sẵn`, 'warning');
+                    return;
+                }
+
+                try {
+                    await CartAPI.addItem({
+                        variant: currentVariant,
+                        quantity: quantity
+                    });
+                    showToast(`Đã thêm ${quantity} sản phẩm vào giỏ hàng`, 'success');
+                    window.dispatchEvent(new CustomEvent('cart-updated'));
+                } catch (error) {
+                    showToast(error.message || 'Không thể thêm sản phẩm vào giỏ hàng', 'error');
                 }
             });
 
@@ -394,6 +404,22 @@
                     toast.classList.add('hidden');
                 }, 3000);
             }
+
+            function updateAvailableQuantity() {
+                const availableQuantitySpan = document.getElementById('available-quantity');
+                currentVariant = variants.find(variant =>
+                    variant.color && variant.color.id == selectedColorId &&
+                    variant.size && variant.size.id == selectedSizeId
+                );
+
+                if (currentVariant) {
+                    availableQuantitySpan.textContent = currentVariant.availableQuantity;
+                    // Reset quantity input to 1 when switching variants
+                    document.getElementById('quantity').value = '1';
+                } else {
+                    availableQuantitySpan.textContent = '0';
+                }
+            }
         });
 
         function decreaseQuantity() {
@@ -407,11 +433,26 @@
         function increaseQuantity() {
             const quantityInput = document.getElementById('quantity');
             let quantity = parseInt(quantityInput.value);
-            quantityInput.value = quantity + 1;
+            if (currentVariant && quantity < currentVariant.availableQuantity) {
+                quantityInput.value = quantity + 1;
+            } else {
+                showToast('Đã đạt số lượng tối đa có sẵn', 'warning');
+            }
         }
 
         document.getElementById('decrease-quantity-btn').addEventListener('click', decreaseQuantity);
         document.getElementById('increase-quantity-btn').addEventListener('click', increaseQuantity);
+
+        // Add input validation for quantity
+        document.getElementById('quantity').addEventListener('change', function (e) {
+            let value = parseInt(this.value);
+            if (isNaN(value) || value < 1) {
+                this.value = 1;
+            } else if (currentVariant && value > currentVariant.availableQuantity) {
+                this.value = currentVariant.availableQuantity;
+                showToast(`Chỉ còn ${currentVariant.availableQuantity} sản phẩm có sẵn`, 'warning');
+            }
+        });
         /*]]>*/
     </script>
 

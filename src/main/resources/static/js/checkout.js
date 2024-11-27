@@ -7,10 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const grandTotalElement = document.getElementById('grand-total');
     const freeShippingMessageElement = document.getElementById('free-shipping-message');
     const progressElement = document.getElementById('shipping-progress');
-    const paymentDescriptionElement = document.querySelector('.p-4.bg-gray-50');
+    const orderForm = document.getElementById('order-form');
 
     const SHIPPING_FEE = 20000;
     const FREE_SHIPPING_THRESHOLD = 500000;
+    let progressValue = 0;
 
     function renderCheckoutItems() {
         const checkoutItems = JSON.parse(sessionStorage.getItem('checkoutItems') || '[]');
@@ -73,7 +74,89 @@ document.addEventListener('DOMContentLoaded', () => {
         grandTotalElement.textContent = `${grandTotal.toLocaleString()} đ`;
     }
 
-    // Khởi tạo giao diện
+    // Handle form submission
+    orderForm.addEventListener('submit', async (e) => {
+        e.preventDefault(); // Prevent form from submitting normally
+        
+        const selectedPayment = document.querySelector('input[name="payment"]:checked');
+
+        if (!selectedPayment) {
+            showToast('Vui lòng chọn phương thức thanh toán', 'warning');
+            return;
+        }
+
+        // Get items from sessionStorage
+        const items = JSON.parse(sessionStorage.getItem('checkoutItems') || '[]');
+        
+        if (items.length === 0) {
+            showToast('Giỏ hàng của bạn đang trống', 'warning');
+            return;
+        }
+
+        try {
+            // Disable submit button to prevent double submission
+            const submitButton = orderForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = `
+                <span class="loading loading-spinner"></span>
+                Đang xử lý...
+            `;
+
+            // Create order data
+            const orderData = {
+                items: items.map(item => ({
+                    variant: item.variant,
+                    quantity: item.quantity
+                })),
+                paymentMethod: selectedPayment.value,
+                shippingFee: progressValue >= 100 ? 0 : SHIPPING_FEE
+            };
+
+            // Send request to create order
+            const response = await fetch('/checkout/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData)
+            });
+
+            if (!response.ok) {
+                throw new Error(await response.text() || 'Có lỗi xảy ra khi đặt hàng');
+            }
+
+            const result = await response.json();
+            
+            // Clear cart
+            const cart = new Cart();
+            items.forEach(item => {
+                cart.removeItem(item.variant.id);
+            });
+            
+            // Clear checkout items
+            sessionStorage.removeItem('checkoutItems');
+            
+            // Show success message
+            showToast('Đặt hàng thành công!', 'success');
+            
+            // Redirect after delay
+            setTimeout(() => {
+                window.location.href = `/orders/${result.orderId}`;
+            }, 2000);
+
+        } catch (error) {
+            showToast(error.message, 'error');
+            // Re-enable submit button on error
+            const submitButton = orderForm.querySelector('button[type="submit"]');
+            submitButton.disabled = false;
+            submitButton.innerHTML = `
+                <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                Đặt hàng ngay
+            `;
+        }
+    });
+
+    // Initialize the interface
     renderCheckoutItems();
 
     function showToast(message, type = 'info') {
@@ -106,88 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
             toast.classList.add('hidden');
         }, 3000);
     }
-
-    // Lấy thông tin người dùng từ server
-    async function loadUserInfo() {
-        try {
-            const response = await fetch('/api/user/info');
-            if (!response.ok) {
-                throw new Error('Failed to load user info');
-            }
-            const userInfo = await response.json();
-            
-            // Điền thông tin vào form
-            document.getElementById('customer-name').value = userInfo.fullName || '';
-            document.getElementById('customer-phone').value = userInfo.phone || '';
-            document.getElementById('customer-email').value = userInfo.email || '';
-            document.getElementById('customer-address').value = userInfo.address || '';
-            
-        } catch (error) {
-            console.error('Error loading user info:', error);
-            showToast('Không thể tải thông tin người dùng', 'error');
-        }
-    }
-
-    // Load user info when page loads
-    loadUserInfo();
-
-    // Xử lý nút đặt hàng
-    document.querySelector('.btn-warning').addEventListener('click', async () => {
-        // Lấy thông tin từ form
-        const orderNote = document.getElementById('order-note').value;
-        const selectedPayment = document.querySelector('input[name="payment"]:checked');
-
-        if (!selectedPayment) {
-            showToast('Vui lòng chọn phương thức thanh toán', 'warning');
-            return;
-        }
-
-        // Lấy items từ sessionStorage
-        const items = JSON.parse(sessionStorage.getItem('checkoutItems') || '[]');
-        
-        // Tạo object chứa thông tin đơn hàng
-        const orderData = {
-            note: orderNote,
-            items,
-            paymentMethod: selectedPayment.value,
-            shippingFee: SHIPPING_FEE
-        };
-
-        try {
-            const response = await fetch('/checkout/api/orders', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(orderData)
-            });
-
-            if (!response.ok) {
-                throw new Error('Có lỗi xảy ra khi đặt hàng');
-            }
-
-            const result = await response.json();
-            
-            // Xóa items đã đặt khỏi giỏ hàng
-            const cart = new Cart();
-            items.forEach(item => {
-                cart.removeItem(item.variant.id);
-            });
-            
-            // Xóa sessionStorage
-            sessionStorage.removeItem('checkoutItems');
-            
-            showToast('Đặt hàng thành công!', 'success');
-            
-            // Chuyển hướng sau 2 giây
-            setTimeout(() => {
-                window.location.href = `/orders/${result.orderId}`;
-            }, 2000);
-
-        } catch (error) {
-            showToast(error.message, 'error');
-        }
-    });
 
     // Thêm event listener cho radio payment
     document.querySelectorAll('input[name="payment"]').forEach(radio => {
