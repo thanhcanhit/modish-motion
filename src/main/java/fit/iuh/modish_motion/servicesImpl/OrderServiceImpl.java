@@ -9,6 +9,7 @@ import fit.iuh.modish_motion.services.OrderDetailService;
 import fit.iuh.modish_motion.services.VariantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -110,4 +111,45 @@ public class OrderServiceImpl implements OrderService {
                 .map(order -> OrderDTO.fromEntity(order, orderDetailService.findByOrderId(order.getId())))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Page<OrderDTO> findOrdersByCustomer(int customerId, int page, int size, String status) {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Order> orders;
+            if (status != null && !status.isEmpty()) {
+                orders = orderRepository.findByCustomerIdAndStatus(customerId, status, pageable);
+                return orders
+                        .map(order -> OrderDTO.fromEntity(order, orderDetailService.findByOrderId(order.getId())));
+            } else {
+                orders = orderRepository.findByCustomerId(customerId, pageable);
+                return orders
+                        .map(order -> OrderDTO.fromEntity(order, orderDetailService.findByOrderId(order.getId())));
+            }
+    }
+
+//    @Transactional(readOnly = true)
+//    public List<OrderDTO> findOrdersByCustomerAndStatus(int customerId, String status) {
+//        List<Order> orders;
+//        if (status == null || status.isEmpty()) {
+//            orders = orderRepository.findByCustomer_Id(customerId);
+//        } else {
+//            int statusCode = parseStatus(status);
+//            orders = orderRepository.findByCustomer_IdAndStatus(customerId, statusCode);
+//        }
+//
+//        return orders.stream()
+//                .map(order -> OrderDTO.fromEntity(order, orderDetailService.findByOrderId(order.getId())))
+//                .collect(Collectors.toList());
+//    }
+
+//    private int parseStatus(String status) {
+//        switch (status.toLowerCase()) {
+//            case "pending": return 0;
+//            case "processing": return 1;
+//            case "shipping": return 2;
+//            case "completed": return 3;
+//            case "cancelled": return 4;
+//            default: throw new IllegalArgumentException("Invalid status: " + status);
+//        }
+//    }
 }

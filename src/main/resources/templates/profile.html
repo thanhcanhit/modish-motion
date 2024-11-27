@@ -16,6 +16,7 @@
                 <div>
                     <div>
                         <p th:text="'Welcome, ' + ${user.username}"></p>
+                        <p id="customerId" class="hidden" th:text="${user.user.id}"></p>
                     </div>
                     <p class="text-gray-800 font-bold"></p>
                     <a href="#" class="text-blue-500 text-sm hover:underline">Sửa Hồ Sơ</a>
@@ -41,8 +42,9 @@
         </div>
 
         <!-- Profile Content -->
-        <div class="w-3/4 bg-white p-6">
+        <div class="w-3/4 p-6">
             <div th:if="${selectedTab == 'profile'}">
+                <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-2xl font-bold text-gray-800 mb-2">Hồ Sơ Của Tôi</h2>
                 <p class="text-gray-500 mb-6">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
                 <div class="grid grid-cols-4 gap-4">
@@ -96,17 +98,12 @@
                         <p class="text-gray-500 text-sm">Định dạng: .JPEG, .PNG</p>
                     </div>
                 </div>
-
+                </div>
             </div>
-
-
-<!--            <div th:if="${selectedTab == 'bank'}">-->
-<!--                <h2 class="text-2xl font-bold text-gray-800 mb-2">Ngân Hàng</h2>-->
-<!--                &lt;!&ndash; Nội dung Ngân Hàng ở đây &ndash;&gt;-->
-<!--            </div>-->
 
             <!-- Địa Chỉ -->
             <div th:if="${selectedTab == 'address'}">
+                <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-2">Địa Chỉ</h2>
                     <button class="bg-blue-300 text-white px-4 py-2 rounded" onclick="openAddAddressModal()">
@@ -136,11 +133,12 @@
                         </div>
                     </div>
 <!--                </div>-->
-
+                </div>
             </div>
 
             <!-- Đổi Mật Khẩu -->
             <div th:if="${selectedTab == 'password'}">
+                <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-2xl font-bold text-gray-800 mb-2">Đổi Mật Khẩu</h2>
                 <p class="text-gray-500 mb-6">Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác</p>
 
@@ -177,59 +175,47 @@
                         <button type="submit" class="bg-blue-300 text-white px-8 py-2 rounded-lg hover:bg-cyan-800 w-1/3 text-center">Đổi mật khẩu</button>
                     </div>
                 </form>
+                </div>
             </div>
 
 
             <!-- Đơn Mua -->
             <div th:if="${selectedTab == 'orders'}">
-                <div class="order-container bg-gray-100 p-6 min-h-screen">
+<!--                <div class="order-container bg-gray-100 p-6 min-h-screen">-->
                     <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
                         <!-- Tabs -->
-                        <div class="tabs flex border-b mb-6">
-                            <button class="tab-item active" onclick="filterOrders('all')">Tất cả</button>
-                            <button class="tab-item" onclick="filterOrders('pending')">Chờ thanh toán</button>
-                            <button class="tab-item" onclick="filterOrders('shipping')">Vận chuyển</button>
-                            <button class="tab-item" onclick="filterOrders('delivered')">Chờ giao hàng</button>
-                            <button class="tab-item" onclick="filterOrders('completed')">Hoàn thành</button>
-                            <button class="tab-item" onclick="filterOrders('cancelled')">Đã hủy</button>
-                        </div>
+                        <nav class="tabs flex space-x-4 border-b">
+                            <button class="tab-item px-4 py-2 text-gray-500 border-b-2 border-transparent hover:text-blue-500 hover:border-blue-500 focus:outline-none"
+                                    onclick="filterOrders('all')">
+                                Tất cả
+                            </button>
+                            <button class="tab-item px-4 py-2 text-gray-500 border-b-2 border-transparent hover:text-blue-500 hover:border-blue-500 focus:outline-none"
+                                    onclick="filterOrders('pending')">
+                                Chờ thanh toán
+                            </button>
+                            <button class="tab-item px-4 py-2 text-gray-500 border-b-2 border-transparent hover:text-blue-500 hover:border-blue-500 focus:outline-none"
+                                    onclick="filterOrders('shipping')">
+                                Vận chuyển
+                            </button>
+                            <button class="tab-item px-4 py-2 text-gray-500 border-b-2 border-transparent hover:text-blue-500 hover:border-blue-500 focus:outline-none"
+                                    onclick="filterOrders('delivered')">
+                                Chờ giao hàng
+                            </button>
+                            <button class="tab-item px-4 py-2 text-gray-500 border-b-2 border-transparent hover:text-blue-500 hover:border-blue-500 focus:outline-none"
+                                    onclick="filterOrders('completed')">
+                                Hoàn thành
+                            </button>
+                            <button class="tab-item px-4 py-2 text-gray-500 border-b-2 border-transparent hover:text-blue-500 hover:border-blue-500 focus:outline-none"
+                                    onclick="filterOrders('cancelled')">
+                                Đã hủy
+                            </button>
+                        </nav>
                         <!-- Danh sách đơn hàng -->
                         <div id="orderList">
-                            <!-- Đơn hàng mẫu -->
-                            <div class="order-item border rounded-lg p-4 mb-4">
-                                <div class="flex justify-between items-center">
-                                    <div class="order-shop font-bold">Shop: Ôp Lưng iPhone - Siêu Tiện Ích</div>
-                                    <div>
-                                        <button class="bg-gray-100 px-4 py-2 rounded mr-2">Chat</button>
-                                        <button class="bg-gray-100 px-4 py-2 rounded">Xem Shop</button>
-                                    </div>
-                                </div>
-                                <div class="mt-4">
-                                    <div class="flex">
-                                        <img
-                                                src="https://via.placeholder.com/100"
-                                                alt="Product Image"
-                                                class="w-20 h-20 object-cover rounded mr-4"
-                                        />
-                                        <div>
-                                            <h3 class="font-bold">Ốp lưng iPhone nắp trượt tròn tranh sơn dầu</h3>
-                                            <p class="text-sm text-gray-500">Phân loại hàng: Nhiều Hoa Nền Hồng, IP 7PLUS/8PLUS</p>
-                                            <p class="text-sm text-gray-500">Số lượng: 1</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mt-4 flex justify-between items-center">
-                                    <div class="status text-green-500 font-bold">Giao hàng thành công</div>
-                                    <div class="text-right">
-                                        <p class="text-gray-500 line-through">30,000đ</p>
-                                        <p class="text-red-500 font-bold">14,900đ</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Thêm các đơn hàng khác ở đây -->
+                            <p class="text-center text-gray-500">Đang tải đơn hàng...</p>
                         </div>
                     </div>
-                </div>
+<!--                </div>-->
 
             </div>
         </div>
@@ -252,47 +238,74 @@
         lucide.createIcons();  // Để cập nhật biểu tượng sau khi thay đổi thuộc tính
     }
 
-    function filterOrders(status) {
-        const tabs = document.querySelectorAll('.tab-item');
-        tabs.forEach((tab) => tab.classList.remove('active'));
-
-        const activeTab = [...tabs].find((tab) => tab.textContent.toLowerCase().includes(status));
-        if (activeTab) activeTab.classList.add('active');
-
+    const customerId = document.getElementById('customerId').textContent;
+    function fetchOrders(status = 'all') {
         const orderList = document.getElementById('orderList');
+        orderList.innerHTML = '<p class="text-center text-gray-500">Đang tải...</p>';
 
-        // Dữ liệu giả lập
-        const orders = {
-            all: [
-                { id: 1, name: 'Ốp lưng iPhone nắp trượt', status: 'completed', price: '14,900đ' },
-                { id: 2, name: 'Ốp lưng cute', status: 'pending', price: '29,900đ' }
-            ],
-            pending: [],
-            shipping: [],
-            completed: [
-                { id: 1, name: 'Ốp lưng iPhone nắp trượt', status: 'completed', price: '14,900đ' }
-            ],
-            cancelled: []
-        };
+        let url = `/api/orders/${customerId}`;
+        if (status !== 'all') url += `?status=${status}`;
 
-        orderList.innerHTML = '';
+        fetch(url)
+            .then(response => {
+                if (!response.ok) throw new Error('Không thể tải dữ liệu');
+                return response.json();
+            })
+            .then(data => {
+                if (data.length === 0) {
+                    orderList.innerHTML = '<p class="text-center text-gray-500">Không có đơn hàng nào.</p>';
+                    return;
+                }
 
-        if (orders[status].length === 0) {
-            orderList.innerHTML = '<p class="text-center text-gray-500">Chưa có đơn hàng</p>';
-            return;
-        }
-
-        orders[status].forEach((order) => {
-            const itemHTML = `
-            <div class="order-item">
-                <h3 class="font-bold">${order.name}</h3>
-                <p>${order.price}</p>
-            </div>
-        `;
-            orderList.innerHTML += itemHTML;
-        });
+                orderList.innerHTML = data.map(order => `
+                <div class="order-item border rounded-lg p-4">
+                    <div class="flex justify-between items-center">
+                        <div>Mã đơn hàng: ${order.id}</div>
+                        <div>
+                            <button class="bg-gray-100 px-4 py-2 rounded mr-2">Chat</button>
+                            <button class="bg-gray-100 px-4 py-2 rounded">Xem Shop</button>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        ${order.orderDetails.map(detail => `
+                            <div class="flex items-center mb-4">
+                                <img src="${detail.variant.imageUrls[0] || 'https://via.placeholder.com/100'}"
+                                     alt="Product Image" class="w-20 h-20 object-cover rounded mr-4"/>
+                                <div>
+                                    <h3 class="font-bold">${detail.variant.name}</h3>
+                                    <p>Số lượng: ${detail.quantity}</p>
+                                    <p>Giá: ${detail.variant.price.toLocaleString()}đ</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="mt-4 flex justify-between items-center">
+                        <div class="text-green-500 font-bold">${getStatusText(order.status)}</div>
+                        <div class="text-right">
+                            <p class="text-gray-500">Tổng cộng:</p>
+                            <p class="text-red-500 font-bold">${order.totalDue.toLocaleString()}đ</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            })
+            .catch(error => {
+                console.error(error);
+                orderList.innerHTML = '<p class="text-center text-red-500">Đã xảy ra lỗi khi tải dữ liệu.</p>';
+            });
     }
 
+    function getStatusText(status) {
+        const statuses = {
+            1: 'Đang xử lý',
+            2: 'Đang vận chuyển',
+            3: 'Đã giao hàng',
+            4: 'Đã hủy',
+        };
+        return statuses[status] || 'Không xác định';
+    }
+
+    fetchOrders();
 </script>
 </body>
 </html>

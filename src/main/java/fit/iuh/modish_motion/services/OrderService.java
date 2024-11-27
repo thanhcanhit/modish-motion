@@ -19,4 +19,6 @@ public interface OrderService {
     Page<OrderDTO> findByPage(Pageable pageable);
     OrderDTO createOrder(OrderDTO orderDTO, List<OrderDetailDTO> orderDetails);
     List<OrderDTO> findByDateRange(Date startDate, Date endDate, Sort sort);
+    Page<OrderDTO> findOrdersByCustomer(int customerId, int page, int size, String status);
+//    List<OrderDTO> findOrdersByCustomerAndStatus(int customerId, String status);
 }
