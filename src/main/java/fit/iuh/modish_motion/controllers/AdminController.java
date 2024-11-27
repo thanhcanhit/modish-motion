@@ -1,11 +1,15 @@
 package fit.iuh.modish_motion.controllers;
 
 import fit.iuh.modish_motion.dto.AccountDTO;
+import fit.iuh.modish_motion.dto.UserAccountDTO;
 import fit.iuh.modish_motion.dto.UserDTO;
 import fit.iuh.modish_motion.entities.User;
 import fit.iuh.modish_motion.services.AccountService;
 import fit.iuh.modish_motion.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -64,55 +68,28 @@ public class AdminController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok("Authentication details: " + auth);
     }
-    @GetMapping("/admin/dashboard/users")
-    public String getAccountList(Model model) {
-        List<AccountDTO> accounts = accountService.findAll();
-        model.addAttribute("accounts", accounts);
-        return "dashboard-users";
+@GetMapping("/admin/dashboard/users")
+public String getUsers(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(defaultValue = "") String filter,
+        Model model) {
+    int totalAccounts = accountService.count();
+    Page<AccountDTO> accounts = accountService.findByPage(PageRequest.of(page, size));
+
+    if ("Admin".equals(filter)) {
+        accounts = accountService.findByRole(true, PageRequest.of(page, size));
+    } else if ("Normal User".equals(filter)) {
+        accounts = accountService.findByRole(false, PageRequest.of(page, size));
     }
 
-    // Trang danh sách người dùng
-//    @GetMapping("/users")
-//    public String listUsers(Model model) {
-//        List<UserDTO> users = userService.findAll();
-//        model.addAttribute("users", users);
-//        return "admin/users";
-//    }
-//
-//    // Trang thêm người dùng mới
-//    @GetMapping("/users/add")
-//    public String addUserForm(Model model) {
-//        model.addAttribute("user", new User());
-//        return "admin/add-user";
-//    }
-//
-//    // Xử lý thêm người dùng
-//    @PostMapping("/users/add")
-//    public String addUser(@ModelAttribute("user") User user) {
-//        Optional<UserDTO> userDTO = userService.findById(user.getId());
-//        userService.save(userDTO.get());
-//        return "redirect:/admin/users";
-//    }
-//
-//    // Trang chỉnh sửa thông tin người dùng
-//    @GetMapping("/users/edit/{id}")
-//    public String editUserForm(@PathVariable Integer id, Model model) {
-//        Optional<UserDTO> user = userService.findById(id);
-//        model.addAttribute("user", user);
-//        return "admin/edit-user";
-//    }
-//
-//    // Xử lý cập nhật thông tin người dùng
-//    @PostMapping("/users/edit/{id}")
-//    public String updateUser(@PathVariable Integer id, @ModelAttribute("user") User user) {
-//        userService.updateUser(id, UserDTO.fromEntity(user));
-//        return "redirect:/admin/users";
-//    }
-//
-//    // Xóa người dùng
-//    @GetMapping("/users/delete/{id}")
-//    public String deleteUser(@PathVariable Integer id) {
-//        userService.deleteById(id);
-//        return "redirect:/admin/users";
-//    }
+    model.addAttribute("accounts", accounts.getContent());
+    model.addAttribute("totalAccounts", totalAccounts);
+    model.addAttribute("totalPages", accounts.getTotalPages());
+    model.addAttribute("currentPage", page);
+
+    model.addAttribute("filter", filter);
+
+    return "dashboard-users";
+}
 }

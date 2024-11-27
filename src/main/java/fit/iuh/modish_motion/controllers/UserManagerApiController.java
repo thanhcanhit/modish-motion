@@ -9,11 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/admin")
-public class AdminApiController {
+public class UserManagerApiController {
 
     @Autowired
     private AccountService accountService;
@@ -45,4 +46,36 @@ public class AdminApiController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Không thể cập nhật tài khoản");
         }
     }
+    @PostMapping("/users")
+    public ResponseEntity<String> addUser(@RequestBody UserAccountDTO userAccountDTO) {
+        try {
+            userService.registerUser(userAccountDTO); // Gọi service để xử lý thêm
+            return ResponseEntity.ok("Người dùng đã được thêm thành công");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Không thể thêm người dùng");
+        }
+    }
+    @GetMapping("/search")
+    public ResponseEntity<List<AccountDTO>> searchUsers(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "false") boolean isAdmin) {
+        List<AccountDTO> results;
+
+        if ("all".equalsIgnoreCase(keyword))
+            results = accountService.findAll();
+        else if (keyword.matches("\\d+")) { // Nếu keyword là số, tìm theo ID
+            results = accountService.findById(Integer.parseInt(keyword))
+                    .map(List::of)
+                    .orElseGet(List::of);
+        } else { // Nếu keyword là chuỗi, tìm theo username
+            results = accountService.findByUsernameContain(keyword);
+        }
+
+        if (results.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // Không có kết quả
+        }
+
+        return ResponseEntity.ok(results); // Trả về danh sách kết quả
+    }
+
 }

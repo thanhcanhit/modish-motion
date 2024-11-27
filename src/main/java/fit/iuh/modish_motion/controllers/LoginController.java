@@ -1,6 +1,7 @@
 package fit.iuh.modish_motion.controllers;
 
 import fit.iuh.modish_motion.dto.AccountDTO;
+import fit.iuh.modish_motion.dto.UserAccountDTO;
 import fit.iuh.modish_motion.dto.UserDTO;
 import fit.iuh.modish_motion.services.AccountService;
 import fit.iuh.modish_motion.services.UserService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,9 +39,10 @@ public class LoginController {
     @PostMapping("/loginrequest")
     public String login(@RequestParam("username") String username,
                         @RequestParam("password") String password,
-                        Model model) {
+                        Model model,
+                        RedirectAttributes redirectAttributes) {
 
-        //boolean isAuthenticated = accountService.authenticate(username, password);
+        boolean isAuthenticated = accountService.authenticate(username, password);
         Optional<AccountDTO> accountDTO = accountService.findByUserNameAndPassword(username, password);
         if (accountDTO.isPresent()) {
             AccountDTO account = accountDTO.get();
@@ -47,23 +50,29 @@ public class LoginController {
             List<GrantedAuthority> authorities = Collections.singletonList(
                     new SimpleGrantedAuthority(account.isAdmin() ? "ADMIN" : "USER")
             );
+
             Authentication auth = new UsernamePasswordAuthenticationToken(username, password, authorities);
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             return "redirect:/";
         } else {
-            model.addAttribute("error", "Invalid username or password");
+            System.out.println("Redirecting with errorMessage: " + isAuthenticated);
+            redirectAttributes.addFlashAttribute("errorMessage", isAuthenticated);
             return "login";
         }
     }
 
     @GetMapping("/login")
-    public String loginPage(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
-            return "redirect:/";  // Điều hướng về trang chủ
+    public String loginPage(@RequestParam(value = "error", required = false) String error, Model model) {
+        if (error != null) {
+            model.addAttribute("errorMessage", "Sai tên đăng nhập hoặc mật khẩu. Vui lòng thử lại!");
         }
-        return "login";  // Hiển thị trang đăng nhập nếu chưa đăng nhập
+            model.addAttribute("userAccount", new UserAccountDTO());
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+                return "redirect:/";  // Điều hướng về trang chủ
+            }
+            return "login";  // Hiển thị trang đăng nhập nếu chưa đăng nhập
     }
 
     @GetMapping("/user")
@@ -71,9 +80,6 @@ public class LoginController {
         return "redirect:/profile";
     }
 
-    @GetMapping("/signup")
-    public String signupPage(Model model) {
-        return "login";  // trả về trang login.html, trong đó đã gọi showSignUp()
-    }
+
 
 }

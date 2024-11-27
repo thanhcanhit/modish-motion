@@ -1,5 +1,6 @@
 package fit.iuh.modish_motion.services;
 
+import fit.iuh.modish_motion.dto.UserAccountDTO;
 import fit.iuh.modish_motion.dto.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,4 +15,7 @@ public interface UserService {
     void deleteById(Integer id);
     Page<UserDTO> findByPage(Pageable pageable);
     void updateUser(Integer id, UserDTO user);
+    public String registerUser(UserAccountDTO userDTO);
+
+    void updateAccount(Integer id, UserAccountDTO request);
 }

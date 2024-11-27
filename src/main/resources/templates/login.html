@@ -25,7 +25,7 @@
                 </label>
                 <label class="input input-bordered flex items-center gap-2 mb-2">
                     <i data-lucide="key" class="w-4 h-4 mr-2"></i>
-                    <input type="password" id="password" name="password" class="grow" placeholder="password"/>
+                    <input type="password" id="password" name="password" class="grow" placeholder="Password"/>
                 </label>
 
                 <div class="text-right mb-4">
@@ -35,8 +35,9 @@
                         class="flex items-center justify-center w-full px-4 py-2 bg-white text-gray-800 font-semibold border border-gray-300 rounded-full shadow-sm hover:bg-teal-300">
                     Log in
                 </button>
-                <div th:if="${error != null}" class="text-red-500 text-sm mb-4">
-                    <p th:text="${error}">Invalid username or password</p>
+                <div th:if="${errorMessage}" role="alert" class="alert alert-error mt-2">
+                    <i data-lucide="badge-info" class="w-4 h-4 mr-2"></i>
+                    <span th:text="${errorMessage}"></span>
                 </div>
             </form>
             <div class="text-center mt-2">
@@ -62,48 +63,44 @@
         </div>
 
         <div id="signup-form" class="hidden ">
-            <form>
+            <form th:action="@{/signuprequest}" th:object="${userAccount}" method="post">
                 <div class="flex gap-4 mb-2">
                     <label class="input input-bordered flex items-center gap-2 grow">
                         <i data-lucide="skull" class="w-4 h-4 mr-2"></i>
-                        <input type="text" id="name" class="grow" placeholder="Name" />
+                        <input type="text" id="name" class="grow" th:field="*{name}" placeholder="Name" />
                     </label>
                     <label class="input input-bordered flex items-center gap-2 grow">
                         <i data-lucide=user class="w-4 h-4 mr-2"></i>
-                        <input type="text" id="user-name" class="grow" placeholder="Username" />
+                        <input type="text" id="user-name" class="grow" th:field="*{username}" placeholder="Username" />
                     </label>
                 </div>
                 <label class="input input-bordered flex items-center gap-2 mb-2">
                     <i data-lucide="mail" class="w-4 h-4 mr-2"></i>
-                    <input type="text" id="mail" class="grow" placeholder="Email" />
+                    <input type="text" id="mail" class="grow" th:field="*{email}" placeholder="Email" />
                 </label>
                 <label class="input input-bordered flex items-center gap-2 mb-2">
                     <i data-lucide="phone" class="w-4 h-4 mr-2"></i>
-                    <input type="text" id="phone" class="grow" placeholder="Phone" />
+                    <input type="text" id="phone" class="grow" th:field="*{phoneNumber}" placeholder="Phone" />
                 </label>
 
                 <label class="input input-bordered flex items-center gap-2 mb-2">
                     <i data-lucide="key" class="w-4 h-4 mr-2"></i>
-                    <input type="password" class="grow" placeholder="Password" />
+                    <input type="password" class="grow" th:field="*{password}" placeholder="Password" />
                 </label>
-                <label class="input input-bordered flex items-center gap-2 mb-2">
-                    <i data-lucide="map-pin" class="w-4 h-4 mr-2"></i>
-                    <input type="text" id="address" class="grow" placeholder="Address" />
-                </label>
-
-                <label class="input input-bordered flex items-center gap-2 mb-2">
-                    <i data-lucide="calendar" class="w-4 h-4 mr-2"></i>
-                    <input type="date" id="dob" placeholder="DD/MM/YYYY"
-                           class="grow" />
-                </label>
-
-                <label class="input input-bordered flex items-center gap-2 mb-4">
-                    <i data-lucide="key" class="w-4 h-4 mr-2"></i>
-                    <select id="gender" name="gender" class="w-full px-4 py-2  rounded-lg focus:outline-none">
-                        <option value="false">Male</option>
-                        <option value="true">Female</option>
-                    </select>
-                </label>
+                <div class="flex gap-4 mb-2">
+                    <label class="input input-bordered flex items-center gap-2 mb-4 w-1/2">
+                        <i data-lucide="key" class="w-4 h-4 mr-2"></i>
+                        <select id="gender" name="gender" th:field="*{gender}" class="w-full px-4 py-2  rounded-lg focus:outline-none">
+                            <option value="false">Male</option>
+                            <option value="true">Female</option>
+                        </select>
+                    </label>
+                    <label class="input input-bordered flex items-center gap-2 grow w-1/2">
+                        <i data-lucide="calendar" class="w-4 h-4 mr-2"></i>
+                        <input type="date" id="dob" th:field="*{dob}" placeholder="DD/MM/YYYY"
+                               class="grow" />
+                    </label>
+                </div>
                 <button type="submit"
                         class="flex items-center justify-center w-full px-4 py-2 mt-3 bg-white text-gray-800 font-semibold border border-gray-300 rounded-full shadow-sm hover:bg-teal-300"
                         onclick="checkSignup()">

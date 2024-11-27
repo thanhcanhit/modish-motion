@@ -1,10 +1,10 @@
 package fit.iuh.modish_motion.servicesImpl;
 
-import fit.iuh.modish_motion.dto.UserDTO;
 import fit.iuh.modish_motion.entities.Account;
 import fit.iuh.modish_motion.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import fit.iuh.modish_motion.repositories.AccountRepository;
@@ -35,34 +35,28 @@ public class AccountServiceImpl implements AccountService {
                 .map(account -> AccountDTO.fromEntity(account));
     }
 
-
-
-//    @Override
-//    public Optional<AccountDTO> findByUserNameAndPassword(String username, String password) {
-//        Account account = accountRepository.findByUsernameAndPassword(username, password);
-//        if (account == null) {
-//            return Optional.empty();
-//        }
-//        return Optional.of(AccountDTO.fromEntity(account));
-//    }
-@Override
-public Optional<AccountDTO> findByUserNameAndPassword(String username, String password) {
-    System.out.println("Finding account by username: " + username + " and password: " + password);
-    Optional<Account> account = accountRepository.findByUsername(username);
-
-    if (account.isPresent()) {
-        Account acc = account.get();
-        if (password.isEmpty() || acc.getPassword().equals(password)) { // Chấp nhận không kiểm tra password
-            System.out.println("Account found: " + acc);
-            return account.map(AccountDTO::fromEntity);
-        } else {
-            System.out.println("Password does not match");
-        }
-    } else {
-        System.out.println("Account not found with username: " + username);
+    @Override
+    public int count() {
+        return (int) accountRepository.count();
     }
-    return Optional.empty();
-}
+
+    @Override
+    public Optional<AccountDTO> findByUserNameAndPassword(String username, String password) {
+        Optional<Account> account = accountRepository.findByUsername(username);
+
+        if (account.isPresent()) {
+            Account acc = account.get();
+            if (password.isEmpty() || acc.getPassword().equals(password)) { // Chấp nhận không kiểm tra password
+                System.out.println("Account found: " + acc);
+                return account.map(AccountDTO::fromEntity);
+            } else {
+                System.out.println("Password does not match");
+            }
+        } else {
+            System.out.println("Account not found with username: " + username);
+        }
+        return Optional.empty();
+    }
 
 
     @Override
@@ -70,6 +64,32 @@ public Optional<AccountDTO> findByUserNameAndPassword(String username, String pa
         return accountRepository.findByUsername(username)
                 .map(account -> AccountDTO.fromEntity(account));
     }
+
+    @Override
+    public Page<AccountDTO> findByRole(boolean isAdmin, Pageable pageable) {
+        return accountRepository.findByIsAdmin(isAdmin, pageable)
+                .map(account -> AccountDTO.fromEntity(account));
+    }
+
+    @Override
+    public List<AccountDTO> findByUsernameContain(String keyword) {
+        return accountRepository.findByUsernameContaining(keyword)
+                .stream()
+                .map(account -> AccountDTO.fromEntity(account))
+                .collect(Collectors.toList());
+    }
+
+//    @Override
+//    public Page<AccountDTO> findByKeyWord(String keyword, Pageable pageable) {
+//        return accountRepository.findByUsernameContainingOrId(keyword, Integer.parseInt(keyword), pageable)
+//                .map(account -> AccountDTO.fromEntity(account));
+//    }
+//
+//    @Override
+//    public Page<AccountDTO> findByRoleAndKeyWord(boolean isAdmin, String keyword, Pageable pageable) {
+//        return accountRepository.findByUsernameContainingAndIsAdmin(isAdmin, keyword, pageable)
+//                .map(account -> AccountDTO.fromEntity(account));
+//    }
 
     @Override
     public AccountDTO save(AccountDTO accountDTO) {

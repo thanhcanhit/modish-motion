@@ -6,11 +6,11 @@
     <div th:replace="components/head :: head"></div>
     <title>Hồ Sơ Của Tôi</title>
 </head>
-<body class="bg-gray-100 mt-20">
+<body class="bg-gray-100" data-theme="light">
 <header th:replace="components/header"></header>
-<div class="container mx-auto my-10 mt-30" data-theme="light">
+<div class="container mx-auto my-10 pt-10" >
     <div class="flex space-x-6">
-        <div class="w-1/4 bg-white rounded-lg shadow-lg p-4">
+        <div class="w-1/4 bg-gray-100 p-4">
             <div class="flex items-center space-x-4 mb-6">
                 <img th:src="@{/images/profile/hamburmeo.jfif}" alt="avatar" class="rounded-full w-14 h-14">
                 <div>
@@ -21,27 +21,27 @@
                     <a href="#" class="text-blue-500 text-sm hover:underline">Sửa Hồ Sơ</a>
                 </div>
             </div>
-            <ul class="text-sm text-gray-600">
-                <li class="py-2 border-b border-gray-200">
+            <ul class="text-lg text-gray-600 gap-2">
+                <li class="py-2">
                     <a href="#" th:onclick="|window.location.href='@{/profile?tab=profile}'|" class="flex items-center" th:classappend="${selectedTab == 'profile'} ? 'text-red-500' : ''">Hồ Sơ</a>
                 </li>
-                <li class="py-2 border-b border-gray-200">
-                    <a href="#" th:onclick="|window.location.href='@{/profile?tab=bank}'|" class="flex items-center" th:classappend="${selectedTab == 'bank'} ? 'text-red-500' : ''">Ngân Hàng</a>
-                </li>
-                <li class="py-2 border-b border-gray-200">
+<!--                <li class="py-2 border-b border-gray-200">-->
+<!--                    <a href="#" th:onclick="|window.location.href='@{/profile?tab=bank}'|" class="flex items-center" th:classappend="${selectedTab == 'bank'} ? 'text-red-500' : ''">Ngân Hàng</a>-->
+<!--                </li>-->
+                <li class="py-2">
                     <a href="#" th:onclick="|window.location.href='@{/profile?tab=address}'|" class="flex items-center" th:classappend="${selectedTab == 'address'} ? 'text-red-500' : ''">Địa Chỉ</a>
                 </li>
-                <li class="py-2 border-b border-gray-200">
+                <li class="py-2">
                     <a href="#" th:onclick="|window.location.href='@{/profile?tab=password}'|" class="flex items-center" th:classappend="${selectedTab == 'password'} ? 'text-red-500' : ''">Đổi Mật Khẩu</a>
                 </li>
-                <li class="py-2 border-b border-gray-200">
+                <li class="py-2">
                     <a href="#" th:onclick="|window.location.href='@{/profile?tab=orders}'|" class="flex items-center" th:classappend="${selectedTab == 'orders'} ? 'text-red-500' : ''">Đơn Mua</a>
                 </li>
             </ul>
         </div>
 
         <!-- Profile Content -->
-        <div class="w-3/4 bg-white rounded-lg shadow-lg p-6">
+        <div class="w-3/4 bg-white p-6">
             <div th:if="${selectedTab == 'profile'}">
                 <h2 class="text-2xl font-bold text-gray-800 mb-2">Hồ Sơ Của Tôi</h2>
                 <p class="text-gray-500 mb-6">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
@@ -100,18 +100,45 @@
             </div>
 
 
-            <div th:if="${selectedTab == 'bank'}">
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Ngân Hàng</h2>
-                <!-- Nội dung Ngân Hàng ở đây -->
-            </div>
+<!--            <div th:if="${selectedTab == 'bank'}">-->
+<!--                <h2 class="text-2xl font-bold text-gray-800 mb-2">Ngân Hàng</h2>-->
+<!--                &lt;!&ndash; Nội dung Ngân Hàng ở đây &ndash;&gt;-->
+<!--            </div>-->
 
             <!-- Địa Chỉ -->
             <div th:if="${selectedTab == 'address'}">
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Địa Chỉ</h2>
-                <!-- Nội dung Địa Chỉ ở đây -->
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Địa Chỉ</h2>
+                    <button class="bg-blue-300 text-white px-4 py-2 rounded" onclick="openAddAddressModal()">
+                        + Thêm địa chỉ mới
+                    </button>
+                </div>
+
+<!--                <div class="address-container bg-gray-100 p-6 min-h-screen">-->
+                    <div class="max-w-4xl mx-auto bg-white border-t border-gray-300 p-6">
+                        <!-- Tiêu đề -->
+                        <div class="flex justify-between items-center mb-6">
+                            <h1 class="text-xl font-bold">Địa chỉ của tôi</h1>
+
+                        </div>
+                        <!-- Danh sách địa chỉ -->
+                        <div class="address-list space-y-6">
+                            <!-- Địa chỉ -->
+                            <div class="address-item border-b pb-4">
+                                <div class="text-lg font-bold" th:text="${user.user.name}"></div>
+                                <div class="text-gray-600" th:text="${user.user.address}"></div>
+                                <div class="text-gray-500" th:text="${user.user.phoneNumber}"></div>
+                                <div class="flex gap-4 mt-2">
+                                    <span class="text-red-500 font-semibold">Mặc định</span>
+                                    <a href="#" class="text-blue-500" onclick="editAddress()">Cập nhật</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<!--                </div>-->
+
             </div>
 
-            <!-- Đổi Mật Khẩu -->
             <!-- Đổi Mật Khẩu -->
             <div th:if="${selectedTab == 'password'}">
                 <h2 class="text-2xl font-bold text-gray-800 mb-2">Đổi Mật Khẩu</h2>
@@ -147,7 +174,7 @@
 
                     <!-- Nút Lưu ở giữa -->
                     <div class="flex justify-center mt-6">
-                        <button type="submit" class="bg-red-500 text-white px-8 py-2 rounded-lg hover:bg-red-600 w-1/3 text-center">Đổi mật khẩu</button>
+                        <button type="submit" class="bg-blue-300 text-white px-8 py-2 rounded-lg hover:bg-cyan-800 w-1/3 text-center">Đổi mật khẩu</button>
                     </div>
                 </form>
             </div>
@@ -155,8 +182,55 @@
 
             <!-- Đơn Mua -->
             <div th:if="${selectedTab == 'orders'}">
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Đơn Mua</h2>
-                <!-- Nội dung Đơn Mua ở đây -->
+                <div class="order-container bg-gray-100 p-6 min-h-screen">
+                    <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
+                        <!-- Tabs -->
+                        <div class="tabs flex border-b mb-6">
+                            <button class="tab-item active" onclick="filterOrders('all')">Tất cả</button>
+                            <button class="tab-item" onclick="filterOrders('pending')">Chờ thanh toán</button>
+                            <button class="tab-item" onclick="filterOrders('shipping')">Vận chuyển</button>
+                            <button class="tab-item" onclick="filterOrders('delivered')">Chờ giao hàng</button>
+                            <button class="tab-item" onclick="filterOrders('completed')">Hoàn thành</button>
+                            <button class="tab-item" onclick="filterOrders('cancelled')">Đã hủy</button>
+                        </div>
+                        <!-- Danh sách đơn hàng -->
+                        <div id="orderList">
+                            <!-- Đơn hàng mẫu -->
+                            <div class="order-item border rounded-lg p-4 mb-4">
+                                <div class="flex justify-between items-center">
+                                    <div class="order-shop font-bold">Shop: Ôp Lưng iPhone - Siêu Tiện Ích</div>
+                                    <div>
+                                        <button class="bg-gray-100 px-4 py-2 rounded mr-2">Chat</button>
+                                        <button class="bg-gray-100 px-4 py-2 rounded">Xem Shop</button>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <div class="flex">
+                                        <img
+                                                src="https://via.placeholder.com/100"
+                                                alt="Product Image"
+                                                class="w-20 h-20 object-cover rounded mr-4"
+                                        />
+                                        <div>
+                                            <h3 class="font-bold">Ốp lưng iPhone nắp trượt tròn tranh sơn dầu</h3>
+                                            <p class="text-sm text-gray-500">Phân loại hàng: Nhiều Hoa Nền Hồng, IP 7PLUS/8PLUS</p>
+                                            <p class="text-sm text-gray-500">Số lượng: 1</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex justify-between items-center">
+                                    <div class="status text-green-500 font-bold">Giao hàng thành công</div>
+                                    <div class="text-right">
+                                        <p class="text-gray-500 line-through">30,000đ</p>
+                                        <p class="text-red-500 font-bold">14,900đ</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Thêm các đơn hàng khác ở đây -->
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -177,6 +251,48 @@
         }
         lucide.createIcons();  // Để cập nhật biểu tượng sau khi thay đổi thuộc tính
     }
+
+    function filterOrders(status) {
+        const tabs = document.querySelectorAll('.tab-item');
+        tabs.forEach((tab) => tab.classList.remove('active'));
+
+        const activeTab = [...tabs].find((tab) => tab.textContent.toLowerCase().includes(status));
+        if (activeTab) activeTab.classList.add('active');
+
+        const orderList = document.getElementById('orderList');
+
+        // Dữ liệu giả lập
+        const orders = {
+            all: [
+                { id: 1, name: 'Ốp lưng iPhone nắp trượt', status: 'completed', price: '14,900đ' },
+                { id: 2, name: 'Ốp lưng cute', status: 'pending', price: '29,900đ' }
+            ],
+            pending: [],
+            shipping: [],
+            completed: [
+                { id: 1, name: 'Ốp lưng iPhone nắp trượt', status: 'completed', price: '14,900đ' }
+            ],
+            cancelled: []
+        };
+
+        orderList.innerHTML = '';
+
+        if (orders[status].length === 0) {
+            orderList.innerHTML = '<p class="text-center text-gray-500">Chưa có đơn hàng</p>';
+            return;
+        }
+
+        orders[status].forEach((order) => {
+            const itemHTML = `
+            <div class="order-item">
+                <h3 class="font-bold">${order.name}</h3>
+                <p>${order.price}</p>
+            </div>
+        `;
+            orderList.innerHTML += itemHTML;
+        });
+    }
+
 </script>
 </body>
 </html>
