@@ -12,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import fit.iuh.modish_motion.dto.UserDTO;
@@ -27,6 +28,8 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public List<UserDTO> findAll() {
@@ -95,7 +98,7 @@ public class UserServiceImpl implements UserService {
         Account account = new Account();
         account.setUser(savedUser);
         account.setUsername(userAccountDTO.getUsername());
-        account.setPassword(userAccountDTO.getPassword()); // Có thể mã hóa password
+        account.setPassword(passwordEncoder.encode(userAccountDTO.getPassword())); // Mã hóa password
         account.setAdmin(false);
 
         accountRepository.save(account);
@@ -118,7 +121,4 @@ public class UserServiceImpl implements UserService {
         user.setGender(request.isGender());
         userRepository.save(user);
     }
-
-
-
 }

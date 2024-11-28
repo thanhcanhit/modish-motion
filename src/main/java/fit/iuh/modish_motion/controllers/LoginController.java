@@ -56,7 +56,6 @@ public class LoginController {
 
             return "redirect:/";
         } else {
-            System.out.println("Redirecting with errorMessage: " + isAuthenticated);
             redirectAttributes.addFlashAttribute("errorMessage", isAuthenticated);
             return "login";
         }

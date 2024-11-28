@@ -6,6 +6,7 @@ import fit.iuh.modish_motion.servicesImpl.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -30,6 +31,8 @@ import java.util.List;
 public class SpringSecurityConfig {
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
     @Bean
 //    @SuppressWarnings("deprecation")
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,6 +40,7 @@ public class SpringSecurityConfig {
                 .authorizeRequests(auth -> auth
                         .requestMatchers("/admin").hasAuthority("ADMIN")
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/error/**").permitAll()
                 )
                 .formLogin(login -> login
                         .loginPage("/login")
@@ -45,26 +49,29 @@ public class SpringSecurityConfig {
                         .passwordParameter("password")
                         .successHandler((request, response, authentication) -> {
                             SecurityContextHolder.getContext().setAuthentication(authentication);
+                            System.out.println("Login successful for user: " + authentication.getName());
+                            System.out.println("Authorities: " + authentication.getAuthorities());
                             response.sendRedirect("/"); // Điều hướng sau khi đăng nhập thành công
                         })
+//                        .defaultSuccessUrl("/", true)
                 )
 //                .logout(logout -> logout.logoutUrl("/admin-logout").logoutSuccessUrl("/login"))
                 .logout(logout -> logout
                         .logoutUrl("/logout") // URL dùng để xử lý logout
                         .logoutSuccessUrl("/login") // Trang điều hướng sau khi logout thành công
                         .clearAuthentication(true) // Xóa thông tin xác thực
+                        .permitAll()
                 )
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            System.out.println("Access Denied for user: " +
-                                    SecurityContextHolder.getContext().getAuthentication());
-                            response.sendRedirect("/not-found");
+                            response.setStatus(HttpStatus.FORBIDDEN.value()); // Gán HTTP 403
+                            request.getRequestDispatcher("/error/403").forward(request, response);
                         })
                         .authenticationEntryPoint((request, response, authException) -> {
-                            System.out.println("User not authenticated: " +
-                                    SecurityContextHolder.getContext().getAuthentication());
+                            response.setStatus(HttpStatus.UNAUTHORIZED.value()); // Gán HTTP 401
                             response.sendRedirect("/login");
-                        }))
+                        })
+                )
                 .rememberMe(rememberMe -> rememberMe
                         .key("uniqueAndSecret")
                         .tokenValiditySeconds(86400)
@@ -77,14 +84,9 @@ public class SpringSecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers(
-                "/assets/**", "/assetsUser/**", "uploads/**", "/assetsAdmin/**"
+                "/assets/**", "/assetsUser/**", "uploads/**", "/assetsAdmin/**", "/error/**"
         );
     }
-
-//    @Bean
-//    BCryptPasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -113,60 +115,68 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService());
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        return new AuthenticationProvider() {
-            @Override
-            public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-                String username = authentication.getName();
-                String password = authentication.getCredentials().toString();
-
-                System.out.println("Authenticating user: " + username + " with password: " + password);
-
-                // Tìm tài khoản từ database
-                Account account = accountService.findByUsername(username)
-                        .orElseThrow(() -> {
-                            System.out.println("User not found: " + username);
-                            return new UsernameNotFoundException("Không tìm thấy tài khoản");
-                        }).toEntity();
-
-                // So sánh mật khẩu không mã hóa
-                if (!account.getPassword().equals(password)) {
-                    System.out.println("Invalid password for user: " + username);
-                    throw new BadCredentialsException("Tài khoản hoặc mật khẩu không chính xác");
-                }
-
-                // Gán quyền dựa trên isAdmin
-                List<GrantedAuthority> authorities = Collections.singletonList(
-                        new SimpleGrantedAuthority(account.isAdmin() ? "ADMIN" : "USER")
-                );
-
-                // Tạo Authentication object
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        username, password, authorities
-                );
-                SecurityContextHolder.getContext().setAuthentication(auth); // Đảm bảo lưu Authentication vào SecurityContext
-
-                System.out.println("Authentication success for user: " + username);
-                return auth;
-            }
-
-            @Override
-            public boolean supports(Class<?> authentication) {
-                return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
-            }
-        };
-    }
+//    @Bean
+//    public AuthenticationManager authenticationManager(
+//            AuthenticationConfiguration authConfig) throws Exception {
+//        return authConfig.getAuthenticationManager();
+//    }
+//    @Bean
+//    public AuthenticationProvider authenticationProvider() {
+//        return new AuthenticationProvider() {
+//            @Override
+//            public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+//                String username = authentication.getName();
+//                String rawPassword = authentication.getCredentials().toString();
+//
+//                // Tìm tài khoản từ database
+//                Account account = accountService.findByUsername(username)
+//                        .orElseThrow(() -> {
+//                            System.out.println("User not found: " + username);
+//                            return new UsernameNotFoundException("Không tìm thấy tài khoản");
+//                        }).toEntity();
+//
+//                // So sánh mật khẩu không mã hóa
+//                if (!passwordEncoder.matches(rawPassword, account.getPassword())) {
+//                    System.out.println("Invalid password for user: " + username);
+//                    throw new BadCredentialsException("Tài khoản hoặc mật khẩu không chính xác");
+//                }
+////                if (!account.getPassword().equals(password)) {
+////                    System.out.println("Invalid password for user: " + username);
+////                    throw new BadCredentialsException("Tài khoản hoặc mật khẩu không chính xác");
+////                }
+//
+//                // Gán quyền dựa trên isAdmin
+//                List<GrantedAuthority> authorities = Collections.singletonList(
+//                        new SimpleGrantedAuthority(account.isAdmin() ? "ADMIN" : "USER")
+//                );
+//
+//                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+//                        username, account.getPassword(), authorities
+//                );
+//
+//                System.out.println("Authentication success for user: " + username);
+//                return auth;
+//            }
+//
+//            @Override
+//            public boolean supports(Class<?> authentication) {
+//                return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
+//            }
+//        };
+//    }
 
 
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -181,8 +181,7 @@
 
             <!-- Đơn Mua -->
             <div th:if="${selectedTab == 'orders'}">
-<!--                <div class="order-container bg-gray-100 p-6 min-h-screen">-->
-                    <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
+                <div id="orderListContain" class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
                         <!-- Tabs -->
                         <nav class="tabs flex space-x-4 border-b">
                             <button class="tab-item px-4 py-2 text-gray-500 border-b-2 border-transparent hover:text-blue-500 hover:border-blue-500 focus:outline-none"
@@ -211,12 +210,18 @@
                             </button>
                         </nav>
                         <!-- Danh sách đơn hàng -->
-                        <div id="orderList">
+                        <div id="orderList"
+                                >
                             <p class="text-center text-gray-500">Đang tải đơn hàng...</p>
                         </div>
                     </div>
-<!--                </div>-->
+                <div id="orderDetails" class="hidden max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
+                    <!-- Nội dung chi tiết đơn hàng sẽ được script render -->
 
+                    <div id="orderDetailsContent">
+                        <!-- Nội dung chi tiết đơn hàng -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -268,11 +273,11 @@
                     </div>
                     <div class="mt-4">
                         ${order.orderDetails.map(detail => `
-                            <div class="flex items-center mb-4">
+                            <div class="flex items-center mb-4" >
                                 <img src="${detail.variant.imageUrls[0] || 'https://via.placeholder.com/100'}"
                                      alt="Product Image" class="w-20 h-20 object-cover rounded mr-4"/>
                                 <div>
-                                    <h3 class="font-bold">${detail.variant.name}</h3>
+                                    <a onclick="fetchOrderDetails(${order.id})" class="cursor-pointer"><h3 class="font-bold">${detail.variant.name}</h3></a>
                                     <p>Số lượng: ${detail.quantity}</p>
                                     <p>Giá: ${detail.variant.price.toLocaleString()}đ</p>
                                 </div>
@@ -294,6 +299,70 @@
                 orderList.innerHTML = '<p class="text-center text-red-500">Đã xảy ra lỗi khi tải dữ liệu.</p>';
             });
     }
+    function fetchOrderDetails(orderId) {
+        console.log("Fetching order details for ID:", orderId);
+        if (!orderId) {
+            console.error("Order ID không hợp lệ:", orderId);
+            return;
+        }
+        const orderList = document.getElementById('orderListContain');
+        const orderDetails = document.getElementById('orderDetails');
+        orderDetails.innerHTML = '<p class="text-center text-gray-500">Đang tải chi tiết đơn hàng...</p>';
+
+        // Hiển thị chi tiết đơn hàng và ẩn danh sách
+        orderList.classList.add('hidden');
+        orderDetails.classList.remove('hidden');
+
+        const url = `/api/orders/details/${orderId}`;
+        fetch(url)
+            .then(response => {
+                if (!response.ok) throw new Error('Không thể tải chi tiết đơn hàng');
+                return response.json();
+            })
+            .then(order => {
+                orderDetails.innerHTML = `
+                <button onclick="showOrderList()" class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">
+                        Quay lại
+                </button>
+                <div class="order-details bg-white shadow rounded-lg p-6 mt-6">
+                    <p class="font-semibold">Mã đơn hàng: <span>${order.id}</span></p>
+                    <p class="font-semibold">Ngày đặt hàng: <span>${formatDate(order.orderAt)}</span></p>
+                    <p class="font-semibold">Tổng tiền: <span>${formatCurrency(order.totalDue)}</span></p>
+                    <p class="font-semibold">Trạng thái: <span>${getStatusText(order.status)}</span></p>
+
+                    <h3 class="text-lg font-bold mt-6">Danh sách sản phẩm</h3>
+                    <ul class="mt-4 space-y-4">
+                        ${order.orderDetails.map(detail => `
+                            <li class="flex items-center">
+                                <img src="${detail.variant.imageUrls[0] || 'https://via.placeholder.com/100'}" alt="product" class="w-20 h-20 object-cover rounded mr-4">
+                                <div>
+                                    <h4 class="font-semibold">${detail.variant.name}</h4>
+                                    <p class="font-semibold">Phân loại: ${detail.variant.variantType}</p>
+                                    <p class="font-semibold">Số lượng: ${detail.quantity}</p>
+                                    <p class="text-red-500 font-semibold">${formatCurrency(detail.variant.price)}</p>
+                                </div>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+            })
+            .catch(error => {
+                console.error(error);
+                orderDetails.innerHTML = '<p class="text-center text-red-500">Không thể tải chi tiết đơn hàng.</p>';
+            });
+    }
+
+    function formatDate(dateString) {
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        return new Date(dateString).toLocaleDateString('vi-VN', options);
+    }
+
+    // Format tiền tệ
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    }
+
 
     function getStatusText(status) {
         const statuses = {
@@ -303,6 +372,14 @@
             4: 'Đã hủy',
         };
         return statuses[status] || 'Không xác định';
+    }
+    function showOrderList() {
+        const orderList = document.getElementById('orderListContain');
+        const orderDetails = document.getElementById('orderDetails');
+
+        // Hiển thị danh sách đơn hàng và ẩn chi tiết
+        orderList.classList.remove('hidden');
+        orderDetails.classList.add('hidden');
     }
 
     fetchOrders();
