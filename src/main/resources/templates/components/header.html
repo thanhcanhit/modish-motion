@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <div th:replace="components/head :: head"></div>
-    </head>
+<head>
+
+</head>
 <header th:fragment="header" class="fixed top-0 left-0 right-0 z-40 bg-white shadow-sm">
     <div class="container px-4 mx-auto">
         <!-- Main Header -->
@@ -67,7 +67,7 @@
             <div class="container px-4 mx-auto">
                 <!-- Search Header -->
                 <div class="flex items-center justify-between h-16">
-                    <a href="/" class="flex-shrink-0">
+                    <a href="/" class="hidden md:block flex-shrink-0 mb-4 md:mb-0">
                         <span class="text-2xl font-bold text-blue-900">Modish Motion</span>
                     </a>
 
@@ -208,7 +208,7 @@
                                     </div>
                                     <div class="pl-4 submenu">
                                         ${groupedCategories[group][subgroup].map(category => `
-                                            <a href="/categories/${category.categoryName}?page=0" class="block px-4 py-2 hover:bg-gray-100 text-[#31495e]">${category.categoryName}</a>
+                                            <a href="/categories/${category.categoryName}?page=1" class="block px-4 py-2 hover:bg-gray-100 text-[#31495e]">${category.categoryName}</a>
                                         `).join('')}
                                     </div>
                                 </div>
@@ -272,7 +272,7 @@
             const searches = JSON.parse(localStorage.getItem('recentSearches')) || [];
             const recentSearchesContainer = document.getElementById('recentSearches');
             recentSearchesContainer.innerHTML = searches.map(search => `
-                <button class="px-4 py-2 text-sm bg-gray-100 rounded-full hover:bg-gray-200" onclick="fillSearchInput('${search}')">${search}</button>
+                <button class="px-4 py-2 text-sm bg-gray-100 rounded-full hover:bg-gray-200 mt-2" onclick="fillSearchInput('${search}')">${search}</button>
             `).join('');
         }
 

@@ -1,272 +1,480 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-      <div th:replace="components/head :: head"></div>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nam - YODY</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      .header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 64px;
-        background: #fff;
-        z-index: 40;
-        border-bottom: 1px solid #eee;
+<head>
+  <meta charset="UTF-8" />
+  <div th:replace="components/head :: head"></div>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${category.categoryName + ' - YODY'}">Category - YODY</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: #fff;
+      z-index: 50; /* Increase z-index to ensure header is on top */
+      border-bottom: 1px solid #eee;
+    }
+
+    .category-controls {
+      position: sticky;
+      top: 64px;
+      background: #fff;
+      z-index: 4; /* Decrease z-index to ensure it is below the header */
+      border-bottom: 1px solid #eee;
+      padding: 12px 0;
+      transition: all 0.3s ease;
+    }
+
+    .category-controls.fixed {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 0;
+      z-index: 50;
+    }
+
+    #filterPanel {
+      position: fixed;
+      bottom: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      transition: bottom 0.3s ease-in-out;
+      z-index: 1000;
+      padding: 46px;
+    }
+
+    #filterPanel.visible {
+      bottom: 0;
+    }
+
+    .filter-btn:hover {
+      background-color: #f2f5f8;
+    }
+
+    .filter-title {
+      font-weight: bold;
+    }
+
+    .selected {
+      border: 1px solid #d3d3d3 !important;
+    }
+
+    @media (max-width: 1024px) {
+      .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .product-grid {
+        grid-template-columns: repeat(1, 1fr);
       }
 
       .category-controls {
-        position: sticky;
-        top: 64px; /* Adjust this value to match the height of the header */
-        background: #fff;
-        z-index: 30;
-        border-bottom: 1px solid #eee;
-        padding: 12px 0;
-        transition: all 0.3s ease;
+        top: 98;
+        left: 0;
+        right: 0;
+        position: fixed;
+        width: 100%;
+        z-index: 10;
       }
 
       .category-controls.fixed {
-        position: fixed;
-        left: 0;
-        right: 0;
         top: 0;
-        z-index: 50; /* Ensure it is above the header */
       }
 
-      .dropdown-content {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        min-width: 160px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      #filterPanel {
+        padding: 0;
       }
+/* 
+      header {
+        display: block; /* Change from 'none' to 'block' */
+      /* } */ 
 
-      .dropdown:hover .dropdown-content {
-        display: block;
+      .filter-btn {
+        justify-content: center;
       }
+    }
 
-      @media (max-width: 1024px) {
-        .product-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
+    #productGrid {
+      min-height: 100vh;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-      @media (max-width: 640px) {
-        .product-grid {
-          grid-template-columns: repeat(1, 1fr);
-        }
-      }
+    .filter-btn {
+      height: 74px;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      background-color: #fff;
+      cursor: pointer;
+    }
+    .filter-btn.selected {
+      border: 2px solid #000;
+      border-radius: 5px;
+    }
+    .filter-btn .color-circle {
+      width: 32px;
+      height: 35px;
+      border-radius: 50%;
+      border: 1px solid #d3d3d3;
+      margin-bottom: 5px;
+    }
+    .filter-btn .size-circle {
+      width: 32px;
+      height: 35px;
+      border-radius: 50%;
+      border: 1px solid #d3d3d3;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body class="bg-white">
+<header th:replace="components/header"></header>
 
-      #sideMenu {
-        padding: 0 1rem;
-      }
+<!-- Hidden inputs for state -->
+<input type="hidden" id="totalItems" th:value="${totalItems}" />
+<input type="hidden" id="hasMore" th:value="${hasMore}" />
+<input type="hidden" id="currentPage" th:value="${currentPage}" />
+<input type="hidden" id="selectedColors" th:value="${selectedColors}" />
+<input type="hidden" id="selectedSizes" th:value="${selectedSizes}" />
+<input type="hidden" id="selectedPrice" th:value="${selectedPrice}" />
 
-      @media (min-width: 1024px) {
-        #sideMenu {
-          padding: 0 1.5rem;
-        }
-      }
+<main class="pt-16">
+  <div class="container mx-auto px-4 lg:px-6">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-sm text-gray-500 py-4">
+      <a href="/" class="hover:text-[#31495e]">Trang chủ</a>
+      <span>></span>
+      <span class="text-[#31495e]" th:text="${category.categoryName}">Category</span>
+    </nav>
 
-      #productGrid {
-        min-height: 100vh; /* Đảm bảo grid luôn có chiều cao tối thiểu */
-      }
-      #loadMoreBtn {
-        transition: opacity 0.3s ease-out;
-      }
-      #loadMoreBtn.hiding {
-        opacity: 0;
-      }
-      .selected {
-        border: 1px solid black;
-      }
+    <!-- Category Title -->
+    <h1 class="text-2xl font-semibold text-[#31495e] mb-4" th:text="${category.categoryName}">
+      Category Name
+    </h1>
 
-      .filter-btn-container {
-        display: grid;
-        gap: 0.5rem;
-      }
-
-      @media (min-width: 1024px) {
-        .filter-btn-container {
-          grid-template-columns: repeat(3, 1fr);
-        }
-      }
-
-      @media (min-width: 640px) and (max-width: 1023px) {
-        .filter-btn-container {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-
-      @media (max-width: 639px) {
-        .filter-btn-container {
-          grid-template-columns: repeat(1, 1fr);
-        }
-      }
-
-      .filter-btn span {
-        font-size: 1rem; /* Increase the size of the spans */
-      }
-    </style>
-  </head>
-  <body class="bg-white">
-    <header th:replace="components/header"></header>
-
-    <main class="pt-16">
+    <!-- Category Controls -->
+    <div class="category-controls" id="categoryControls">
       <div class="container mx-auto px-4 lg:px-6">
-        <nav class="flex items-center gap-2 text-sm text-gray-500 py-4">
-          <a href="/" class="hover:text-[#31495e]">Trang chủ</a>
-          <span>></span>
-          <span class="text-[#31495e]" th:text="${category.categoryName}"
-            >Nam</span
-          >
-        </nav>
-
-        <h1
-          class="text-2xl font-semibold text-[#31495e] mb-4"
-          th:text="${category.categoryName}"
-        >
-          Nam
-        </h1>
-
-        <div class="category-controls" id="categoryControls">
-          <div class="container mx-auto px-4 lg:px-6">
-            <div class="flex justify-between items-center">
-              <span
-                id="productCount"
-                class="text-[#31495e] text-sm"
-                th:text="${items.size()} + ' sản phẩm'"
-                >335 sản phẩm</span
-              >
-              <button
-                onclick="openFilter()"
-                class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:border-gray-400 transition-colors flex items-center gap-2"
-              >
-                Bộ lọc
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M6 9l6 6 6-6" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <input
-          type="hidden"
-          id="scrollPosition"
-          name="scrollPosition"
-          th:value="${scrollPosition}"
-        />
-
-        <div
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 py-6 justify-items-center"
-          id="productGrid"
-        >
-          <th:block th:each="item, iterStat : ${items}">
-            <div
-              th:replace="components/productItem :: productItem(${item})"
-              th:classappend="${iterStat.index >= 10} ? 'hidden' : ''"
-            ></div>
-          </th:block>
-        </div>
-        <div class="text-center py-4 flex justify-center gap-4">
-          <button
-            id="loadMoreBtn"
-            class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 transform hover:scale-105"
-            onclick="loadMoreItems()"
-          >
-            Xem thêm
-          </button>
-          <button
-            id="collapseBtn"
-            class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all duration-300 transform hover:scale-105 hidden"
-            onclick="collapseItems()"
-          >
-            Thu gọn
+        <div class="flex justify-between items-center">
+                        <span id="productCount" class="text-[#31495e] text-sm"
+                              th:text="${totalItems + ' sản phẩm'}">0 sản phẩm</span>
+          <button onclick="openFilter()"
+                  class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:border-gray-400 transition-colors flex items-center gap-2">
+            Bộ lọc
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
           </button>
         </div>
       </div>
-    </main>
-    <footer th:replace="components/footer"></footer>
-    <div th:replace="/components/lucide_icons :: lucide_icon"></div>
-    <script th:inline="javascript">
-      document.addEventListener("DOMContentLoaded", function () {
-        const productGrid = document.getElementById("productGrid");
-        const loadMoreBtn = document.getElementById("loadMoreBtn");
-        const collapseBtn = document.getElementById("collapseBtn");
-        const productCountElement = document.getElementById("productCount");
-        const items = Array.from(productGrid.children);
-        const totalItems = /*[[${totalItems}]]*/ 0;
-        let itemsToShow = 18;
-        let currentIndex = itemsToShow;
+    </div>
 
-        // Cập nhật số lượng sản phẩm hiển thị
-        function updateProductCount() {
-          productCountElement.textContent = `${totalItems} sản phẩm`;
-        }
-        updateProductCount();
+    <!-- Filter Panel -->
+    <div id="filterPanel" class="hidden">
+      <div class="bg-white w-full h-full rounded-none overflow-hidden transform transition-all duration-300 ease-in-out absolute bottom-0 sm:relative sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2">
+        <div class="p-6 h-full flex flex-col">
+          <!-- Filter Header -->
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold filter-title">Bộ lọc</h2>
+            <button onclick="closeFilter()" class="text-gray-500 hover:text-gray-700">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                   fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                   stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
 
-        // Ẩn các sản phẩm ban đầu
-        items.forEach((item, index) => {
-          if (index >= itemsToShow) {
-            item.classList.add("hidden");
-          }
-        });
+          <!-- Filter Content -->
+          <div class="space-y-4 flex-1 overflow-auto">
+            <!-- Color Filters -->
+            <div>
+              <h3 class="font-medium mb-2 filter-title">Màu sắc</h3>
+              <div id="colorFilters" class="grid grid-cols-3 gap-6">
+                <th:block th:each="color : ${allColors}">
+                  <button th:data-color-id="${color.id}"
+                          th:data-color-hex="${color.hex}"
+                          th:data-color-name="${color.color}"
+                          th:class="${selectedColors != null && selectedColors.contains(color.id)} ? 'filter-btn selected' : 'filter-btn'"
+                          class="filter-btn"
+                          onclick="toggleFilter('color', this.getAttribute('data-color-id'), this)">
+                                            <span class="color-circle"
+                                                  th:style="'background-color: ' + ${color.hex}"></span>
+                    <span th:text="${color.color}">Color Name</span>
+                  </button>
+                </th:block>
+              </div>
+            </div>
 
-        window.loadMoreItems = function () {
-          const itemsToLoad = Math.min(
-            itemsToShow,
-            items.length - currentIndex
-          );
-          for (let i = currentIndex; i < currentIndex + itemsToLoad; i++) {
-            items[i].classList.remove("hidden");
-          }
-          currentIndex += itemsToLoad;
+            <!-- Size Filters -->
+            <div>
+              <h3 class="font-medium mb-2 filter-title">Kích thước</h3>
+              <div id="sizeFilters" class="grid grid-cols-3 gap-6">
+                <th:block th:each="size : ${allSizes}">
+                  <button th:data-size-id="${size.id}"
+                          th:data-size-name="${size.size}"
+                          th:class="${selectedSizes != null && selectedSizes.contains(size.id)} ? 'filter-btn selected' : 'filter-btn'"
+                          class="filter-btn"
+                          onclick="toggleFilter('size', this.getAttribute('data-size-id'), this)">
+                    <span class="">
+                      <span th:text="${size.size}">Size</span>
+                    </span>
+                  </button>
+                </th:block>
+              </div>
+            </div>
 
-          if (currentIndex >= items.length) {
-            loadMoreBtn.classList.add("hidden");
-          }
+            <!-- Price Filters -->
+            <div>
+              <h3 class="font-medium mb-2 filter-title">Giá</h3>
+              <div id="priceFilters" class="space-y-2">
+                <label class="flex items-center space-x-2">
+                  <input type="radio" name="priceRange" value="0-350000" class="form-radio"
+                         th:checked="${selectedPrice == '0-350000'}" />
+                  <span>Dưới 350,000đ</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                  <input type="radio" name="priceRange" value="350000-750000" class="form-radio"
+                         th:checked="${selectedPrice == '350000-750000'}" />
+                  <span>350,000đ - 750,000đ</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                  <input type="radio" name="priceRange" value="750000-999999999" class="form-radio"
+                         th:checked="${selectedPrice == '750000-999999999'}" />
+                  <span>Trên 750,000đ</span>
+                </label>
+              </div>
+            </div>
+          </div>
 
-          collapseBtn.classList.remove("hidden");
-        };
+          <!-- Filter Actions -->
+          <div class="mt-6 flex gap-4">
+            <button id="clearFiltersBtn"
+                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                    onclick="clearFilters()">
+              Xóa bộ lọc
+            </button>
+            <button id="applyFiltersBtn"
+                    class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                    onclick="applyFilters()">
+              Áp dụng
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        window.collapseItems = function () {
-          const itemsToHide = Math.min(itemsToShow, currentIndex - itemsToShow);
-          for (let i = currentIndex - 1; i >= currentIndex - itemsToHide; i--) {
-            items[i].classList.add("hidden");
-          }
-          currentIndex -= itemsToHide;
+    <!-- Product Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 py-6 justify-items-center"
+         id="productGrid">
+      <th:block th:each="item : ${items}">
+        <div th:replace="components/productItem :: productItem(${item})"></div>
+      </th:block>
+    </div>
 
-          if (currentIndex <= itemsToShow) {
-            collapseBtn.classList.add("hidden");
-          }
+    <!-- Load More -->
+    <div th:if="${totalPages > 1}" class="flex justify-center gap-2 py-4">
+  <span th:if="${currentPage > 1}">
+    <a th:href="@{/categories/{categoryName}(categoryName=${category.categoryName}, page=${currentPage - 1}, colors=${selectedColors}, sizes=${selectedSizes}, price=${selectedPrice})}"
+       class="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors duration-200">
+      &lt;
+    </a>
+  </span>
+  <span th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
+    <a th:if="${pageNumber == 1 || pageNumber == totalPages || (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)}"
+       th:href="@{/categories/{categoryName}(categoryName=${category.categoryName}, page=${pageNumber}, colors=${selectedColors}, sizes=${selectedSizes}, price=${selectedPrice})}"
+       th:text="${pageNumber}"
+       th:class="${pageNumber == currentPage} ? 'px-4 py-2 bg-blue-500 text-white rounded' : 'px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200'"
+       class="transition-colors duration-200">
+    </a>
+    <span th:if="${pageNumber == currentPage - 2 || pageNumber == currentPage + 2}">...</span>
+  </span>
+  <span th:if="${currentPage < totalPages}">
+    <a th:href="@{/categories/{categoryName}(categoryName=${category.categoryName}, page=${currentPage + 1}, colors=${selectedColors}, sizes=${selectedSizes}, price=${selectedPrice})}"
+       class="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors duration-200">
+      &gt;
+    </a>
+  </span>
+</div>
+  </div>
+</main>
 
-          loadMoreBtn.classList.remove("hidden");
-        };
+<footer th:replace="components/footer"></footer>
+<div th:replace="/components/lucide_icons :: lucide_icon"></div>
 
-        // Kiểm tra nếu có ít hơn hoặc bằng 18 sản phẩm, ẩn cả hai nút
-        if (items.length <= itemsToShow) {
-          loadMoreBtn.classList.add("hidden");
-          collapseBtn.classList.add("hidden");
-        }
+<script th:inline="javascript">
+  // Get initial state from Thymeleaf
+  let currentPage = /*[[${currentPage}]]*/ 1;
+  let selectedColors = /*[[${selectedColors}]]*/ [];
+  let selectedSizes = /*[[${selectedSizes}]]*/ [];
+  let selectedPriceRange = /*[[${selectedPrice}]]*/ '';
+  let hasMore = /*[[${hasMore}]]*/ false;
+
+  // Filter Panel Functions
+  function openFilter() {
+    const filterPanel = document.getElementById("filterPanel");
+    filterPanel.classList.remove("hidden");
+    setTimeout(() => {
+      filterPanel.classList.add("visible");
+    }, 10);
+  }
+
+  function closeFilter() {
+    const filterPanel = document.getElementById("filterPanel");
+    filterPanel.classList.remove("visible");
+    setTimeout(() => {
+      filterPanel.classList.add("hidden");
+    }, 300);
+  }
+
+  function toggleFilter(type, value, btn) {
+    value = parseInt(value);
+    let selected;
+    if (type === "color") {
+      selected = selectedColors.includes(value);
+      if (selected) {
+        selectedColors = selectedColors.filter(id => id !== value);
+      } else {
+        selectedColors.push(value);
+      }
+    } else if (type === "size") {
+      selected = selectedSizes.includes(value);
+      if (selected) {
+        selectedSizes = selectedSizes.filter(id => id !== value);
+      } else {
+        selectedSizes.push(value);
+      }
+    }
+    btn.classList.toggle("selected");
+  }
+
+  function clearFilters() {
+    selectedColors = [];
+    selectedSizes = [];
+    selectedPriceRange = "";
+
+    // Reset UI
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+
+      btn.classList.remove('selected');
+      
+    });
+    document.querySelectorAll('input[name="priceRange"]').forEach(radio => {
+      radio.checked = false;
+    });
+  }
+
+  function applyFilters() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('colors');
+    url.searchParams.delete('sizes');
+    url.searchParams.delete('price');
+    url.searchParams.delete('page');
+
+    if (selectedColors.length > 0) {
+      selectedColors.forEach(color => url.searchParams.append('colors', color));
+    }
+    if (selectedSizes.length > 0) {
+      selectedSizes.forEach(size => url.searchParams.append('sizes', size));
+    }
+    if (selectedPriceRange) {
+      url.searchParams.set('price', selectedPriceRange);
+    }
+
+    window.location.href = url.toString();
+  }
+
+  async function loadMoreItems() {
+    const nextPage = currentPage + 1;
+    const url = new URL(window.location.href);
+    url.searchParams.set('page', nextPage);
+
+    try {
+      const response = await fetch(url.toString());
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      // Get new items and append them
+      const newItems = doc.querySelectorAll('#productGrid > div');
+      const productGrid = document.getElementById('productGrid');
+      newItems.forEach(item => {
+        productGrid.appendChild(item.cloneNode(true));
       });
-    </script>
-    <script th:src="@{/js/filter.js}"></script>
-  </body>
+
+      // Update state
+      currentPage = nextPage;
+      hasMore = doc.getElementById('hasMore').value === 'true';
+
+      // Hide load more button if no more items
+      if (!hasMore) {
+        document.getElementById('loadMoreBtn').classList.add('hidden');
+      }
+
+      // Update product count if needed
+      const newTotalItems = doc.getElementById('totalItems').value;
+      document.getElementById('productCount').textContent = `${newTotalItems} sản phẩm`;
+    } catch (error) {
+      console.error('Error loading more items:', error);
+    }
+  }
+
+  // Price range handler
+  document.querySelectorAll('input[name="priceRange"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      selectedPriceRange = e.target.value;
+    });
+  });
+
+  // Sticky header handler
+  const categoryControls = document.getElementById('categoryControls');
+  const header = document.querySelector('.header');
+  let lastScrollY = window.scrollY;
+
+  window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+
+    if (currentScrollY > lastScrollY && currentScrollY > header.offsetHeight) {
+      categoryControls.classList.add('fixed');
+      categoryControls.style.top = '0';
+    } else {
+      categoryControls.classList.remove('fixed');
+      categoryControls.style.top = `${header.offsetHeight}px`;
+    }
+
+    lastScrollY = currentScrollY;
+  });
+
+  // Initialize selected filters on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    // Set initial price range if exists
+    if (selectedPriceRange) {
+      const radio = document.querySelector(`input[name="priceRange"][value="${selectedPriceRange}"]`);
+      if (radio) radio.checked = true;
+    }
+
+    // Update product count
+    const totalItems = document.getElementById('totalItems').value;
+    document.getElementById('productCount').textContent = `${totalItems} sản phẩm`;
+  });
+</script>
+</body>
 </html>

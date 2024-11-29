@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -25,6 +26,9 @@ public interface ItemRepository extends JpaRepository<Item, String> {
     List<Item> findRelatedItems(@Param("categoryId") int categoryId, @Param("itemId") String itemId, @Param("limit") int limit);
     Page<Item> findByCategoryId(int categoryId, Pageable pageable);
     List<Item> findByNameContaining(String name);
+
+    @Query("SELECT i FROM Item i WHERE i.name LIKE %:name%")
+    List<Item> findByNameContaining2(String name);
     long countByCategoryId(int categoryId);
     @Query("SELECT i FROM Item i JOIN i.variants v WHERE i.category.id = :categoryId " +
             "AND (:colors IS NULL OR v.color.color IN :colors) " +
@@ -40,4 +44,79 @@ public interface ItemRepository extends JpaRepository<Item, String> {
     long countByCategoryIdAndFilter(@Param("categoryId") int categoryId,
                                     @Param("colors") List<String> colors,
                                     @Param("sizes") List<String> sizes);
+
+
+
+    @Query("""
+        SELECT DISTINCT i FROM Item i
+        LEFT JOIN FETCH i.variants v
+        LEFT JOIN FETCH v.color c
+        LEFT JOIN FETCH v.size s
+        WHERE i.category.id = :categoryId
+        AND (:colors IS NULL OR c.id IN :colors)
+        AND (:sizes IS NULL OR s.id IN :sizes)
+        AND (
+            CASE 
+                WHEN i.promotionPrice > 0 THEN i.promotionPrice
+                ELSE (SELECT MIN(v2.price) FROM Variant v2 WHERE v2.item = i)
+            END
+        ) BETWEEN :minPrice AND :maxPrice
+        ORDER BY i.quantitySold DESC
+    """)
+    Page<Item> findByCategoryIdAndFilter(
+            @Param("categoryId") int categoryId,
+            @Param("colors") List<Integer> colors,
+            @Param("sizes") List<Integer> sizes,
+            @Param("minPrice") double minPrice,
+            @Param("maxPrice") double maxPrice,
+            Pageable pageable
+    );
+
+    @Query("""
+        SELECT COUNT(DISTINCT i) FROM Item i
+        LEFT JOIN i.variants v
+        LEFT JOIN v.color c
+        LEFT JOIN v.size s
+        WHERE i.category.id = :categoryId
+        AND (:colors IS NULL OR c.id IN :colors)
+        AND (:sizes IS NULL OR s.id IN :sizes)
+        AND (
+            CASE 
+                WHEN i.promotionPrice > 0 THEN i.promotionPrice
+                ELSE (SELECT MIN(v2.price) FROM Variant v2 WHERE v2.item = i)
+            END
+        ) BETWEEN :minPrice AND :maxPrice
+    """)
+    long countByFilters(
+            @Param("categoryId") int categoryId,
+            @Param("colors") List<Integer> colors,
+            @Param("sizes") List<Integer> sizes,
+            @Param("minPrice") double minPrice,
+            @Param("maxPrice") double maxPrice
+    );
+
+    @Query("""
+        SELECT DISTINCT i FROM Item i
+        LEFT JOIN FETCH i.variants v
+        LEFT JOIN FETCH v.color c
+        LEFT JOIN FETCH v.size s
+        WHERE i.name LIKE %:name%
+        AND (:colors IS NULL OR c.id IN :colors)
+        AND (:sizes IS NULL OR s.id IN :sizes)
+        AND (
+            CASE 
+                WHEN i.promotionPrice > 0 THEN i.promotionPrice
+                ELSE (SELECT MIN(v2.price) FROM Variant v2 WHERE v2.item = i)
+            END
+        ) BETWEEN :minPrice AND :maxPrice
+        ORDER BY i.quantitySold DESC
+    """)
+    Page<Item> searchByNameAndFilter(
+            @Param("name") String name,
+            @Param("colors") List<Integer> colors,
+            @Param("sizes") List<Integer> sizes,
+            @Param("minPrice") double minPrice,
+            @Param("maxPrice") double maxPrice,
+            Pageable pageable
+    );
 }
