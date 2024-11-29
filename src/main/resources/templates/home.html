@@ -9,7 +9,7 @@
 <header th:replace="components/header"></header>
 
 <div th:fragment="content" class="pt-8 bg-white">
-    <div class="px-10  ">
+    <div class="px-2 ">
         <!-- Banner Slider -->
         <div class="relative w-full h-full mx-auto mt-10 overflow-hidden">
             <!-- Slide Wrapper -->
@@ -45,68 +45,69 @@
             </div>
         </div>
     </div>
-    <div class="px-10">
 
-        <!-- Tab selection -->
-        <div class="px-10">
-            <div class="px-4 mx-auto mt-8">
-                <h2 class="mb-4 text-3xl font-semibold text-center text-black">Sản phẩm ưa chuộng</h2>
-                <div class="flex justify-center mb-8 overflow-x-auto whitespace-nowrap" id="category-buttons">
-                    <button th:each="category, iterStat : ${categories1}"
-                            th:text="${category.categoryName}"
-                            th:data-category-index="${iterStat.index}"
-                            class="btn min-w-[80px] mx-2 border-0 rounded-full hover:bg-gray-100"
-                            th:classappend="${iterStat.index == 0} ? 'btn-warning' : 'bg-gray-100'"
-                            onclick="showPopularItems(this)">
-                    </button>
+
+    <!-- Tab selection -->
+    <div class="px-2">
+        <div class="mt-8">
+            <h2 class="mb-4 text-3xl font-semibold text-center text-black">Sản phẩm ưa chuộng</h2>
+            <div class="flex justify-start gap-4 px-10 mb-8 overflow-x-auto md:justify-center snap-x snap-mandatory whitespace-nowrap scroll-px-4" id="category-buttons">
+            <button th:each="category, iterStat : ${categories1}"
+                        th:text="${category.categoryName}"
+                        th:data-category-index="${iterStat.index}"
+                        class="btn min-w-[80px] mx-2 border-0 rounded-full hover:bg-gray-100 "
+                        th:classappend="${iterStat.index == 0} ? 'btn-warning' : 'bg-gray-100'"
+                        onclick="showPopularItems(this)">
+                </button>
+            </div>
+            <div id="popular-grid" class="w-full mx-auto">
+                <div id="popularItems1" class="grid grid-cols-2 popular-items lg:grid-cols-4 ">
+                    <div th:each="item : ${popularItems1}">
+                        <div th:replace="components/productItem :: productItem(item=${item})"></div>
+                    </div>
                 </div>
-                <div id="popular-grid" >
-                    <div id="popularItems1" class="grid grid-cols-1 popular-items md:grid-cols-2 lg:grid-cols-4 ">
-                        <div th:each="item : ${popularItems1}">
-                            <div th:replace="components/productItem :: productItem(item=${item})"></div>
-                        </div>
+                <div id="popularItems2" class="hidden grid-cols-2 popular-items lg:grid-cols-4 ">
+                    <div th:each="item : ${popularItems2}">
+                        <div th:replace="components/productItem :: productItem(item=${item})"></div>
                     </div>
-                    <div id="popularItems2" class="hidden grid-cols-1 popular-items md:grid-cols-2 lg:grid-cols-4 ">
-                        <div th:each="item : ${popularItems2}">
-                            <div th:replace="components/productItem :: productItem(item=${item})"></div>
-                        </div>
+                </div>
+                <div id="popularItems3" class="hidden grid-cols-2 popular-items lg:grid-cols-4 ">
+                    <div th:each="item : ${popularItems3}">
+                        <div th:replace="components/productItem :: productItem(item=${item})"></div>
                     </div>
-                    <div id="popularItems3" class="hidden grid-cols-1 popular-items md:grid-cols-2 lg:grid-cols-4 ">
-                        <div th:each="item : ${popularItems3}">
-                            <div th:replace="components/productItem :: productItem(item=${item})"></div>
-                        </div>
-                    </div>
-                    <div id="popularItems4" class="hidden grid-cols-1 popular-items md:grid-cols-2 lg:grid-cols-4 ">
-                        <div th:each="item : ${popularItems4}">
-                            <div th:replace="components/productItem :: productItem(item=${item})"></div>
-                        </div>
+                </div>
+                <div id="popularItems4" class="hidden grid-cols-2 popular-items lg:grid-cols-4 ">
+                    <div th:each="item : ${popularItems4}">
+                        <div th:replace="components/productItem :: productItem(item=${item})"></div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Load more button -->
-        <div class="flex justify-center mt-8">
+    </div>
+    <!-- Load more button -->
+    <div class="flex justify-center mt-8">
         <button class="h-10 text-lg text-black border-black btn btn-outline w-80 rounded-xl hover:bg-gray-200 hover:text-black"
                 data-section="popular"
                 onclick="redirectToCategory('popular')">
             Xem thêm
         </button>
-        </div>
-
     </div>
-    <div class="px-10 py-5">
+
+    <div class="py-5 ">
         <a href="">
             <img th:src="@{/images/home/imageSubBanner.png}"
                  alt="image" class="object-cover w-full">
         </a>
     </div>
     <!--danh sách sản phẩm gợi ý-->
-    <div class="px-10">
-        <div class="mx-auto mt-8">
-            <div class="navbar bg-white justify-center py-5 items-center">
-                <h2 class="text-2xl text-gray-600 pr-5">Gợi ý sản phẩm</h2>
+    <div class="px-2">
+        <div class="w-full mx-auto mt-8">
+            <div class="items-center justify-center py-5 bg-white navbar">
+                <h2 class="pr-5 text-2xl text-gray-600">Gợi ý sản phẩm</h2>
                 <details class="dropdown">
-                    <summary id="dropdown-summary" class="btn m-1 bg-white text-gray-500 font-medium caret-transparent px-10" th:text="${categories2[0].categoryName}"></summary>
+                    <summary id="dropdown-summary"
+                             class="px-10 m-1 font-medium text-gray-500 bg-white btn caret-transparent"
+                             th:text="${categories2[0].categoryName}"></summary>
                     <ul class="dropdown-content menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                         <li th:each="category, iterStat : ${categories2}">
                             <a href="javascript:void(0)"
@@ -118,60 +119,64 @@
                 </details>
 
             </div>
-            <div id="product-grid" >
-                <div id="suggestedItems1" class="grid grid-cols-1 suggested-items sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 ">
+            <div id="product-grid" class="w-full mx-auto">
+                <div id="suggestedItems1"
+                     class="grid grid-cols-2 suggested-items md:grid-cols-3 lg:grid-cols-4 ">
                     <div th:each="item : ${suggestedItems1}">
                         <div th:replace="components/productItem :: productItem(item=${item})"></div>
                     </div>
                 </div>
-                <div id="suggestedItems2" class="hidden grid-cols-1 suggested-items sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 ">
+                <div id="suggestedItems2"
+                     class="hidden grid-cols-2 suggested-items md:grid-cols-3 lg:grid-cols-4 ">
                     <div th:each="item : ${suggestedItems2}">
                         <div th:replace="components/productItem :: productItem(item=${item})"></div>
                     </div>
                 </div>
-                <div id="suggestedItems3" class="hidden grid-cols-1 suggested-items sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 ">
+                <div id="suggestedItems3"
+                     class="hidden grid-cols-2 suggested-items md:grid-cols-3 lg:grid-cols-4 ">
                     <div th:each="item : ${suggestedItems3}">
                         <div th:replace="components/productItem :: productItem(item=${item})"></div>
                     </div>
                 </div>
-                <div id="suggestedItems4" class="hidden grid-cols-1 suggested-items sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 ">
+                <div id="suggestedItems4"
+                     class="hidden grid-cols-2 suggested-items md:grid-cols-3 lg:grid-cols-4 ">
                     <div th:each="item : ${suggestedItems4}">
                         <div th:replace="components/productItem :: productItem(item=${item})"></div>
                     </div>
                 </div>
-        </div>
-            <div class="flex justify-center mt-8">
-            <button class="h-10 text-lg text-black border-black btn btn-outline w-80 rounded-xl hover:bg-gray-200 hover:text-black"
-                    data-section="suggested"
-                    onclick="redirectToCategory('suggested')">
-                Xem thêm
-            </button>
             </div>
+            <div class="flex justify-center mt-8">
+                <button class="h-10 text-lg text-black border-black btn btn-outline w-80 rounded-xl hover:bg-gray-200 hover:text-black"
+                        data-section="suggested"
+                        onclick="redirectToCategory('suggested')">
+                    Xem thêm
+                </button>
+            </div>
+        </div>
     </div>
-</div>
-<div class="px-10 py-5 bg-white">
-    <div class="grid grid-rows-2 sm:grid-cols-2 md:grid-cols-2 ">
-        <a href=""><img th:src="@{/images/home/imageContent1.png}"
-                        alt="image" class="object-cover w-full p-1"></a>
-        <a href=""><img th:src="@{/images/home/imageContent2.png}"
-                        alt="image" class="object-cover w-full p-1 "></a>
-        <a href=""><img th:src="@{/images/home/imageContent3.png}"
-                        alt="image" class="object-cover w-full p-1"></a>
-        <a href=""><img th:src="@{/images/home/imageContent4.png}"
-                        alt="image" class="object-cover w-full p-1"></a>
+    <div class="px-2 py-5 bg-white">
+        <div class="grid grid-rows-2 sm:grid-cols-2 md:grid-cols-2 ">
+            <a href=""><img th:src="@{/images/home/imageContent1.png}"
+                            alt="image" class="object-cover w-full p-1"></a>
+            <a href=""><img th:src="@{/images/home/imageContent2.png}"
+                            alt="image" class="object-cover w-full p-1 "></a>
+            <a href=""><img th:src="@{/images/home/imageContent3.png}"
+                            alt="image" class="object-cover w-full p-1"></a>
+            <a href=""><img th:src="@{/images/home/imageContent4.png}"
+                            alt="image" class="object-cover w-full p-1"></a>
+        </div>
     </div>
-</div>
-<div class="flex items-center justify-center w-full h-16 bg-black">
-    <h1 class="text-3xl font-semibold text-center text-white">#Yody tự hào thương hiệu Việt</h1>
-</div>
-<div class="px-10 bg-white">
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ">
-        <a href=""><img th:src="@{/images/home/imageBlog1.jpeg}"
-                        alt="image" class="object-cover w-full p-1 "></a>
-        <a href=""><img th:src="@{/images/home/imageBlog2.webp}"
-                        alt="image" class="object-cover w-full p-1 "></a>
+    <div class="flex items-center justify-center w-full h-16 bg-black">
+        <h1 class="text-3xl font-semibold text-center text-white">#Yody tự hào thương hiệu Việt</h1>
     </div>
-</div>
+    <div class="px-2 bg-white">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 ">
+            <a href=""><img th:src="@{/images/home/imageBlog1.jpeg}"
+                            alt="image" class="object-cover w-full p-1 "></a>
+            <a href=""><img th:src="@{/images/home/imageBlog2.webp}"
+                            alt="image" class="object-cover w-full p-1 "></a>
+        </div>
+    </div>
 </div>
 
 
