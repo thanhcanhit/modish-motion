@@ -52,6 +52,13 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
+    public List<OrderDetailDTO> findByVariantId(String variantId) {
+        return orderDetailRepository.findByVariantId(variantId).stream()
+                .map(OrderDetailDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<OrderDetailDTO> findByOrderId(Integer orderId) {
         List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(orderId);
         return orderDetails.stream()

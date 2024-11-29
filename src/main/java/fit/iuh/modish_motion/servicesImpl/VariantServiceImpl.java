@@ -1,6 +1,8 @@
 package fit.iuh.modish_motion.servicesImpl;
 
+import fit.iuh.modish_motion.dto.ItemDTO;
 import fit.iuh.modish_motion.dto.VariantDTO;
+import fit.iuh.modish_motion.entities.Item;
 import fit.iuh.modish_motion.entities.Variant;
 import fit.iuh.modish_motion.repositories.VariantRepository;
 import fit.iuh.modish_motion.services.VariantService;
@@ -29,6 +31,14 @@ public class VariantServiceImpl implements VariantService {
     }
 
     @Override
+    public List<VariantDTO> findByItemId(String itemId) {
+        List<Variant> variants = variantRepository.findByItemId(itemId);
+        return variants.stream()
+                .map(VariantDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Optional<VariantDTO> findById(String id) {
         return variantRepository.findById(id)
                 .map(VariantDTO::fromEntity);
@@ -39,6 +49,18 @@ public class VariantServiceImpl implements VariantService {
         Variant variant = variantDTO.toEntity();
         Variant savedVariant = variantRepository.save(variant);
         return VariantDTO.fromEntity(savedVariant);
+    }
+
+    @Override
+    public void update(VariantDTO variant) {
+        Variant existingVariant = variantRepository.findById(variant.getId())
+                .orElseThrow(() -> new RuntimeException("Variant not found"));
+        existingVariant.setColor(variant.getColor().toEntity());
+        existingVariant.setSize(variant.getSize().toEntity());
+        existingVariant.setPrice(variant.getPrice());
+        existingVariant.setAvailableQuantity(variant.getAvailableQuantity());
+        existingVariant.setImageUrl(variant.toEntity().getImageUrl());
+        variantRepository.save(existingVariant);
     }
 
     @Override

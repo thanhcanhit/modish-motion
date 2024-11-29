@@ -31,5 +31,6 @@ public class Item {
     private List<Variant> variants;
 
     public Item(String itemId) {
+        this.id = itemId;
     }
 }
