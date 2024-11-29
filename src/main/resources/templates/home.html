@@ -9,7 +9,7 @@
 <header th:replace="components/header"></header>
 
 <div th:fragment="content" class="pt-8 bg-white">
-    <div class="px-10 h-[500px] ">
+    <div class="px-10  ">
         <!-- Banner Slider -->
         <div class="relative w-full h-full mx-auto mt-10 overflow-hidden">
             <!-- Slide Wrapper -->
@@ -19,7 +19,7 @@
                      class="flex-shrink-0 w-full customSlider"
                      th:classappend="${iterStat.index == 0} ? 'block' : 'hidden'">
                     <a th:href="${banner.link}">
-                        <img th:src="${banner.imageUrl}" alt="Banner" class="object-cover w-full h-full">
+                        <img th:src="${banner.imageUrl}" alt="Banner" class="object-cover w-full h-full max-h-[500px]">
                     </a>
                 </div>
             </div>
@@ -85,11 +85,13 @@
             </div>
         </div>
         <!-- Load more button -->
+        <div class="flex justify-center mt-8">
         <button class="h-10 text-lg text-black border-black btn btn-outline w-80 rounded-xl hover:bg-gray-200 hover:text-black"
                 data-section="popular"
                 onclick="redirectToCategory('popular')">
             Xem thêm
         </button>
+        </div>
 
     </div>
     <div class="px-10 py-5">
@@ -138,12 +140,13 @@
                     </div>
                 </div>
         </div>
-
+            <div class="flex justify-center mt-8">
             <button class="h-10 text-lg text-black border-black btn btn-outline w-80 rounded-xl hover:bg-gray-200 hover:text-black"
                     data-section="suggested"
                     onclick="redirectToCategory('suggested')">
                 Xem thêm
             </button>
+            </div>
     </div>
 </div>
 <div class="px-10 py-5 bg-white">
