@@ -91,22 +91,22 @@
       #filterPanel {
         padding: 0;
       }
-/* 
-      header {
-        display: block; /* Change from 'none' to 'block' */
-      /* } */ 
+      /*
+            header {
+              display: block; /* Change from 'none' to 'block' */
+      /* } */
 
       .filter-btn {
         justify-content: center;
       }
     }
 
-    #productGrid {
-      min-height: 100vh;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+    /*#productGrid {*/
+    /*  min-height: 100vh;*/
+    /*  display: flex;*/
+    /*  flex-wrap: wrap;*/
+    /*  justify-content: center;*/
+    /*}*/
 
     .filter-btn {
       height: 74px;
@@ -298,7 +298,7 @@
       &lt;
     </a>
   </span>
-  <span th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
+      <span th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
     <a th:if="${pageNumber == 1 || pageNumber == totalPages || (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)}"
        th:href="@{/categories/{categoryName}(categoryName=${category.categoryName}, page=${pageNumber}, colors=${selectedColors}, sizes=${selectedSizes}, price=${selectedPrice})}"
        th:text="${pageNumber}"
@@ -307,13 +307,13 @@
     </a>
     <span th:if="${pageNumber == currentPage - 2 || pageNumber == currentPage + 2}">...</span>
   </span>
-  <span th:if="${currentPage < totalPages}">
+      <span th:if="${currentPage < totalPages}">
     <a th:href="@{/categories/{categoryName}(categoryName=${category.categoryName}, page=${currentPage + 1}, colors=${selectedColors}, sizes=${selectedSizes}, price=${selectedPrice})}"
        class="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors duration-200">
       &gt;
     </a>
   </span>
-</div>
+    </div>
   </div>
 </main>
 
@@ -375,7 +375,7 @@
     document.querySelectorAll('.filter-btn').forEach(btn => {
 
       btn.classList.remove('selected');
-      
+
     });
     document.querySelectorAll('input[name="priceRange"]').forEach(radio => {
       radio.checked = false;
