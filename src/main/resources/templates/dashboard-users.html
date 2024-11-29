@@ -78,16 +78,19 @@
                                 <ul tabindex="0" class="dropdown-content bg-gray-100 menu z-[1] w-52 p-2">
                                     <li>
                                         <a th:onclick="|confirmDelete(${account.user.id})|">
+                                            <i data-lucide="user-round-x"></i>
                                             Delete
                                         </a>
                                     </li>
                                     <li>
                                         <a th:onclick="|openEditModal(${account.user.id})|">
+                                            <i data-lucide="user-round-cog"></i>
                                             Edit
                                         </a>
                                     </li>
                                     <li>
                                         <a th:onclick="|loadAccountDetails(${account.user.id})|">
+                                            <i data-lucide="user-round-search"></i>
                                             View
                                         </a>
                                     </li>
@@ -305,11 +308,60 @@
             </form>
         </div>
     </div>
+    <div id="toastContainer" class="fixed bottom-4 right-4 space-y-2 z-50"></div>
+
+    <div id="confirmationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-1/3">
+            <h3 id="modalTitle" class="text-lg font-semibold mb-4">Xác nhận</h3>
+            <p id="modalMessage" class="text-gray-700 mb-6">Bạn có chắc chắn muốn thực hiện hành động này?</p>
+            <div class="flex justify-end space-x-2">
+                <button id="modalCancelBtn" class="btn bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Hủy</button>
+                <button id="modalConfirmBtn" class="btn bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Đồng ý</button>
+            </div>
+        </div>
+    </div>
 
 </div>
 <div th:replace="/components/lucide_icons :: lucide_icon"></div>
 <footer th:replace="components/footer"></footer>
 <script>
+    function showToast(message, type = 'success') {
+        const toastContainer = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type} shadow-lg flex justify-between items-center gap-4`;
+        toast.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.remove()" class="btn btn-sm btn-circle bg-transparent text-white">✕</button>
+    `;
+        toastContainer.appendChild(toast);
+
+        // Tự động ẩn sau 3 giây
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+    function showConfirmationModal(title, message, onConfirm) {
+        const modal = document.getElementById('confirmationModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const cancelBtn = document.getElementById('modalCancelBtn');
+        const confirmBtn = document.getElementById('modalConfirmBtn');
+
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+
+        modal.classList.remove('hidden');
+
+        cancelBtn.onclick = () => {
+            modal.classList.add('hidden');
+        };
+
+        confirmBtn.onclick = () => {
+            modal.classList.add('hidden');
+            onConfirm();
+        };
+    }
+
     function loadAccountDetails(accountId) {
         fetch(`/api/admin/account/${accountId}`)
             .then(response => response.json())
@@ -406,11 +458,13 @@
         })
             .then(response => {
                 if (response.ok) {
-                    alert('Thêm người dùng thành công');
+                    showToast('Thêm người dùng thành công', 'success');
                     closeModal('addUserModal');
-                    window.location.reload();
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
                 } else {
-                    alert('Không thể thêm người dùng');
+                    showToast('Không thể thêm người dùng', 'error');
                 }
             })
             .catch(error => console.error('Lỗi khi thêm người dùng:', error));
@@ -418,18 +472,28 @@
 
     function confirmDelete(accountId) {
 
-        if (confirm('Bạn có chắc chắn muốn xóa tài khoản này?')) {
-            fetch(`/api/admin/user/${accountId}`, { method: 'DELETE' })
-                .then(response => {
-                    if (response.ok) {
-                        alert('Xóa thành công');
-                        location.reload();
-                    } else {
-                        alert('Không thể xóa tài khoản');
-                    }
-                })
-                .catch(error => console.error('Lỗi:', error));
-        }
+        showConfirmationModal(
+            'Xác nhận xóa',
+            'Bạn có chắc chắn muốn xóa tài khoản này?',
+            () => {
+                fetch(`/api/admin/user/${accountId}`, { method: 'DELETE' })
+                    .then(response => {
+                        if (response.ok) {
+                            showToast('Xóa thành công', 'success');
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            showToast('Không thể xóa tài khoản', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        showToast('Đã xảy ra lỗi khi xóa tài khoản', 'error');
+                        console.error('Lỗi:', error);
+                    });
+            }
+        );
+
     }
     function closeModal(modalId) {
         document.getElementById(modalId).classList.add('hidden');
@@ -475,10 +539,12 @@
                     })
                         .then(response => {
                             if (response.ok) {
-                                alert('Cập nhật thành công');
-                                location.reload();
+                                showToast('Cập nhật thành công', 'success');
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1000);
                             } else {
-                                alert('Không thể cập nhật');
+                                showToast('Cập nhật không thành công', 'error');
                             }
                         })
                         .catch(error => console.error('Lỗi:', error));
