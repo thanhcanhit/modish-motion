@@ -1,7 +1,7 @@
 <input type="hidden" id="totalItems" value="[[${totalItems}]]" />
 <input type="hidden" id="hasMore" value="[[${hasMore}]]" />
-<input type="hidden" id="selectedColors" name="selectedColors" />
-<input type="hidden" id="selectedSizes" name="selectedSizes" />
+<input type="hidden" id="selectedColors" name="selectedColors" value="[[${colors}]]" />
+<input type="hidden" id="selectedSizes" name="selectedSizes" value="[[${sizes}]]" />
 
 <style>
   #filterPanel {
@@ -32,6 +32,32 @@
   }
   .filter-title {
     font-weight: bold; /* Make text bolder */
+  }
+  .filter-btn {
+    height: 74px;
+    border-radius: 5px;
+    display:block;
+    padding: 8px;
+    background-color: #fff;
+    cursor: pointer;
+  }
+  .filter-btn.selected {
+    border: 2px solid #000; /* Add border to selected items */
+  }
+  .filter-btn .color-circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 1px solid #d3d3d3;
+    margin-bottom: 5px;
+  }
+  .filter-btn-color {
+    width: 35px;
+    height: 37px;
+    border-radius: 50%;
+    border: 1px solid #d3d3d3;
+    margin-bottom: 5px;
+    display: block;
   }
 </style>
 
@@ -66,13 +92,30 @@
         <div>
           <h3 class="font-medium mb-2 filter-title">Màu sắc</h3> <!-- Added filter-title class -->
           <div id="colorFilters" class="grid grid-cols-3 gap-6">
-            <!-- Filters will be populated here by JavaScript -->
+            <th:block th:each="color : ${allColors}">
+              <button
+                      th:data-color-id="${color.id}"
+                      th:class="${selectedColors != null && selectedColors.contains(color.id)} ? 'filter-btn selected' : 'filter-btn'"
+                      class="filter-btn"
+                      onclick="toggleFilter('color', this, '${color.id}')">
+                <span class="color-circle" th:style="'background-color: ' + ${color.hex}"></span>
+                <span th:text="${color.color}">Color Name</span>
+              </button>
+            </th:block>
           </div>
         </div>
         <div>
           <h3 class="font-medium mb-2 filter-title">Kích thước</h3> <!-- Added filter-title class -->
           <div id="sizeFilters" class="grid grid-cols-3 gap-6">
-            <!-- Filters will be populated here by JavaScript -->
+            <th:block th:each="size : ${allSizes}">
+              <button
+                      th:data-size-id="${size.id}"
+                      th:class="${selectedSizes != null && selectedSizes.contains(size.id)} ? 'filter-btn selected' : 'filter-btn'"
+                      class="h-[50px] rounded-[5px] border border-gray-300 flex items-center justify-center"
+                      onclick="toggleFilter('size', this)">
+                <span th:text="${size.size}">Size Name</span>
+              </button>
+            </th:block>
           </div>
         </div>
         <div>
@@ -132,8 +175,8 @@
 </div>
 
 <script th:inline="javascript">
-  let selectedColors = JSON.parse(localStorage.getItem('selectedColors')) || [];
-  let selectedSizes = JSON.parse(localStorage.getItem('selectedSizes')) || [];
+  let selectedColors = /*[[${colors}]]*/ [];
+  let selectedSizes = /*[[${sizes}]]*/ [];
   let selectedPriceRange = localStorage.getItem('selectedPriceRange') || "";
 
   //
@@ -143,27 +186,25 @@
     localStorage.setItem('selectedPriceRange', selectedPriceRange);
   }
 
-  function toggleFilter(type, filter, btn) {
-    if (type === "color") {
-      const index = selectedColors.indexOf(filter);
-      if (index === -1) {
-        selectedColors.push(filter);
+  function toggleFilter(type, btn, id) {
+    if (type == "color") {
+      const index = selectedColors.indexOf(id);
+      if (index == -1) {
+        selectedColors.push(id);
       } else {
         selectedColors.splice(index, 1);
       }
-      document.getElementById("selectedColors").value =
-              selectedColors.join(",");
+      document.getElementById("selectedColors").value = selectedColors.join(",");
     } else if (type === "size") {
-      const index = selectedSizes.indexOf(filter);
+      const index = selectedSizes.indexOf(id);
       if (index === -1) {
-        selectedSizes.push(filter);
+        selectedSizes.push(id);
       } else {
         selectedSizes.splice(index, 1);
       }
       document.getElementById("selectedSizes").value = selectedSizes.join(",");
     }
-    btn.classList.toggle("border");
-    btn.classList.toggle("border-gray-300");
+    btn.classList.toggle("selected");
     saveFiltersToLocalStorage();
     console.log(selectedColors, selectedSizes);
     console.log(selectedPriceRange);
@@ -203,14 +244,7 @@
     colors.forEach((color) => {
       const btn = document.createElement("button");
       btn.classList.add(
-              "filter-btn",
-              "h-[74px]",
-              "rounded-[5px]",
-              "flex",
-              "flex-col",
-              "items-center",
-              "justify-center",
-              "p-2"
+          "filter-btn"
       );
       btn.setAttribute("data-type", "color");
       btn.setAttribute("data-value", color.id);
@@ -218,13 +252,11 @@
       btn.style.backgroundColor = "#fff"; // Set background color
 
       const span1 = document.createElement("span");
-      span1.style.width = "35px"; // Tăng kích thước
-      span1.style.height = "37px"; // Tăng kích thước
-      span1.style.borderRadius = "50%";
+      span1.classList.add(
+        "filter-btn-color",
+
+      );
       span1.style.backgroundColor = color.hex;
-      span1.style.display = "inline-block";
-      span1.style.border = "1px solid #ccc";
-      span1.style.marginBottom = "4px"; // Thêm khoảng cách dưới span1
 
       const span2 = document.createElement("span");
       span2.textContent = color.color;

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-
 <header th:fragment="header" class="fixed top-0 left-0 right-0 z-40 bg-white shadow-sm">
     <div class="container px-4 mx-auto">
         <!-- Main Header -->
@@ -37,7 +36,7 @@
                         <!-- Hiển thị avatar nếu người dùng đã đăng nhập -->
                         <img th:if="${#authentication.name != 'anonymousUser'}"
                              th:src="@{/images/profile/hamburmeo.jfif}"
-                             class="w-10 h-10 rounded-full object-cover"
+                             class="object-cover w-10 h-10 rounded-full"
                              alt="User Avatar" />
                         <!-- Hiển thị icon nếu chưa đăng nhập -->
                         <i data-lucide="user" class="w-6 h-6 font-semibold" th:if="${#authentication.name == 'anonymousUser'}"></i>
@@ -74,7 +73,7 @@
             <div class="container px-4 mx-auto">
                 <!-- Search Header -->
                 <div class="flex items-center justify-between h-16">
-                    <a href="/" class="flex-shrink-0">
+                    <a href="/" class="flex-shrink-0 hidden mb-4 md:block md:mb-0">
                         <span class="text-2xl font-bold text-blue-900">Modish Motion</span>
                     </a>
 
@@ -215,7 +214,7 @@
                                     </div>
                                     <div class="pl-4 submenu">
                                         ${groupedCategories[group][subgroup].map(category => `
-                                            <a href="/categories/${category.categoryName}?page=0" class="block px-4 py-2 hover:bg-gray-100 text-[#31495e]">${category.categoryName}</a>
+                                            <a href="/categories/${category.categoryName}?page=1" class="block px-4 py-2 hover:bg-gray-100 text-[#31495e]">${category.categoryName}</a>
                                         `).join('')}
                                     </div>
                                 </div>
@@ -279,7 +278,7 @@
             const searches = JSON.parse(localStorage.getItem('recentSearches')) || [];
             const recentSearchesContainer = document.getElementById('recentSearches');
             recentSearchesContainer.innerHTML = searches.map(search => `
-                <button class="px-4 py-2 text-sm bg-gray-100 rounded-full hover:bg-gray-200" onclick="fillSearchInput('${search}')">${search}</button>
+                <button class="px-4 py-2 mt-2 text-sm bg-gray-100 rounded-full hover:bg-gray-200" onclick="fillSearchInput('${search}')">${search}</button>
             `).join('');
         }
 

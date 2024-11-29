@@ -1,13 +1,21 @@
 package fit.iuh.modish_motion.servicesImpl;
 
+import fit.iuh.modish_motion.dto.ColorDTO;
+import fit.iuh.modish_motion.dto.SizeDTO;
 import fit.iuh.modish_motion.entities.Item;
 import fit.iuh.modish_motion.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import fit.iuh.modish_motion.repositories.ItemRepository;
 import fit.iuh.modish_motion.dto.ItemDTO;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -16,6 +24,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     private ItemRepository itemRepository;
+
+    private boolean isValidItem(Item item) {
+        return item != null && item.getVariants() != null && !item.getVariants().isEmpty();
+    }
 
     @Override
     public List<ItemDTO> findAll() {
@@ -81,8 +93,105 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public long countByCategoryId(int categoryId) {
-        return itemRepository.countByCategoryId(categoryId);
+    public Page<ItemDTO> findByCategoryIdAndFilter(
+            int categoryId,
+            List<Integer> colors,
+            List<Integer> sizes,
+            double minPrice,
+            double maxPrice,
+            int page,
+            int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Item> itemPage = itemRepository.findByCategoryIdAndFilter(
+                categoryId, colors, sizes, minPrice, maxPrice, pageable
+        );
+
+        // Filter out items without variants and create new Page
+        List<ItemDTO> validItems = itemPage.getContent().stream()
+                .filter(item -> item.getVariants() != null && !item.getVariants().isEmpty())
+                .map(ItemDTO::fromEntity)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(
+                validItems,
+                pageable,
+                itemPage.getTotalElements()
+        );
     }
-    // Remove methods related to filtering by size and color
+
+    @Override
+    public Page<ItemDTO> searchItemsByNameAndFilter(
+            String name,
+            List<Integer> colors,
+            List<Integer> sizes,
+            double minPrice,
+            double maxPrice,
+            int page,
+            int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Item> itemPage = itemRepository.searchByNameAndFilter(
+                name, colors, sizes, minPrice, maxPrice, pageable
+        );
+
+        List<ItemDTO> validItems = itemPage.getContent().stream()
+                .filter(item -> item.getVariants() != null && !item.getVariants().isEmpty())
+                .map(ItemDTO::fromEntity)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(
+                validItems,
+                pageable,
+                itemPage.getTotalElements()
+        );
+    }
+
+    @Override
+    public long countByFilters(
+            int categoryId,
+            List<Integer> colors,
+            List<Integer> sizes,
+            double minPrice,
+            double maxPrice) {
+        return itemRepository.countByFilters(categoryId, colors, sizes, minPrice, maxPrice);
+    }
+
+    @Override
+    public List<ColorDTO> findAllColorsByCategoryId(int categoryId) {
+        return itemRepository.findByCategoryId(categoryId).stream()
+                .flatMap(item -> item.getVariants().stream())
+                .map(variant -> variant.getColor())
+                .distinct()
+                .map(ColorDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SizeDTO> findAllSizesByCategoryId(int categoryId) {
+        return itemRepository.findByCategoryId(categoryId).stream()
+                .flatMap(item -> item.getVariants().stream())
+                .map(variant -> variant.getSize())
+                .distinct()
+                .map(SizeDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ColorDTO> findAllColorsBySearchQuery(String query) {
+        return itemRepository.findByNameContaining2(query).stream()
+                .flatMap(item -> item.getVariants().stream())
+                .map(variant -> variant.getColor())
+                .distinct()
+                .map(ColorDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SizeDTO> findAllSizesBySearchQuery(String query) {
+        return itemRepository.findByNameContaining2(query).stream()
+                .flatMap(item -> item.getVariants().stream())
+                .map(variant -> variant.getSize())
+                .distinct()
+                .map(SizeDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
 }
