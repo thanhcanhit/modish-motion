@@ -24,19 +24,21 @@
                     </svg>
                 </button>
                 <div class="indicator">
-                    <a href="/cart">
-                        <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                    <a href="/cart" class="relative">
+                        <i data-lucide="shopping-cart" class="w-6 h-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                        </i>
+                        <div class="absolute flex items-center justify-center w-4 h-4 text-xs text-white transition-all duration-300 scale-0 rounded-full -top-2 -right-2 bg-warning" id="cart-badge">
+                            <span id="cart-count" class="text-xs">0</span>
+                        </div>
                     </a>
-                    <span class="indicator-item badge badge-warning badge-sm">
-                        <span id="cart-count">0</span>
-                    </span>
                 </div>
                 <div class="dropdown dropdown-hover dropdown-end">
                     <button tabindex="0" class="p-2">
                         <!-- Hiển thị avatar nếu người dùng đã đăng nhập -->
                         <img th:if="${#authentication.name != 'anonymousUser'}"
                              th:src="@{/images/profile/hamburmeo.jfif}"
-                             class="object-cover w-10 h-10 rounded-full"
+                             class="object-cover w-[28px] h-[28px] rounded-full"
                              alt="User Avatar" />
                         <!-- Hiển thị icon nếu chưa đăng nhập -->
                         <i data-lucide="user" class="w-6 h-6 font-semibold" th:if="${#authentication.name == 'anonymousUser'}"></i>
@@ -106,7 +108,7 @@
                             </svg>
                         </button>
                     </div>
-                    <div class="mt-2 mt-6" id="recentSearches">
+                    <div class="mt-6" id="recentSearches">
                         <button class="px-4 py-2 text-sm bg-gray-100 rounded-full hover:bg-gray-200">áo</button>
                     </div>
                 </div>
@@ -305,5 +307,44 @@
             renderRecentSearches();
         }
     </script>
+        <!-- Cart indicator script -->
+        <script type="module">
+            import { CartAPI } from '/js/cart.js';
+            
+            document.addEventListener('DOMContentLoaded', async () => {
+                const cartBadge = document.getElementById('cart-badge');
+                const cartCount = document.getElementById('cart-count');
+                
+                async function updateCartIndicator() {
+                    try {
+                        const count = await CartAPI.getTotalItems();
+                        if (cartBadge && cartCount) {
+                            cartCount.textContent = count;
+                            // Use transform scale instead of opacity for better performance
+                            if (count > 0) {
+                                cartBadge.classList.remove('scale-0');
+                                cartBadge.classList.add('scale-100');
+                            } else {
+                                cartBadge.classList.remove('scale-100');
+                                cartBadge.classList.add('scale-0');
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error updating cart indicator:', error);
+                    }
+                }
+    
+                // Initial update
+                await updateCartIndicator();
+                
+                // Listen for cart updates
+                window.addEventListener('cart-updated', async () => {
+                    await updateCartIndicator();
+                });
+    
+                // Update every 5 seconds to keep in sync with server
+                setInterval(updateCartIndicator, 5000);
+            });
+        </script>
 </header>
 </html>

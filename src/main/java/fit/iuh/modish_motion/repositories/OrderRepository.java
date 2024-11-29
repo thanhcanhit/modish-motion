@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -18,6 +19,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     Page<Order> findByCustomerIdAndStatus(int customerId, String status, Pageable pageable);
 
+    @Query("from Order o where o.customer.id = :customerId order by o.orderAt desc")
     Page<Order> findByCustomerId(int customerId, Pageable pageable);
 //    List<Order> findByCustomer_Id(int customerId);
 //    List<Order> findByCustomer_IdAndStatus(int customerId, int status);

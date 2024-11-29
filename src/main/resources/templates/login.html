@@ -5,13 +5,13 @@
     <div th:replace="components/head :: head"></div>
     <title>Đăng nhập</title>
 </head>
-<body data-theme="light" class="flex items-center justify-center min-h-screen bg-cover bg-center relative bg-gradient-to-br from-blue-500 to-yellow-400 ">
-<div  class="relative  flex w-full max-w-7xl bg-white/50 shadow-lg rounded-lg overflow-hidden px-8 py-10" style="height: 600px;">
-    <div class="w-full md:w-1/2 flex items-center justify-center p-4 md:p-0">
+<body data-theme="light" class="relative flex items-center justify-center min-h-screen bg-center bg-cover bg-gradient-to-br from-blue-500 to-yellow-400 ">
+<div  class="relative flex w-full px-8 py-10 overflow-hidden rounded-lg shadow-lg max-w-7xl bg-white/50" style="height: 600px;">
+    <div class="flex items-center justify-center w-full p-4 md:w-1/2 md:p-0">
         <img th:src="@{/images/login/logo.png}" class="w-full md:w-auto" alt="logo"/>
     </div>
-    <div class="w-full md:w-1/2 p-4 md:p-8 overflow-y-auto">
-        <div class="text-center mb-4">
+    <div class="w-full p-4 overflow-y-auto md:w-1/2 md:p-8">
+        <div class="mb-4 text-center">
             <div class="flex justify-center">
                 <button id="login-tab" onclick="redirectToLogIn()" class="px-4 py-2 font-semibold text-gray-800 border-b-4 border-blue-500">Login</button>
                 <button id="signup-tab" onclick="redirectToSignUp()" class="px-4 py-2 font-semibold text-gray-500">Sign Up</button>
@@ -19,45 +19,45 @@
         </div>
         <div id="login-form">
             <form th:action="@{/loginrequest}" method="post" onsubmit="return validateLoginForm()"  class="space-y-4">
-                <label class="input input-bordered flex items-center gap-2 mb-2 px-3 py-2">
+                <label class="flex items-center gap-2 px-3 py-2 mb-2 input input-bordered">
                     <i data-lucide=user class="w-4 h-4 mr-2"></i>
                     <input type="text" id="username" name="username" class="grow" placeholder="Username"/>
                 </label>
-                <p id="usernameError" class="text-red-500 text-sm hidden">Vui lòng nhập tên đăng nhập hợp lệ.</p>
-                <label class="input input-bordered flex items-center gap-2 mb-2">
+                <p id="usernameError" class="hidden text-sm text-red-500">Vui lòng nhập tên đăng nhập hợp lệ.</p>
+                <label class="flex items-center gap-2 mb-2 input input-bordered">
                     <i data-lucide="key" class="w-4 h-4 mr-2"></i>
                     <input type="password" id="password" name="password" class="grow" placeholder="Password"/>
                 </label>
-                <p id="passwordError" class="text-red-500 text-sm hidden">Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, và số.</p>
+                <p id="passwordError" class="hidden text-sm text-red-500">Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, và số.</p>
 
-                <div class="text-right mb-4">
-                    <a href="#" class="text-sm text-blue-500 hover:underline cursor-pointer">I forgot my password</a>
+                <div class="mb-4 text-right">
+                    <a href="#" class="text-sm text-blue-500 cursor-pointer hover:underline">I forgot my password</a>
                 </div>
                 <button type="submit"
-                        class="btn btn-warning flex items-center justify-center w-full px-4 py-2 text-gray-800 font-semibold border border-gray-300 rounded-full shadow-sm">
+                        class="flex items-center justify-center w-full px-4 py-2 font-semibold text-gray-800 border border-gray-300 rounded-full shadow-sm btn btn-warning">
                     Log in
                 </button>
-                <div th:if="${errorMessage}" role="alert" class="alert alert-error mt-2">
+                <div th:if="${errorMessage}" role="alert" class="mt-2 alert alert-error">
                     <i data-lucide="badge-info" class="w-4 h-4 mr-2"></i>
                     <span th:text="${errorMessage}"></span>
                 </div>
             </form>
-            <div class="text-center mt-2">
+            <div class="mt-2 text-center">
                 <div class="flex items-center my-4">
                     <div class="flex-grow border-t border-gray-300"></div>
-                    <span class="text-gray-500 text-sm px-4">Or by</span>
+                    <span class="px-4 text-sm text-gray-500">Or by</span>
                     <div class="flex-grow border-t border-gray-300"></div>
                 </div>
                 <div class="flex justify-center mt-4 space-x-4">
-                    <button class="flex items-center justify-center w-full px-4 py-2 bg-white text-gray-800 font-semibold border border-gray-300 rounded-full shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
+                    <button class="flex items-center justify-center w-full px-4 py-2 font-semibold text-gray-800 bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
                         <img th:src="@{/svg/google.svg}" alt="Google logo" class="w-5 h-5 mr-3">
                         Continue with Google
                     </button>
                 </div>
             </div>
-            <div class="text-center mt-6">
-                <p class="text-gray-500 text-sm">Don't have an account?</p>
-                <a class="text-sm text-blue-500 hover:underline cursor-pointer"
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-500">Don't have an account?</p>
+                <a class="text-sm text-blue-500 cursor-pointer hover:underline"
                    onclick="redirectToSignUp()" >
                     Create an account
                 </a>
@@ -67,69 +67,69 @@
         <div id="signup-form" class="hidden ">
             <form th:action="@{/signuprequest}" th:object="${userAccount}" method="post" onsubmit="return validateSignUpForm()">
                 <div class="flex gap-4 mb-2">
-                    <label class="input input-bordered flex items-center gap-2 grow">
+                    <label class="flex items-center gap-2 input input-bordered grow">
                         <i data-lucide="folder-pen" class="w-4 h-4 mr-2"></i>
                         <input type="text" id="name" class="grow" th:field="*{name}" placeholder="Name" />
                     </label>
 
-                    <label class="input input-bordered flex items-center gap-2 grow">
+                    <label class="flex items-center gap-2 input input-bordered grow">
                         <i data-lucide=user class="w-4 h-4 mr-2"></i>
                         <input type="text" id="user-name" class="grow" th:field="*{username}" placeholder="Username" />
                     </label>
                 </div>
-                <p id="nameError" class="text-red-500 text-sm hidden">Họ và tên phải từ 2 đến 50 ký tự, chỉ chứa chữ cái và khoảng trắng.</p>
-                <p id="signupUsernameError" class="text-red-500 text-sm hidden">Tên đăng nhập không hợp lệ.</p>
-                <label class="input input-bordered flex items-center gap-2 mb-2">
+                <p id="nameError" class="hidden text-sm text-red-500">Họ và tên phải từ 2 đến 50 ký tự, chỉ chứa chữ cái và khoảng trắng.</p>
+                <p id="signupUsernameError" class="hidden text-sm text-red-500">Tên đăng nhập không hợp lệ.</p>
+                <label class="flex items-center gap-2 mb-2 input input-bordered">
                     <i data-lucide="mail" class="w-4 h-4 mr-2"></i>
                     <input type="text" id="mail" class="grow" th:field="*{email}" placeholder="Email" />
                 </label>
-                <p id="emailError" class="text-red-500 text-sm hidden">Vui lòng nhập email hợp lệ (vd: example@domain.com).</p>
-                <label class="input input-bordered flex items-center gap-2 mb-2">
+                <p id="emailError" class="hidden text-sm text-red-500">Vui lòng nhập email hợp lệ (vd: example@domain.com).</p>
+                <label class="flex items-center gap-2 mb-2 input input-bordered">
                     <i data-lucide="phone" class="w-4 h-4 mr-2"></i>
                     <input type="text" id="phone" class="grow" th:field="*{phoneNumber}" placeholder="Phone" />
                 </label>
-                <p id="phoneError" class="text-red-500 text-sm hidden">Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng (10 số).</p>
-                <label class="input input-bordered flex items-center gap-2 mb-2">
+                <p id="phoneError" class="hidden text-sm text-red-500">Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng (10 số).</p>
+                <label class="flex items-center gap-2 mb-2 input input-bordered">
                     <i data-lucide="key" class="w-4 h-4 mr-2"></i>
                     <input type="password" id="signupPassword" class="grow" th:field="*{password}" placeholder="Password" />
                 </label>
-                <p id="signupPasswordError" class="text-red-500 text-sm hidden">Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, và số.</p>
+                <p id="signupPasswordError" class="hidden text-sm text-red-500">Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, và số.</p>
                 <div class="flex gap-4 mb-2">
-                    <label class="input input-bordered flex items-center gap-2 mb-4 w-1/2">
+                    <label class="flex items-center w-1/2 gap-2 mb-4 input input-bordered">
                         <i data-lucide="bot" class="w-4 h-4 mr-2"></i>
-                        <select id="gender" name="gender" th:field="*{gender}" class="w-full px-4 py-2  rounded-lg focus:outline-none">
+                        <select id="gender" name="gender" th:field="*{gender}" class="w-full px-4 py-2 rounded-lg focus:outline-none">
                             <option value="false">Male</option>
                             <option value="true">Female</option>
                         </select>
                     </label>
-                    <label class="input input-bordered flex items-center gap-2 grow w-1/2">
+                    <label class="flex items-center w-1/2 gap-2 input input-bordered grow">
                         <i data-lucide="calendar" class="w-4 h-4 mr-2"></i>
                         <input type="date" id="dob" th:field="*{dob}" placeholder="DD/MM/YYYY"
                                class="grow" />
                     </label>
                 </div>
                 <button type="submit"
-                        class="btn btn-warning flex items-center justify-center w-full px-4 py-2 mt-3 text-gray-800 font-semibold border border-gray-300 rounded-full shadow-sm"
+                        class="flex items-center justify-center w-full px-4 py-2 mt-3 font-semibold text-gray-800 border border-gray-300 rounded-full shadow-sm btn btn-warning"
                         onclick="checkSignup()">
                     Sign up
                 </button>
             </form>
-            <div class="text-center mt-2">
+            <div class="mt-2 text-center">
                 <div class="flex items-center my-4">
                     <div class="flex-grow border-t border-gray-300"></div>
-                    <span class="text-gray-500 text-sm px-4">Or by</span>
+                    <span class="px-4 text-sm text-gray-500">Or by</span>
                     <div class="flex-grow border-t border-gray-300"></div>
                 </div>
                 <div class="flex justify-center mt-4 space-x-4">
-                    <button class="flex items-center justify-center w-full px-4 py-2 bg-white text-gray-800 font-semibold border border-gray-300 rounded-full shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
+                    <button class="flex items-center justify-center w-full px-4 py-2 font-semibold text-gray-800 bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
                         <img th:src="@{/svg/google.svg}" alt="Google logo" class="w-5 h-5 mr-3">
                         Continue with Google
                     </button>
                 </div>
             </div>
-            <div class="text-center mt-6">
-                <p class="text-gray-500 text-sm">Have an account?</p>
-                <a class="text-sm text-blue-500 hover:underline cursor-pointer"
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-500">Have an account?</p>
+                <a class="text-sm text-blue-500 cursor-pointer hover:underline"
                    onclick="redirectToLogIn()">
                     Log in
                 </a>
