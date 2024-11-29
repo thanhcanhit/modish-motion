@@ -269,11 +269,11 @@
           <div class="mt-6 flex gap-4">
             <button id="clearFiltersBtn"
                     class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-                    onclick="clearFilters()">
+                    onclick="clearFilters()" disabled>
               Xóa bộ lọc
             </button>
             <button id="applyFiltersBtn"
-                    class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                    class="flex-1 px-4 py-2 bg-[#fdaf17] text-white rounded-lg hover:bg-[#e09e15] transition-colors"
                     onclick="applyFilters()">
               Áp dụng
             </button>
@@ -294,7 +294,7 @@
     <div th:if="${totalPages > 1}" class="flex justify-center gap-2 py-4">
   <span th:if="${currentPage > 1}">
     <a th:href="@{/categories/{categoryName}(categoryName=${category.categoryName}, page=${currentPage - 1}, colors=${selectedColors}, sizes=${selectedSizes}, price=${selectedPrice})}"
-       class="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors duration-200">
+       class="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-[#fdaf17] hover:text-white transition-colors duration-200">
       &lt;
     </a>
   </span>
@@ -302,14 +302,14 @@
     <a th:if="${pageNumber == 1 || pageNumber == totalPages || (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)}"
        th:href="@{/categories/{categoryName}(categoryName=${category.categoryName}, page=${pageNumber}, colors=${selectedColors}, sizes=${selectedSizes}, price=${selectedPrice})}"
        th:text="${pageNumber}"
-       th:class="${pageNumber == currentPage} ? 'px-4 py-2 bg-blue-500 text-white rounded' : 'px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200'"
+       th:class="${pageNumber == currentPage} ? 'px-4 py-2 bg-[#fdaf17] text-white rounded' : 'px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-[#fdaf17] hover:text-white'"
        class="transition-colors duration-200">
     </a>
     <span th:if="${pageNumber == currentPage - 2 || pageNumber == currentPage + 2}">...</span>
   </span>
       <span th:if="${currentPage < totalPages}">
     <a th:href="@{/categories/{categoryName}(categoryName=${category.categoryName}, page=${currentPage + 1}, colors=${selectedColors}, sizes=${selectedSizes}, price=${selectedPrice})}"
-       class="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors duration-200">
+       class="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-[#fdaf17] hover:text-white transition-colors duration-200">
       &gt;
     </a>
   </span>
@@ -364,6 +364,7 @@
       }
     }
     btn.classList.toggle("selected");
+    updateClearFiltersBtnState();
   }
 
   function clearFilters() {
@@ -371,15 +372,22 @@
     selectedSizes = [];
     selectedPriceRange = "";
 
-    // Reset UI
     document.querySelectorAll('.filter-btn').forEach(btn => {
-
       btn.classList.remove('selected');
-
     });
     document.querySelectorAll('input[name="priceRange"]').forEach(radio => {
       radio.checked = false;
     });
+    updateClearFiltersBtnState();
+  }
+
+  function updateClearFiltersBtnState() {
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+    if (selectedColors.length === 0 && selectedSizes.length === 0 && !selectedPriceRange) {
+      clearFiltersBtn.setAttribute('disabled', 'disabled');
+    } else {
+      clearFiltersBtn.removeAttribute('disabled');
+    }
   }
 
   function applyFilters() {
@@ -474,6 +482,7 @@
     // Update product count
     const totalItems = document.getElementById('totalItems').value;
     document.getElementById('productCount').textContent = `${totalItems} sản phẩm`;
+    updateClearFiltersBtnState();
   });
 </script>
 </body>
