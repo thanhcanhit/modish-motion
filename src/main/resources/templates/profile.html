@@ -321,6 +321,7 @@
                     orderList.innerHTML = '<p class="text-center text-gray-500">Không có đơn hàng nào.</p>';
                     return;
                 }
+                data.sort((a, b) => new Date(b.orderAt) - new Date(a.orderAt));
 
                 orderList.innerHTML = data.map(order => `
                 <div class="order-item border rounded-lg p-4">

@@ -43,16 +43,16 @@ public class SpringSecurityConfig {
                         .requestMatchers("/error/**").permitAll()
                 )
                 .formLogin(login -> login
-                        .loginPage("/login")
-                        .loginProcessingUrl("/loginrequest")
-                        .usernameParameter("username")
-                        .passwordParameter("password")
-                        .successHandler((request, response, authentication) -> {
-                            SecurityContextHolder.getContext().setAuthentication(authentication);
-                            System.out.println("Login successful for user: " + authentication.getName());
-                            System.out.println("Authorities: " + authentication.getAuthorities());
-                            response.sendRedirect("/"); // Điều hướng sau khi đăng nhập thành công
-                        })
+                                .loginPage("/login")
+                                .loginProcessingUrl("/loginrequest")
+                                .usernameParameter("username")
+                                .passwordParameter("password")
+                                .successHandler((request, response, authentication) -> {
+                                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                                    System.out.println("Login successful for user: " + authentication.getName());
+                                    System.out.println("Authorities: " + authentication.getAuthorities());
+                                    response.sendRedirect("/"); // Điều hướng sau khi đăng nhập thành công
+                                })
 //                        .defaultSuccessUrl("/", true)
                 )
 //                .logout(logout -> logout.logoutUrl("/admin-logout").logoutSuccessUrl("/login"))

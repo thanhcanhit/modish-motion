@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface UserService {
     List<UserDTO> findAll();
     Optional<UserDTO> findById(Integer id);
+    Optional<UserDTO> findByEmail(String email);
     UserDTO save(UserDTO user);
     void deleteById(Integer id);
     Page<UserDTO> findByPage(Pageable pageable);
