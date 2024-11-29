@@ -1,5 +1,6 @@
 package fit.iuh.modish_motion.entities;
 
+import fit.iuh.modish_motion.enums.AuthProvider;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,4 +25,10 @@ public class User {
 
     @Temporal(TemporalType.DATE)
     private Date dob;
+    @Column(name = "google_id")
+    private String googleId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider")
+    private AuthProvider provider;
 }
