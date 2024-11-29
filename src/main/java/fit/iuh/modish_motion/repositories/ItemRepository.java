@@ -121,4 +121,7 @@ public interface ItemRepository extends JpaRepository<Item, String> {
             @Param("maxPrice") double maxPrice,
             Pageable pageable
     );
+
+    @Query("SELECT i FROM Item i WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+    Page<Item> searchByName(@Param("name") String name, Pageable pageable);
 }

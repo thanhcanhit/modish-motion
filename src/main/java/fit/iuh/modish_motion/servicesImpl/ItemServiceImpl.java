@@ -25,6 +25,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     private ItemRepository itemRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     private boolean isValidItem(Item item) {
         return item != null && item.getVariants() != null && !item.getVariants().isEmpty();
