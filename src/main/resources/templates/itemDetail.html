@@ -9,9 +9,9 @@
 <body>
     <header th:replace="components/header"></header>
 
-    <div class="container px-24 pt-20 pb-32 mx-auto">
+    <div class="container px-4 pt-20 pb-32 mx-auto md:px-24">
         <!-- Breadcrumbs -->
-        <div class="mb-4 text-gray-500 breadcrumbs text-md">
+        <div class="mb-4 text-sm text-gray-500 md:text-md breadcrumbs">
             <ul>
                 <li><a href="/">Trang chủ</a></li>
                 <li><a th:text="${product?.gender ?: 'Unisex'}"></a></li>
@@ -20,11 +20,11 @@
             </ul>
         </div>
 
-        <div class="grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-16">
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-16">
             <!-- Product Image Carousel and Thumbnails -->
-            <section class="flex col-span-5 gap-2">
+            <section class="flex col-span-1 gap-2 lg:col-span-5">
                 <!-- Thumbnails for Selected Color -->
-                <div class="flex flex-col justify-start gap-2 w-fit" id="variant-thumbnails">
+                <div class="flex-col justify-start hidden gap-2 md:flex w-fit" id="variant-thumbnails">
                     <!-- Thumbnails will be dynamically updated based on selected color -->
                 </div>
 
@@ -37,21 +37,21 @@
             </section>
 
             <!-- Product Information -->
-            <section class="flex flex-col col-span-7 gap-2">
-                <h1 class="text-xl font-semibold" th:text="${product.name ?: 'Product Name'}">Product Name</h1>
-                <p class="text-sm text-gray-500">Mã sản phẩm: <span th:text="${product.id ?: 'Unknown ID'}">ID</span>
+            <section class="flex flex-col col-span-1 gap-4 lg:col-span-7">
+                <h1 class="text-lg font-semibold md:text-xl" th:text="${product.name ?: 'Product Name'}">Product Name</h1>
+                <p class="text-xs text-gray-500 md:text-sm">Mã sản phẩm: <span th:text="${product.id ?: 'Unknown ID'}">ID</span>
                 </p>
 
                 <!-- Static Rating and Sales -->
-                <div class="flex items-center gap-2 text-gray-500">
+                <div class="flex flex-wrap items-center gap-2 text-gray-500">
 
-                    <i data-lucide="star" class="w-4 fill-amber-500 text-amber-500"></i>
-                    <p id="rating" class="text-lg font-semibold">4.8 <span class="text-gray-600">(120)</span></p>
+                    <i data-lucide="star" class="w-3 md:w-4 fill-amber-500 text-amber-500"></i>
+                    <p id="rating" class="text-base font-semibold md:text-lg">4.8 <span class="text-gray-600">(120)</span></p>
                     <p> | Đã bán <span th:text="${product.quantitySold ?: 0}">0</span></p>
                 </div>
 
                 <!-- Price and Discount -->
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                     <p class="flex items-center gap-4 text-lg font-semibold">
                         <!-- Display Promotion Price if Available -->
                         <span th:if="${product.promotionPrice > 0}" class="text-red-500"
@@ -71,9 +71,9 @@
                 <!-- Color Options -->
                 <div>
                     <p class="mb-2 font-semibold">Màu sắc:</p>
-                    <div class="flex gap-2" id="color-options">
+                    <div class="flex flex-wrap gap-2" id="color-options">
                         <button th:each="variant : ${product.displayVariants}" th:data-color-id="${variant.color.id}"
-                            class="py-1 overflow-hidden bg-white btn btn-sm btn-outline hover:bg-white hover:text-amber-500 hover:border-amber-500 min-w-20 h-fit color-option">
+                            class="px-3 py-2 overflow-hidden bg-white md:py-1 btn btn-sm btn-outline hover:bg-white hover:text-amber-500 hover:border-amber-500 min-w-20 h-fit color-option">
                             <span class="flex flex-col items-center gap-1">
                                 <span th:style="|background-color: ${variant.color.hex}|"
                                     class="w-5 h-5 border rounded-full">
@@ -89,42 +89,42 @@
                 <!-- Size Options -->
                 <div>
                     <p class="mb-2 font-semibold">Kích thước:</p>
-                    <div class="flex gap-2" id="size-options">
+                    <div class="flex flex-wrap gap-2" id="size-options">
                         <!-- Size buttons will be dynamically updated based on selected color -->
                     </div>
-                    <p class="mt-2 text-sm text-gray-500">Còn lại: <span id="available-quantity">0</span> sản phẩm</p>
+                    <p class="mt-2 text-xs text-gray-500 md:text-sm">Còn lại: <span id="available-quantity">0</span> sản phẩm</p>
                 </div>
 
                 <!-- Quantity Selector -->
-                <div class="flex items-end w-full gap-4 mt-4">
-                    <div>
+                <div class="flex flex-col items-stretch w-full gap-4 mt-4 md:flex-row md:items-end">
+                    <div class="w-full md:w-auto">
                         <p class="mb-2 font-semibold">Số lượng:</p>
                         <div class="flex items-center gap-2">
-                            <button id="decrease-quantity-btn" class="border btn">-</button>
-                            <input type="text" class="w-12 text-center input" value="1" id="quantity">
-                            <button id="increase-quantity-btn" class="border btn">+</button>
+                            <button id="decrease-quantity-btn" class="w-12 h-12 border md:w-10 md:h-10 btn">-</button>
+                            <input type="text" class="w-16 text-center md:w-12 input" value="1" id="quantity">
+                            <button id="increase-quantity-btn" class="w-12 h-12 border md:w-10 md:h-10 btn">+</button>
                         </div>
                     </div>
 
                     <!-- Add to Cart and Buy Now Buttons -->
-                    <button id="add-to-cart-btn" class="flex-1 btn btn-warning">Thêm vào giỏ</button>
+                    <button id="add-to-cart-btn" class="w-full md:flex-1 btn btn-warning">Thêm vào giỏ</button>
                 </div>
 
                 <div class="grid p-4 py-6 bg-gray-50 place-items-center">
-                    <div class="flex flex-wrap gap-2">
-                        <img alt="" class="object-cover h-8" th:src="@{/images/detail_item/zalopay.webp}" />
-                        <img alt="" class="object-cover h-8" th:src="@{/images/detail_item/visa-card.webp}" />
-                        <img alt="" class="object-cover h-8" th:src="@{/images/detail_item/master-card.webp}" />
-                        <img alt="" class="object-cover h-8" th:src="@{/images/detail_item/vnpay-qr.webp}" />
-                        <img alt="" class="object-cover h-8" th:src="@{/images/detail_item/momo.webp}" />
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <img alt="" class="object-cover h-6 md:h-8" th:src="@{/images/detail_item/zalopay.webp}" />
+                        <img alt="" class="object-cover h-6 md:h-8" th:src="@{/images/detail_item/visa-card.webp}" />
+                        <img alt="" class="object-cover h-6 md:h-8" th:src="@{/images/detail_item/master-card.webp}" />
+                        <img alt="" class="object-cover h-6 md:h-8" th:src="@{/images/detail_item/vnpay-qr.webp}" />
+                        <img alt="" class="object-cover h-6 md:h-8" th:src="@{/images/detail_item/momo.webp}" />
                     </div>
-                    <p class="text-sm font-semibold">Đảm bảo thanh toán an toàn và bảo mật
+                    <p class="text-xs font-semibold text-center md:text-sm">Đảm bảo thanh toán an toàn và bảo mật
                     </p>
                 </div>
 
-                <div class="space-y-2 text-sm">
+                <div class="space-y-2 text-xs md:text-sm">
                     <div class="flex items-center gap-2">
-                        <i data-lucide="truck" class="w-5 h-5 text-gray-600"></i>
+                        <i data-lucide="truck" class="w-4 h-4 text-gray-600 md:w-5 md:h-5"></i>
                         <p><b>Miễn phí vận chuyển</b>: Đơn hàng từ <span class="font-bold text-amber-500">498K</span>
                         </p>
                     </div>
@@ -146,7 +146,7 @@
                     </div>
                 </div>
 
-                <div th:text="${product.characteristic}" class="mt-8 text-sm font-semibold">
+                <div th:text="${product.characteristic}" class="mt-8 text-xs font-semibold md:text-sm">
 
                 </div>
             </section>
@@ -159,11 +159,11 @@
         </div>
     </div>
 
-    <div class="container px-24 py-16 pt-4 mx-auto">
+    <div class="container px-4 py-16 pt-4 mx-auto md:px-24">
         <!-- Related Products Section -->
         <div th:if="${relatedProducts != null and !relatedProducts.empty}">
-            <h2 class="mb-8 text-2xl font-semibold">Sản phẩm liên quan</h2>
-            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4">
+            <h2 class="mb-8 text-xl font-semibold md:text-2xl">Sản phẩm liên quan</h2>
+            <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
                 <!-- Sử dụng component productItem -->
                 <div th:each="item : ${relatedProducts}">
                     <div th:replace="components/productItem :: productItem(item=${item})"></div>
