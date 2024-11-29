@@ -13,5 +13,6 @@ public interface OrderDetailService {
     OrderDetailDTO save(OrderDetailDTO orderDetail);
     void deleteById(Integer id);
     Page<OrderDetailDTO> findByPage(Pageable pageable);
+    List<OrderDetailDTO> findByVariantId(String variantId);
     public List<OrderDetailDTO> findByOrderId(Integer orderId);
 }

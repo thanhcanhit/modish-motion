@@ -139,6 +139,23 @@
                             </div>
                             <input id="product-tags" type="text" class="input input-bordered w-full " placeholder=""/>
                         </label>
+<!--                        <label class="form-control">-->
+<!--                            <div class="label">-->
+<!--                                <span class="label-text">Tags:</span>-->
+<!--                            </div>-->
+<!--                            <div id="tags-container" class="grid grid-cols-6 gap-1 mb-4">-->
+<!--                                <template id="tags-template">-->
+<!--                                    <div class="flex items-center justify-center py-1 rounded ">-->
+<!--                                        <input type="text" class="bg-transparent border-none focus:outline-none" readonly />-->
+<!--                                        <button type="button" class=" top-0 right-0 text-red-500 hover:text-red-300 text-xs" onclick="removeTag(this)">x</button>-->
+<!--                                    </div>-->
+<!--                                </template>-->
+<!--                            </div>-->
+<!--                            <div class="flex join">-->
+<!--                                <input id="tags-input" type="text" placeholder="Add a new tag" class="input input-bordered flex-grow join-item" />-->
+<!--                                <button type="button" onclick="addTag()" class="btn btn-outline join-item"><i data-lucide="plus"></i></button>-->
+<!--                            </div>-->
+<!--                        </label>-->
                     </div>
                     <div class="m-1">
                         <label class="form-control">
@@ -276,6 +293,25 @@
 
         </div>
     </div>
+    <div id="alert-container" class="fixed top-[70px] translate-x-[-50%] left-1/2 z-[9999] space-y-4"></div>
+    <div id="action-alert" class="hidden fixed top-[70px] translate-x-[-50%] max-w-[700px] left-1/2 z-[9999] alert bg-base-100 shadow-lg flex items-center  space-x-4">
+        <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                class="stroke-info h-6 w-6 shrink-0">
+            <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span id="action-alert-message" class="flex-grow">Nội dung thông báo</span>
+        <div class="flex space-x-2">
+            <button id="action-alert-deny" class="btn btn-sm">Deny</button>
+            <button id="action-alert-accept" class="btn btn-sm btn-primary">Accept</button>
+        </div>
+    </div>
     <div class="join flex items-center justify-center w-full pt-10 pb-10">
         <a th:href="@{/admin/products(page=${currentPage - 1}, search=${search})}"
            th:classappend="${currentPage == 0} ? 'btn-disabled' : ''"
@@ -294,6 +330,6 @@
 
 <footer th:replace="components/footer"></footer>
 <div th:replace="/components/lucide_icons :: lucide_icon"></div>
-<script src="/js/admin.js"></script>
+<script src="/js/adminProducts.js"></script>
 </body>
 </html>

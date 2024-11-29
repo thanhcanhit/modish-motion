@@ -1,6 +1,7 @@
 package fit.iuh.modish_motion.controllers;
 
 import fit.iuh.modish_motion.dto.ItemDTO;
+import fit.iuh.modish_motion.dto.OrderDetailDTO;
 import fit.iuh.modish_motion.dto.VariantDTO;
 import fit.iuh.modish_motion.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ public class AdminProductManagement {
     private SizeService sizeService;
     @Autowired
     private ColorService colorService;
+    @Autowired
+    private OrderDetailService orderDetailService;
     // Hiển thị trang quản lý sản phẩm
     @GetMapping
     public String getAdminPage(@RequestParam(defaultValue = "0") int page,
@@ -65,7 +68,7 @@ public class AdminProductManagement {
         model.addAttribute("sizes", sizeService.findAll());
         model.addAttribute("colors", colorService.findAll());
 
-        return "admin/admin";
+        return "admin/adminProducts";
     }
 
     @GetMapping("/{id}/variants/get")
@@ -104,6 +107,10 @@ public class AdminProductManagement {
     @PostMapping("/delete")
     @ResponseBody
     public String deleteProduct(@RequestParam String id) {
+        List<VariantDTO> variants = variantService.findByItemId(id);
+        if (variants != null && !variants.isEmpty()) {
+            return "error: Sản phẩm có loại sản phẩm nên không thể xoá !";
+        }
         itemService.deleteById(id);
         return "success";
     }
@@ -127,6 +134,10 @@ public class AdminProductManagement {
     @PostMapping("/{id}/variants/delete")
     @ResponseBody
     public String deleteVariant(@PathVariable String id, @RequestParam String variantId) {
+        List<OrderDetailDTO> orderDetailDTOS = orderDetailService.findByVariantId(variantId);
+        if (orderDetailDTOS != null && !orderDetailDTOS.isEmpty()) {
+            return "error: Loại sản phẩm đang được sử dụng nên không thể xoá !";
+        }
         variantService.deleteById(variantId);
         return "success";
     }
