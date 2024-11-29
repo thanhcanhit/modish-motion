@@ -74,6 +74,15 @@ document.addEventListener('DOMContentLoaded', () => {
         grandTotalElement.textContent = `${grandTotal.toLocaleString()} đ`;
     }
 
+    // Thêm hàm tính toán phí vận chuyển dựa trên tổng giá trị đơn hàng
+    function calculateShippingFee(items) {
+        const totalAmount = items.reduce((sum, item) => {
+            return sum + (item.variant.price * item.quantity);
+        }, 0);
+        
+        return totalAmount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+    }
+
     // Handle form submission
     orderForm.addEventListener('submit', async (e) => {
         e.preventDefault(); // Prevent form from submitting normally
@@ -102,14 +111,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 Đang xử lý...
             `;
 
-            // Create order data
+            // Tính phí vận chuyển dựa trên tổng giá trị đơn hàng
+            const shippingFee = calculateShippingFee(items);
+
+            // Create order data với phí vận chuyển đã được tính toán
             const orderData = {
                 items: items.map(item => ({
                     variant: item.variant,
                     quantity: item.quantity
                 })),
                 paymentMethod: selectedPayment.value,
-                shippingFee: progressValue >= 100 ? 0 : SHIPPING_FEE
+                shippingFee: shippingFee // Sử dụng phí vận chuyển đã tính
             };
 
             // Send request to create order
@@ -129,20 +141,24 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Clear cart
             const cart = new Cart();
-            items.forEach(item => {
-                cart.removeItem(item.variant.id);
-            });
-            
-            // Clear checkout items
-            sessionStorage.removeItem('checkoutItems');
-            
-            // Show success message
-            showToast('Đặt hàng thành công!', 'success');
-            
-            // Redirect after delay
-            setTimeout(() => {
-                window.location.href = `/orders/${result.orderId}`;
-            }, 2000);
+            try {
+                // Xóa toàn bộ giỏ hàng thay vì xóa từng item
+                await cart.clearCart();
+                
+                // Clear checkout items from session storage
+                sessionStorage.removeItem('checkoutItems');
+                
+                // Show success message
+                showToast('Đặt hàng thành công!', 'success');
+                
+                // Redirect after delay
+                setTimeout(() => {
+                    window.location.href = `/orders/${result.orderId}`;
+                }, 2000);
+            } catch (error) {
+                console.error('Error clearing cart:', error);
+                showToast('Đặt hàng thành công nhưng không thể xóa giỏ hàng', 'warning');
+            }
 
         } catch (error) {
             showToast(error.message, 'error');

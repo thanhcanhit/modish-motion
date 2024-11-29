@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<<<<<<< HEAD
-<article th:fragment="productItem(item)" 
-         class="w-full p-2 mx-auto space-y-1 product-item" 
-         th:id="${item.id}">
-=======
-<article th:fragment="productItem(item)" class="product-item w-full space-y-1 p-2 " th:id="${item.id}">
->>>>>>> b3f2179091d80c057f45840f3fd868f00a97a09b
+<article th:fragment="productItem(item)" class="w-full p-2 space-y-1 product-item " th:id="${item.id}">
     <a th:href="@{/product/{id}(id=${item.id})}" class="flex flex-col gap-2 mb-4">
         <!-- Product Image - Adjust height responsively -->
         <img id="product-image" 
