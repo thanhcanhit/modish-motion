@@ -91,7 +91,7 @@
                 <p id="phoneError" class="text-red-500 text-sm hidden">Số điện thoại không hợp lệ. Vui lòng nhập đúng định dạng (10 số).</p>
                 <label class="input input-bordered flex items-center gap-2 mb-2">
                     <i data-lucide="key" class="w-4 h-4 mr-2"></i>
-                    <input type="password" class="grow" th:field="*{password}" placeholder="Password" />
+                    <input type="password" id="signupPassword" class="grow" th:field="*{password}" placeholder="Password" />
                 </label>
                 <p id="signupPasswordError" class="text-red-500 text-sm hidden">Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, và số.</p>
                 <div class="flex gap-4 mb-2">
@@ -185,7 +185,7 @@
 
     // Regex patterns
     const usernameRegex = /^[a-zA-Z0-9._-]{3,16}$/; // Tên đăng nhập: 3-16 ký tự, không có ký tự đặc biệt
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/; // Mật khẩu: 8 ký tự, ít nhất 1 chữ hoa, 1 chữ thường, và 1 số
+    const passwordRegex = /^[A-Z][A-Za-z\d.,?#@]{7,}$/; // Mật khẩu: 8 ký tự, ít nhất 1 chữ hoa, 1 chữ thường, và 1 số
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email hợp lệ
     const nameRegex = /^[a-zA-ZÀ-ỹ\s]{2,50}$/; // Họ và tên: 2-50 ký tự, chỉ chứa chữ cái và khoảng trắng
     const phoneRegex = /^[0-9]{10}$/; // Số điện thoại: 10-15 chữ số
@@ -262,7 +262,7 @@
         }
 
         // Validate Password
-        const signupPassword = document.getElementById('password').value;
+        const signupPassword = document.getElementById('signupPassword').value;
         const signupPasswordError = document.getElementById('signupPasswordError');
         if (!passwordRegex.test(signupPassword)) {
             signupPasswordError.classList.remove('hidden');
