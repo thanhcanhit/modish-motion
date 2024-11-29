@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Redirect after delay
             setTimeout(() => {
-                window.location.href = `/orders/${result.orderId}`;
+                window.location.href = '/profile?tab=orders';
             }, 2000);
 
         } catch (error) {
