@@ -42,15 +42,33 @@ for (let i = 0; i < dots.length; i++) {
 }
 setInterval(nextSlide, 4000);
 showSlide(currentIndex);
+let selectedCategoryIndex = null; // Lưu chỉ mục của danh mục đã chọn
 
+function selectCategory(element) {
+    // Lấy giá trị của danh mục từ thuộc tính data-value
+    selectedCategoryIndex = element.getAttribute('data-value');
+
+    // Cập nhật giao diện danh mục được chọn (tùy chỉnh nếu cần)
+    const dropdownSummary = document.querySelector('.dropdown summary');
+    dropdownSummary.textContent = element.textContent;
+
+    // Gọi hàm hiển thị danh sách sản phẩm gợi ý
+    showSuggestedItems();
+}
 function showSuggestedItems() {
     // Ẩn tất cả các danh sách sản phẩm
     document.querySelectorAll('.suggested-items').forEach(item => item.classList.add('hidden'));
 
-    // Lấy giá trị của danh mục đã chọn và hiển thị danh sách tương ứng
-    const selectedIndex = document.getElementById('category-select').value;
-    document.getElementById(`suggestedItems${parseInt(selectedIndex) + 1}`).classList.remove('hidden');
-    document.getElementById(`suggestedItems${parseInt(selectedIndex) + 1}`).classList.add('grid');
+    // Hiển thị danh sách tương ứng với danh mục đã chọn
+    if (selectedCategoryIndex !== null) {
+        const targetElement = document.getElementById(`suggestedItems${parseInt(selectedCategoryIndex) + 1}`);
+        if (targetElement) {
+            targetElement.classList.remove('hidden');
+            targetElement.classList.add('grid');
+        } else {
+            console.error(`No matching items found for category index: ${selectedCategoryIndex}`);
+        }
+    }
 }
 function showPopularItems(button) {
     document.querySelectorAll('#category-buttons .btn').forEach(btn => {
@@ -69,4 +87,48 @@ function showPopularItems(button) {
     document.getElementById(`popularItems${parseInt(selectedIndex) + 1}`).classList.remove('hidden');
     document.getElementById(`popularItems${parseInt(selectedIndex) + 1}`).classList.add('grid');
 }
+function redirectToCategory(section) {
+    let categoryIndex = null;
+
+    if (section === 'popular') {
+        // Lấy danh mục đã chọn ở Popular Items
+        const selectedButton = document.querySelector('#category-buttons .btn-warning');
+        if (selectedButton) {
+            categoryIndex = selectedButton.getAttribute('data-category-index');
+        }
+    } else if (section === 'suggested') {
+        // Lấy danh mục đã chọn ở Suggested Items
+        if (selectedCategoryIndex !== null) {
+            categoryIndex = selectedCategoryIndex;
+        }
+    }
+
+    if (categoryIndex !== null) {
+        // Lấy tên danh mục từ danh sách
+        const categoryNameElement = (section === 'popular')
+            ? document.querySelector(`#category-buttons .btn-warning`)
+            : document.querySelector(`.dropdown-content a[data-value="${categoryIndex}"]`);
+
+        const categoryName = categoryNameElement ? categoryNameElement.textContent.trim() : null;
+
+        if (categoryName) {
+            // Chuyển hướng đến trang category
+            window.location.href = `/categories/${encodeURIComponent(categoryName)}?page=1`;
+        } else {
+            console.error('Không thể lấy tên danh mục.');
+        }
+    } else {
+        console.error('Không thể xác định danh mục đã chọn.');
+    }
+}
+document.addEventListener("DOMContentLoaded", () => {
+    // Lấy danh mục đầu tiên
+    const firstCategory = document.querySelector('.dropdown-content a[data-value="0"]');
+
+    if (firstCategory) {
+        // Cập nhật danh mục đã chọn
+        selectCategory(firstCategory);
+    }
+});
+
 

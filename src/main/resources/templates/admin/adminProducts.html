@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="components/head :: head"></div>
+</head>
+<body>
+<header th:replace="components/header"></header>
+
+<div data-theme="light" th:fragment="content" class="bg-white max-w-screen-xl min-h-screen px-4 py-12 pt-24 mx-auto">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Quản lý sản phẩm</h1>
+    <div class="flex justify-between mt-2.5">
+        <div class="w-[70%] mr-2.5 border-r">
+            <div class="flex justify-between items-center mr-2.5">
+                <form method="get" class="flex input input-bordered items-center py-2.5 w-[60%]">
+                    <input type="text" name="search" class="grow" placeholder="Search" th:value="${search}" />
+                    <button>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="h-full w-6 opacity-70">
+                            <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                </form>
+
+                <button class="btn w-[180px]" onclick="openItemModal(true)"><i data-lucide="Plus"></i>Thêm sản phẩm</button>
+            </div>
+            <h2 class="text-lg font-bold text-gray-800 my-4">Danh sách sản phẩm</h2>
+            <div th:if="${search != null and !search.isEmpty()}">
+                <p class="text-sm text-gray-600">Kết quả tìm kiếm cho: "<span th:text="${search}"></span>"</p>
+            </div>
+
+            <table class="table w-full rounded overflow-hidden">
+                <thead class="text-black">
+                <tr>
+                    <th class="px-4 py-2">STT</th>
+                    <th class="px-4 py-2">Tên sản phẩm</th>
+                    <th class="px-4 py-2">Giá</th>
+                    <th class="px-4 py-2">Loại</th>
+                    <th class="px-4 py-2">Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${items == null || items.isEmpty()}">
+                    <td colspan="5" class="text-center">Không có sản phẩm nào được tìm thấy.</td>
+                </tr>
+                <tr th:id="${item.id}" th:each="item, iterStat : ${items}" th:classappend="${selectedItemId == item.id} ? 'bg-gray-200' : ''"
+                    th:data-url="@{/admin/products(page=${currentPage}, search=${search}, selectedItemId=${item.id})}"
+                    class="cursor-pointer hover:bg-gray-100"  onclick="navigateToItem(this)">
+                    <td th:text="${item.id}"></td>
+                    <td th:text="${item.name}"></td>
+                    <td th:text="${item.promotionPrice}"></td>
+                    <td th:text="${item.category?.categoryName}"></td>
+                    <td class="flex justify-end">
+                        <button class="btn btn-ghost btn-sm mx-1" th:attr="data-item-id=${item.id}" onclick="editProduct(this.getAttribute('data-item-id')); event.stopPropagation();">
+                            <i data-lucide="pencil-line" class="h-4 w-4"></i>
+                        </button>
+                        <button class="btn btn-ghost btn-sm mx-1" th:attr="data-item-id=${item.id}" onclick="deleteProduct(this.getAttribute('data-item-id')); event.stopPropagation();">
+                            <i data-lucide="Trash2" class="h-4 w-4 text-red-600"></i>
+                        </button>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+
+
+        <div class="w-[30%] ml-2.5 ">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">Danh sách biến thể</h2>
+
+            <table class="table w-full bg-white rounded overflow-hidden">
+                <thead class="text-black">
+                <tr>
+                    <th class="px-4 py-2">Tên biến thể</th>
+                    <th class="px-4 py-2">Số lượng</th>
+                    <th class="px-4 py-2">Hành động</th>
+                </tr>
+                </thead>
+                <tbody id="variants-list">
+                <tr th:if="${variants == null || variants.isEmpty()}">
+                    <td colspan="4" class="text-center">Chọn sản phẩm để xem danh sách biến thể.</td>
+                </tr>
+                <tr th:id="${variant.id}" th:each="variant : ${variants}" class="hover:bg-gray-100">
+                    <td th:text="${variant.name}"></td>
+                    <td th:text="${variant.availableQuantity}"></td>
+                    <td class="flex justify-end">
+                        <button class="btn btn-ghost btn-sm mx-1"
+                                th:attr="data-item-id=${variant.itemId}"
+                                th:attrappend="data-variant-id=${variant.id}"
+                                onclick="editVariant(this.getAttribute('data-item-id'), this.getAttribute('data-variant-id')); event.stopPropagation();">
+                            <i data-lucide="pencil-line" class="h-4 w-4"></i>
+                        </button>
+                        <button class="btn btn-ghost btn-sm mx-1"
+                                th:attr="data-item-id=${variant.itemId}"
+                                th:attrappend="data-variant-id=${variant.id}"
+                                onclick="deleteVariant(this.getAttribute('data-item-id'), this.getAttribute('data-variant-id')); event.stopPropagation();">
+                            <i data-lucide="Trash2" class="h-4 w-4 text-red-600"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+
+            </table>
+            <div class="flex justify-end w-full my-4 px-2">
+                <button onclick="openVariantModal(true)" class="btn text-black rounded-full">
+                    <i data-lucide="Plus"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="item-modal" class="mt-12 fixed inset-0 bg-black bg-opacity-30 z-[999] flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded shadow w-full max-w-lg">
+            <h2 id="product-modal-title" class="text-lg font-bold mb-4">Add Product</h2>
+            <input id="product-id" type="hidden" />
+
+                <form id="product-form">
+                    <div class="max-h-[70vh] overflow-y-scroll overflow-x-hidden">
+                    <div class="m-1">
+                        <label class="form-control">
+                            <div class="label">
+                                <span class="label-text">Name: </span>
+                            </div>
+                            <input id="product-name" type="text" class="input input-bordered w-full " placeholder=""/>
+                        </label>
+                    </div>
+                    <div class="m-1">
+                        <label class="form-control">
+                            <div class="label">
+                                <span class="label-text">Promotion Price: </span>
+                            </div>
+                            <input id="product-price" type="number" class="input input-bordered w-full pr-8" placeholder=""/>
+                        </label>
+                    </div>
+                    <div class="m-1">
+                        <label class="form-control">
+                            <div class="label">
+                                <span class="label-text">Tags: </span>
+                            </div>
+                            <input id="product-tags" type="text" class="input input-bordered w-full " placeholder=""/>
+                        </label>
+<!--                        <label class="form-control">-->
+<!--                            <div class="label">-->
+<!--                                <span class="label-text">Tags:</span>-->
+<!--                            </div>-->
+<!--                            <div id="tags-container" class="grid grid-cols-6 gap-1 mb-4">-->
+<!--                                <template id="tags-template">-->
+<!--                                    <div class="flex items-center justify-center py-1 rounded ">-->
+<!--                                        <input type="text" class="bg-transparent border-none focus:outline-none" readonly />-->
+<!--                                        <button type="button" class=" top-0 right-0 text-red-500 hover:text-red-300 text-xs" onclick="removeTag(this)">x</button>-->
+<!--                                    </div>-->
+<!--                                </template>-->
+<!--                            </div>-->
+<!--                            <div class="flex join">-->
+<!--                                <input id="tags-input" type="text" placeholder="Add a new tag" class="input input-bordered flex-grow join-item" />-->
+<!--                                <button type="button" onclick="addTag()" class="btn btn-outline join-item"><i data-lucide="plus"></i></button>-->
+<!--                            </div>-->
+<!--                        </label>-->
+                    </div>
+                    <div class="m-1">
+                        <label class="form-control">
+                            <div class="label">
+                                <span class="label-text">Category: </span>
+                            </div>
+                            <select id="product-category" name="category_id" class="select select-bordered w-full p-2 rounded ">
+
+                                <option th:each="category : ${categories}" th:value="${category.id}"
+                                        th:text="${category.categoryName}"></option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="m-1">
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Characteristic: </span>
+                            </div>
+                            <textarea id="item-characteristic" class="textarea textarea-bordered h-24" placeholder=""></textarea>
+
+                        </label>
+                    </div>
+                    <div class="m-1">
+                        <label class="form-control">
+                            <div class="label">
+                                <span class="label-text">Gender: </span>
+                            </div>
+                            <input id="product-gender" type="text" class="input input-bordered w-full " placeholder=""/>
+                        </label>
+
+                    </div>
+                    </div>
+                    <div class="flex justify-end gap-2 pt-4">
+                        <button type="button" onclick="closeItemModal()"
+                                class="btn  px-4 py-2 rounded">
+                            Hủy
+                        </button>
+                        <button type="button" onclick="saveProduct()" class="btn btn-warning px-10 py-2 rounded">
+                            Lưu
+                        </button>
+                    </div>
+                </form>
+
+        </div>
+    </div>
+
+
+    <div id="variant-modal" class="mt-10 fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded shadow w-full max-w-lg">
+            <h2 id="variant-modal-title" class="text-lg font-bold mb-4">Add Variant</h2>
+            <input id="variant-id" type="hidden"/>
+            <input id="selected-item-id" type="hidden" th:value="${selectedItemId}"/>
+
+            <form  id="variant-form">
+                <div class="max-h-[60vh] overflow-y-scroll overflow-x-hidden">
+                <div class="m-1">
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text">Name: </span>
+                        </div>
+                        <input id="variant-name" type="text" class="input input-bordered w-full " placeholder=""/>
+                    </label>
+                </div>
+                <div class="m-1">
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text">Price: </span>
+                        </div>
+                        <input id="variant-price" type="number" class="input input-bordered w-full pr-8" placeholder=""/>
+                    </label>
+                </div>
+                <div class="m-1">
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text">Quantity: </span>
+                        </div>
+                        <input id="variant-quantity" type="number" class="input input-bordered w-full pr-8" placeholder=""/>
+                    </label>
+                </div>
+                <div class="m-1">
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text">Color: </span>
+                        </div>
+                    <select name="color_id" class="select select-bordered w-full p-2 rounded ">
+
+                        <option th:each="color : ${colors}" th:value="${color.id}"
+                                th:text="${color.color}"></option>
+                    </select>
+                    </label>
+                </div>
+                <div class="m-1">
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text">Size: </span>
+                        </div>
+                    <select name="size_id" class="select select-bordered w-full p-2 rounded ">
+
+                        <option th:each="size : ${sizes}" th:value="${size.id}"
+                                th:text="${size.size}"></option>
+                    </select>
+                    </label>
+                </div>
+                <div class="m-1">
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text">Links for Images:</span>
+                        </div>
+                        <div id="image-links-container" class="grid grid-cols-6 gap-1 mb-4">
+                            <template id="link-template">
+                                <div class="flex items-center justify-center py-1 rounded relative">
+                                    <img src="" alt="img" class="w-12 h-12 object-cover rounded" />
+                                    <input type="text" class="bg-transparent border-none focus:outline-none hidden" readonly />
+                                    <button type="button" class="absolute top-0 right-0 text-red-500 hover:text-red-300 text-xs" onclick="removeLink(this)">x</button>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="flex join">
+                            <input id="new-link-input" type="text" placeholder="Add a new image link" class="input input-bordered flex-grow join-item" />
+                            <button type="button" onclick="addLink()" class="btn btn-outline join-item"><i data-lucide="plus"></i></button>
+                        </div>
+                    </label>
+                </div>
+            </div>
+                <div class="flex justify-end gap-2 pt-4">
+                    <button type="button" onclick="closeVariantModal()"
+                            class="btn  hover:bg-gray-400 px-4 py-2 rounded">
+                        Hủy
+                    </button>
+                    <button type="button" onclick="saveVariant()" class="btn btn-warning  px-10 py-2 rounded">
+                        Lưu
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+    <div id="alert-container" class="fixed top-[70px] translate-x-[-50%] left-1/2 z-[9999] space-y-4"></div>
+    <div id="action-alert" class="hidden fixed top-[70px] translate-x-[-50%] max-w-[700px] left-1/2 z-[9999] alert bg-base-100 shadow-lg flex items-center  space-x-4">
+        <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                class="stroke-info h-6 w-6 shrink-0">
+            <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span id="action-alert-message" class="flex-grow">Nội dung thông báo</span>
+        <div class="flex space-x-2">
+            <button id="action-alert-deny" class="btn btn-sm">Deny</button>
+            <button id="action-alert-accept" class="btn btn-sm btn-primary">Accept</button>
+        </div>
+    </div>
+    <div class="join flex items-center justify-center w-full pt-10 pb-10">
+        <a th:href="@{/admin/products(page=${currentPage - 1}, search=${search})}"
+           th:classappend="${currentPage == 0} ? 'btn-disabled' : ''"
+           class="join-item btn btn-sm">«</a>
+
+        <button class="join-item btn btn-sm" th:value="${currentPage + 1}" th:text="${currentPage + 1}"></button>
+
+        <a th:href="@{/admin/products(page=${currentPage + 1}, search=${search})}"
+           th:classappend="${currentPage == totalPages - 1} ? 'btn-disabled' : ''"
+           class="join-item btn btn-sm">»</a>
+    </div>
+
+
+</div>
+
+
+<footer th:replace="components/footer"></footer>
+<div th:replace="/components/lucide_icons :: lucide_icon"></div>
+<script src="/js/adminProducts.js"></script>
+</body>
+</html>

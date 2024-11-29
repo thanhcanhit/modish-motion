@@ -29,8 +29,8 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public String getProductById(Model model, @PathVariable Integer id) {
-        Optional<ItemDTO> itemSearch = itemService.findById(id.toString());
+    public String getProductById(Model model, @PathVariable String id) {
+        Optional<ItemDTO> itemSearch = itemService.findById(id);
         ItemDTO item = itemSearch.orElse(null);
         model.addAttribute("product", item);
 

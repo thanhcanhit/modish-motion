@@ -11,10 +11,15 @@ import java.util.Optional;
 public interface ItemService {
     List<ItemDTO> findAll();
     Optional<ItemDTO> findById(String id);
+    Optional<ItemDTO> findByIdWithoutVariant(String id);
     ItemDTO save(ItemDTO item);
+    Page<ItemDTO> searchByName(String name, Pageable pageable);
+
+    void update(ItemDTO item);
     void deleteById(String id);
     List<ItemDTO> findRandomItemsByCategory(int categoryId, int count);
     List<ItemDTO> findByCategoryId(int categoryId);
+    Page<ItemDTO> findByPage(Pageable pageable);
     List<ItemDTO> findRelatedItems(int categoryId, String itemId, int limit);
     List<ItemDTO> searchItemsByName(String name);
     Page<ItemDTO> findByCategoryIdAndFilter(

@@ -3,6 +3,7 @@ package fit.iuh.modish_motion.servicesImpl;
 import fit.iuh.modish_motion.dto.ColorDTO;
 import fit.iuh.modish_motion.dto.SizeDTO;
 import fit.iuh.modish_motion.entities.Item;
+import fit.iuh.modish_motion.repositories.CategoryRepository;
 import fit.iuh.modish_motion.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,11 +47,38 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public Optional<ItemDTO> findByIdWithoutVariant(String id) {
+        return itemRepository.findById(id)
+                .map(ItemDTO::fromEntity);
+    }
+
+    @Override
     public ItemDTO save(ItemDTO itemDTO) {
         Item item = itemDTO.toEntity();
         Item savedItem = itemRepository.save(item);
         return ItemDTO.fromEntity(savedItem);
     }
+
+    @Override
+    public Page<ItemDTO> searchByName(String name, Pageable pageable) {
+        return itemRepository.searchByName(name,pageable)
+                .map(ItemDTO::fromEntity);
+    }
+
+    @Override
+    public void update(ItemDTO itemDTO) {
+        Item existingItem = itemRepository.findById(itemDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+        existingItem.setName(itemDTO.getName());
+        existingItem.setPromotionPrice(itemDTO.getPromotionPrice());
+        existingItem.setTags(itemDTO.getTags());
+        existingItem.setCategory(categoryRepository.findById(itemDTO.getCategory().getId())
+                .orElseThrow(() -> new RuntimeException("Category not found")));
+        existingItem.setCharacteristic(itemDTO.getCharacteristic());
+        existingItem.setGender(itemDTO.getGender());
+        itemRepository.save(existingItem);
+    }
+
 
     @Override
     public void deleteById(String id) {
@@ -61,8 +89,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDTO> findRandomItemsByCategory(int categoryId, int count) {
         return itemRepository.findRandomItemsByCategory(categoryId, count)
                 .stream()
-                .filter(item -> item.getVariants() != null && !item.getVariants().isEmpty())
-                .map(ItemDTO::fromEntity)
+          .map(ItemDTO::fromEntity)
                 .collect(Collectors.toList());
     }
     @Override
@@ -81,6 +108,13 @@ public class ItemServiceImpl implements ItemService {
                 .filter(item -> item.getVariants() != null && !item.getVariants().isEmpty())
                 .map(ItemDTO::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<ItemDTO> findByPage(Pageable pageable) {
+            return itemRepository.findAll(pageable)
+                    .map(ItemDTO::fromEntity);
+
     }
 
     @Override
