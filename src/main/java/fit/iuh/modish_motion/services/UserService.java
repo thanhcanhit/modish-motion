@@ -15,7 +15,10 @@ public interface UserService {
     void deleteById(Integer id);
     Page<UserDTO> findByPage(Pageable pageable);
     void updateUser(Integer id, UserDTO user);
-    public String registerUser(UserAccountDTO userDTO);
+    String registerUser(UserAccountDTO userDTO);
 
     void updateAccount(Integer id, UserAccountDTO request);
+
+    void updateAddress(Integer id, String address, String phoneNumber);
+
 }

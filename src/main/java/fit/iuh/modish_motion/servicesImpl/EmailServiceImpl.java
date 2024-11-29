@@ -48,6 +48,7 @@ public class EmailServiceImpl implements EmailService {
             
             mailSender.send(message);
         } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
             throw new MessagingException("Error setting sender name", e);
         }
     }

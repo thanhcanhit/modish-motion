@@ -1,7 +1,11 @@
 package fit.iuh.modish_motion.servicesImpl;
 
+import fit.iuh.modish_motion.configs.PasswordEncoder;
+import fit.iuh.modish_motion.dto.UserDTO;
 import fit.iuh.modish_motion.entities.Account;
+import fit.iuh.modish_motion.repositories.UserRepository;
 import fit.iuh.modish_motion.services.AccountService;
+import fit.iuh.modish_motion.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +24,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<AccountDTO> findAll() {
@@ -79,18 +87,6 @@ public class AccountServiceImpl implements AccountService {
                 .collect(Collectors.toList());
     }
 
-//    @Override
-//    public Page<AccountDTO> findByKeyWord(String keyword, Pageable pageable) {
-//        return accountRepository.findByUsernameContainingOrId(keyword, Integer.parseInt(keyword), pageable)
-//                .map(account -> AccountDTO.fromEntity(account));
-//    }
-//
-//    @Override
-//    public Page<AccountDTO> findByRoleAndKeyWord(boolean isAdmin, String keyword, Pageable pageable) {
-//        return accountRepository.findByUsernameContainingAndIsAdmin(isAdmin, keyword, pageable)
-//                .map(account -> AccountDTO.fromEntity(account));
-//    }
-
     @Override
     public AccountDTO save(AccountDTO accountDTO) {
         Account account = accountDTO.toEntity();
@@ -121,19 +117,10 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
-//    @Override
-//    public Optional<Account> findByUsernameAndPassword(String username, String password) {
-//        Optional<AccountDTO> optionalAccount = accountRepository.findByUsername(username);
-//
-//        // Kiểm tra mật khẩu nếu tài khoản tồn tại
-//        if (optionalAccount.isPresent()) {
-//            Account account = optionalAccount.get().toEntity();
-//            if (account.getPassword().equals(password)) { // So sánh mật khẩu
-//                return Optional.of(account);
-//            }
-//        }
-//
-//        return Optional.empty();
-
-//    }
+    public void changePassword(AccountDTO accountDTO, String oldPassword, String newPassword) {
+        Account account = accountRepository.findById(accountDTO.getUser().getId())
+                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+        account.setPassword(passwordEncoder.encode(newPassword));
+        accountRepository.save(account);
+    }
 }

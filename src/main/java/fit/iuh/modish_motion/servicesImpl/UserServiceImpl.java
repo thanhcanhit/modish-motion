@@ -121,4 +121,12 @@ public class UserServiceImpl implements UserService {
         user.setGender(request.isGender());
         userRepository.save(user);
     }
+
+    @Override
+    public void updateAddress(Integer id, String address, String phoneNumber) {
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Tài khoản không tồn tại"));
+        user.setAddress(address);
+        user.setPhoneNumber(phoneNumber);
+        userRepository.save(user);
+    }
 }

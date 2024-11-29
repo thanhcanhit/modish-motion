@@ -20,4 +20,5 @@ public interface AccountService {
     Optional<AccountDTO> findByUsername(String username);
     Page<AccountDTO> findByRole(boolean isAdmin, Pageable pageable);
     List<AccountDTO> findByUsernameContain(String keyword);
+    void changePassword(AccountDTO accountDTO, String oldPassword, String newPassword);
 }
