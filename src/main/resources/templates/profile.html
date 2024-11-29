@@ -9,8 +9,8 @@
 <body class="bg-gray-100" data-theme="light">
 <header th:replace="components/header"></header>
 <div class="container mx-auto my-10 pt-10" >
-    <div class="flex space-x-6">
-        <div class="w-1/4 bg-gray-100 p-4">
+    <div class="flex space-x-2">
+        <div class="w-1/6 bg-gray-100 p-4">
             <div class="flex items-center space-x-4 mb-6">
                 <img th:src="@{/images/profile/hamburmeo.jfif}" alt="avatar" class="rounded-full w-14 h-14">
                 <div>
@@ -42,7 +42,7 @@
         </div>
 
         <!-- Profile Content -->
-        <div class="w-3/4 p-6">
+        <div class="w-5/6 p-6">
             <div th:if="${selectedTab == 'profile'}">
                 <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-2xl font-bold text-gray-800 mb-2">Hồ Sơ Của Tôi</h2>
@@ -104,14 +104,12 @@
             <!-- Địa Chỉ -->
             <div th:if="${selectedTab == 'address'}">
                 <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Địa Chỉ</h2>
-                    <button class="bg-blue-300 text-white px-4 py-2 rounded" onclick="openAddAddressModal()">
-                        + Thêm địa chỉ mới
-                    </button>
-                </div>
-
-<!--                <div class="address-container bg-gray-100 p-6 min-h-screen">-->
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Địa Chỉ</h2>
+                        <button class="btn text-white px-4 py-2 rounded btn-warning" onclick="showUpdateAddressForm()">
+                            Thay đổi địa chỉ
+                        </button>
+                    </div>
                     <div class="max-w-4xl mx-auto bg-white border-t border-gray-300 p-6">
                         <!-- Tiêu đề -->
                         <div class="flex justify-between items-center mb-6">
@@ -119,21 +117,46 @@
 
                         </div>
                         <!-- Danh sách địa chỉ -->
-                        <div class="address-list space-y-6">
+                        <div class="address-list space-y-6" id="addressList">
                             <!-- Địa chỉ -->
                             <div class="address-item border-b pb-4">
                                 <div class="text-lg font-bold" th:text="${user.user.name}"></div>
                                 <div class="text-gray-600" th:text="${user.user.address}"></div>
                                 <div class="text-gray-500" th:text="${user.user.phoneNumber}"></div>
-                                <div class="flex gap-4 mt-2">
-                                    <span class="text-red-500 font-semibold">Mặc định</span>
-                                    <a href="#" class="text-blue-500" onclick="editAddress()">Cập nhật</a>
-                                </div>
                             </div>
                         </div>
+                        <div id="updateAddressForm" class="hidden">
+                            <form class="w-full" th:action="@{/profile/change-address}" method="post">
+                                <div class="mb-4 flex items-center">
+                                    <label for="newName" class="w-1/4 text-gray-600 text-right mr-4">Họ và tên</label>
+                                    <input type="text" class="input input-bordered w-2/4" id="newName" name="newName"
+                                           placeholder="Nhập họ và tên mới (nếu cần)" th:value="${user.user.name}">
+                                </div>
+                                <div class="mb-4 flex items-center">
+                                    <label for="newAddress" class="w-1/4 text-gray-600 text-right mr-4">Địa chỉ mới</label>
+                                    <input type="text" class="input input-bordered w-2/4" id="newAddress" name="newAddress"
+                                           placeholder="Nhập địa chỉ mới" th:value="${user.user.address}" required>
+                                </div>
+                                <div class="mb-4 flex items-center">
+                                    <label for="newPhoneNumber" class="w-1/4 text-gray-600 text-right mr-4">Số điện thoại</label>
+                                    <input type="text" class="input input-bordered w-2/4" id="newPhoneNumber" name="newPhoneNumber"
+                                           placeholder="Nhập số điện thoại mới" th:value="${user.user.phoneNumber}" required>
+                                </div>
+
+                                <!-- Nút Lưu -->
+                                <div class="flex justify-center mt-6">
+                                    <button type="submit" class="btn btn-warning text-white px-8 py-2 rounded-lg w-1/3 text-center">
+                                        Lưu thay đổi
+                                    </button>
+                                    <button type="button" onclick="cancelUpdateAddress()" class="bg-gray-300 text-black px-8 py-2 rounded-lg hover:bg-gray-400 w-1/3 text-center ml-4">
+                                        Hủy
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-<!--                </div>-->
                 </div>
+
             </div>
 
             <!-- Đổi Mật Khẩu -->
@@ -142,11 +165,11 @@
                 <h2 class="text-2xl font-bold text-gray-800 mb-2">Đổi Mật Khẩu</h2>
                 <p class="text-gray-500 mb-6">Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác</p>
 
-                <form class="w-full">
+                <form class="w-full" th:action="@{/profile/change-password}" method="post">
                     <div class="mb-4 flex items-center">
                         <label for="oldPassword" class="w-1/4 text-gray-600 text-right mr-4"> Mật khẩu cũ</label>
                         <div class="flex items-center gap-2 input input-bordered w-2/4">
-                            <input type="password" class="grow w-full" id="oldPassword" />
+                            <input type="password" class="grow w-full" id="oldPassword" name="oldPassword"/>
                             <i id="toggleOldPassword" data-lucide="eye-closed" class="w-4 h-4 cursor-pointer"
                                onclick="togglePasswordVisibility('oldPassword', 'toggleOldPassword')"></i>
                         </div>
@@ -155,7 +178,7 @@
                     <div class="mb-4 flex items-center">
                         <label for="newPassword" class="w-1/4 text-gray-600 text-right mr-4">Mật khẩu mới</label>
                         <div class="flex items-center gap-2 input input-bordered w-2/4">
-                            <input type="password" class="grow w-full" id="newPassword" />
+                            <input type="password" class="grow w-full" id="newPassword" name="newPassword"/>
                             <i id="toggleNewPassword" data-lucide="eye-closed" class="w-4 h-4 cursor-pointer"
                                onclick="togglePasswordVisibility('newPassword', 'toggleNewPassword')"></i>
                         </div>
@@ -164,17 +187,33 @@
                     <div class="mb-4 flex items-center">
                         <label for="confirmPassword" class="w-1/4 text-gray-600 text-right mr-4">Nhập lại mật khẩu mới</label>
                         <div class="flex items-center gap-2 input input-bordered w-2/4">
-                            <input type="password" class="grow w-full" id="confirmPassword" />
+                            <input type="password" class="grow w-full" id="confirmPassword" oninput="checkPasswordMatch()"/>
                             <i id="toggleConfirmPassword" data-lucide="eye-closed" class="w-4 h-4 cursor-pointer"
                                onclick="togglePasswordVisibility('confirmPassword', 'toggleConfirmPassword')"></i>
                         </div>
                     </div>
+                    <p id="passwordMismatchError" class="hidden text-red-500 text-sm text-center">
+                        Mật khẩu mới và xác nhận mật khẩu không khớp.
+                    </p>
 
                     <!-- Nút Lưu ở giữa -->
                     <div class="flex justify-center mt-6">
-                        <button type="submit" class="bg-blue-300 text-white px-8 py-2 rounded-lg hover:bg-cyan-800 w-1/3 text-center">Đổi mật khẩu</button>
+                        <button type="submit" class="btn text-white px-8 py-2 rounded-lg w-1/3 text-center btn-warning">Đổi mật khẩu</button>
+                    </div>
+                    <div th:if="${param.error == 'oldPassword'}" class="mt-4 text-red-500 text-center">
+                        Mật khẩu cũ không chính xác.
+                    </div>
+                    <div th:if="${param.error == 'confirmMismatch'}" class="mt-4 text-red-500 text-center">
+                        Mật khẩu mới và nhập lại mật khẩu không khớp.
+                    </div>
+                    <div th:if="${param.error == 'invalidNewPassword'}" class="mt-4 text-red-500 text-center">
+                        Mật khẩu mới không hợp lệ! Phải bắt đầu bằng chữ hoa, có số và ký tự đặc biệt, độ dài tối thiểu 8 ký tự.
+                    </div>
+                    <div th:if="${param.success != null}" class="mt-4 text-green-500 text-center">
+                        Đổi mật khẩu thành công!
                     </div>
                 </form>
+
                 </div>
             </div>
 
@@ -230,6 +269,21 @@
 <footer th:replace="components/footer"></footer>
 
 <script>
+    function showUpdateAddressForm() {
+        // Ẩn danh sách địa chỉ
+        document.getElementById('addressList').classList.add('hidden');
+
+        // Hiển thị form cập nhật địa chỉ
+        document.getElementById('updateAddressForm').classList.remove('hidden');
+    }
+
+    function cancelUpdateAddress() {
+        // Hiển thị danh sách địa chỉ
+        document.getElementById('addressList').classList.remove('hidden');
+
+        // Ẩn form cập nhật địa chỉ
+        document.getElementById('updateAddressForm').classList.add('hidden');
+    }
     function togglePasswordVisibility(inputId, iconId) {
         const input = document.getElementById(inputId);
         const icon = document.getElementById(iconId);
@@ -242,7 +296,17 @@
         }
         lucide.createIcons();  // Để cập nhật biểu tượng sau khi thay đổi thuộc tính
     }
+    function checkPasswordMatch() {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const error = document.getElementById('passwordMismatchError');
 
+        if (newPassword !== confirmPassword) {
+            error.classList.remove('hidden');
+        } else {
+            error.classList.add('hidden');
+        }
+    }
     const customerId = document.getElementById('customerId').textContent;
     function fetchOrders(status = 'all') {
         const orderList = document.getElementById('orderList');

@@ -31,6 +31,7 @@ public class EmailController {
             
             return ResponseEntity.ok("Email sent successfully");
         } catch (MessagingException e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().body("Failed to send email: " + e.getMessage());
         }
     }

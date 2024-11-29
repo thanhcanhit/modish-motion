@@ -3,60 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <title>Đăng ký thành công</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            padding: 32px;
+            background-color: #f3f4f6;
+            font-family: Arial, sans-serif;
+        }
+
+        section {
+            max-width: 768px;
+            padding: 24px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+        }
+
+        header img {
+            height: 32px;
+            margin-bottom: 8px;
+        }
+
+        header h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        main img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        h2 {
+            margin-top: 24px;
+            font-size: 20px;
+            color: #374151;
+        }
+
+        p {
+            margin-top: 16px;
+            line-height: 1.6;
+            color: #6b7280;
+        }
+
+        button {
+            display: inline-block;
+            padding: 12px 24px;
+            margin-top: 32px;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: capitalize;
+            color: #ffffff;
+            background-color: #2563eb;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+
+        footer {
+            margin-top: 32px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        footer a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        footer p {
+            margin-top: 12px;
+            text-align: center;
+        }
+    </style>
 </head>
-<body class="p-8 bg-gray-100">
-    <div class="max-w-2xl mx-auto">
-        <div class="border mockup-window bg-base-300">
-            <div class="p-8 bg-base-200">
-                <!-- Header -->
-                <div class="mb-8 text-center">
-                    <h1 class="mb-2 text-3xl font-bold text-primary">Modish Motion</h1>
-                    <div class="badge badge-accent badge-lg">Đăng ký thành công</div>
-                </div>
+<body>
+<section>
+    <header>
+        <a href="#">
+            <img src="https://i.ibb.co/9q8BDh7/official-logo.png" alt="">
+        </a>
+        <h1>Modish Motion</h1>
+    </header>
 
-                <!-- Nội dung chính -->
-                <div class="shadow-xl card bg-base-100">
-                    <div class="card-body">
-                        <h2 class="card-title">
-                            <span class="text-xl">Xin chào </span>
-                            <span class="text-primary" th:text="${userName}"></span>
-                        </h2>
-                        
-                        <div class="mb-4 alert alert-success">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span>Tài khoản của bạn đã được tạo thành công!</span>
-                        </div>
+    <main>
+        <img src="https://i.ibb.co/HgTYtH1/image-Sub-Banner.webp" alt="">
 
-                        <!-- Thông tin tài khoản -->
-                        <div class="shadow stats">
-                            <div class="stat">
-                                <div class="stat-title">Email</div>
-                                <div class="text-lg stat-value text-primary" th:text="${userEmail}"></div>
-                            </div>
-                            <div class="stat">
-                                <div class="stat-title">Tên đăng nhập</div>
-                                <div class="text-lg stat-value text-secondary" th:text="${userName}"></div>
-                            </div>
-                        </div>
+        <h2>Hi <span th:text="${userName}"></span></h2>
 
-                        <!-- Nút CTA -->
-                        <div class="justify-center mt-6 card-actions">
-                            <a href="#" class="btn btn-warning btn-wide">Đến cửa hàng ngay</a>
-                        </div>
-                    </div>
-                </div>
+        <p>
+            We’re glad to have you onboard! You’re already on your way to
+            creating your own great fashion sense.
+            Whether you’re here for your brand, for a cause, or just for fun —
+            welcome! If there’s anything you need, we’ll be here every step of the way.
+        </p>
 
-                <!-- Footer -->
-                <div class="mt-8 text-sm text-center opacity-70">
-                    <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email</p>
-                    <p class="font-semibold">support@modishmotion.com</p>
-                </div>
-            </div>
-        </div>
-    </div>
+        <p>
+            Thanks, <br>
+            Modish Motion team
+        </p>
+
+        <button>Login</button>
+    </main>
+
+    <footer>
+        <p>
+            This email was sent to <a href="#" target="_blank">support@modishmotion.com</a>.
+            If you'd rather not receive this kind of email, you can <a href="#">unsubscribe</a> or <a href="#">manage your email preferences</a>.
+        </p>
+
+        <p>© 2024 Modish Motion. All Rights Reserved.</p>
+    </footer>
+</section>
 </body>
-</html> 
+</html>
