@@ -15,6 +15,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.DateFormatter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -125,6 +130,33 @@ public class OrderServiceImpl implements OrderService {
                 return orders
                         .map(order -> OrderDTO.fromEntity(order, orderDetailService.findByOrderId(order.getId())));
             }
+    }
+
+
+    @Override
+    public List<OrderDTO> findOrdersByDateAndStatus(Date date) {
+
+        List<Order> orders = orderRepository.findOrdersByOrderAtAndStatus(date, 1);
+
+        System.out.println("order danh sach: "+orders);
+
+        // Chuyển đổi danh sách đơn hàng thành danh sách DTO
+        return orders.stream()
+                .map(order -> OrderDTO.fromEntity(order, orderDetailService.findByOrderId(order.getId())))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderDTO> findOrdersByDateAndStatusBetween(Date startDate, Date endDate) {
+        // Truy vấn các đơn hàng có trạng thái thành công trong khoảng thời gian từ startDate đến endDate
+        List<Order> orders = orderRepository.findOrdersByStatusAndDateBetween(1, startDate, endDate);
+
+        System.out.println("Danh sách đơn hàng trong khoảng thời gian: " + orders);
+
+        // Chuyển đổi danh sách đơn hàng thành danh sách DTO
+        return orders.stream()
+                .map(order -> OrderDTO.fromEntity(order, orderDetailService.findByOrderId(order.getId())))
+                .collect(Collectors.toList());
     }
 
 //    @Transactional(readOnly = true)

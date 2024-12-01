@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -21,4 +22,6 @@ public interface OrderService {
     List<OrderDTO> findByDateRange(Date startDate, Date endDate, Sort sort);
     Page<OrderDTO> findOrdersByCustomer(int customerId, int page, int size, String status);
 //    List<OrderDTO> findOrdersByCustomerAndStatus(int customerId, String status);
+    List<OrderDTO> findOrdersByDateAndStatus(Date date);
+    List<OrderDTO> findOrdersByDateAndStatusBetween(Date startDate, Date endDate);
 }

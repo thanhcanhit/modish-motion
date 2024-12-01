@@ -1,0 +1,207 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="vi" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <div th:replace="components/head :: head"></div>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Dashboard</title>-->
+<!--</head>-->
+<!--<body class="bg-gray-100 font-sans text-sm">-->
+<!--<header th:replace="components/header"></header>-->
+<!--<div class="container mx-auto my-12 p-8">-->
+
+
+<!--    &lt;!&ndash; Form lọc theo ngày &ndash;&gt;-->
+<!--    <form method="get" action="/admin/dashboard/dashboard-statistics" class="bg-white p-6 rounded-lg shadow-md mb-6 flex space-x-4">-->
+<!--        <div class="flex-1">-->
+<!--            <label for="date" class="block text-sm font-medium text-gray-700">Ngày lọc: </label>-->
+<!--            <input type="date" id="date" name="date" value="${date}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">-->
+<!--        </div>-->
+<!--        <div class="flex items-end">-->
+<!--            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Lọc</button>-->
+<!--        </div>-->
+<!--    </form>-->
+
+<!--    &lt;!&ndash; Bảng danh sách sản phẩm bán chạy &ndash;&gt;-->
+<!--    <div class="bg-white p-6 rounded-lg shadow-lg">-->
+<!--        <h1 lass="text-3xl font-semibold text-gray-900 mb-14">Top Sản Phẩm Bán Chạy</h1>-->
+
+<!--        <table class="w-full table-auto border-collapse">-->
+<!--            <thead>-->
+<!--            <tr class="bg-gray-100 text-gray-600">-->
+<!--                <th class="py-2 px-4 border-b text-left">Mã Sản Phẩm</th>-->
+<!--                <th class="py-2 px-4 border-b text-left">Tên Sản Phẩm</th>-->
+<!--                <th class="py-2 px-4 border-b text-left">Số Lượng Bán</th>-->
+<!--                <th class="py-2 px-4 border-b text-left">Giá Tiền</th>-->
+<!--                <th class="py-2 px-4 border-b text-left">Tổng Doanh Thu</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--            <tr th:each="product : ${topSellingProductsByDate}" class="hover:bg-gray-50">-->
+<!--                <td class="py-2 px-4 border-b text-gray-800" th:text="${product.productCode}"></td>-->
+<!--                <td class="py-2 px-4 border-b text-gray-800" th:text="${product.productName}"></td>-->
+<!--                <td class="py-2 px-4 border-b text-gray-800" th:text="${product.productQuantity}"></td>-->
+<!--                <td class="py-2 px-4 border-b text-gray-800" th:text="${#numbers.formatDecimal(product.productPrice, 0, 'POINT', 0, 'COMMA')}"></td>-->
+<!--                <td class="py-2 px-4 border-b text-gray-800" th:text="${#numbers.formatDecimal(product.productTotalAmount, 0, 'POINT', 0, 'COMMA')}"></td>-->
+<!--            </tr>-->
+<!--            </tbody>-->
+<!--        </table>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<div th:replace="/components/lucide_icons :: lucide_icon"></div>-->
+<!--<footer th:replace="components/footer"></footer>-->
+<!--<script th:inline="javascript">-->
+<!--    const orders = /*[[${orders}]]*/ [];-->
+<!--    let currentPage = 1;-->
+<!--    const itemsPerPage = 10;-->
+<!--    let selectedOrderId = null;-->
+
+<!--    function showPage(page) {-->
+<!--        const start = (page - 1) * itemsPerPage;-->
+<!--        const end = page * itemsPerPage;-->
+<!--        const paginatedOrders = orders.slice(start, end);-->
+<!--        const orderList = document.querySelector('tbody');-->
+<!--        orderList.innerHTML = '';-->
+
+<!--        paginatedOrders.forEach(order => {-->
+<!--            const row = document.createElement('tr');-->
+<!--            row.setAttribute('data-order-id', order.id);-->
+<!--            row.setAttribute('onclick', 'showOrderDetails(this.getAttribute("data-order-id"))');-->
+<!--            row.innerHTML = `-->
+<!--                <td class="border px-4 py-2 border-gray-300">${order.customer.name}</td>-->
+<!--                <td class="border px-4 py-2 border-gray-300">${order.orderAt}</td>-->
+<!--                <td class="border px-4 py-2 border-gray-300">${order.cancelledAt || ''}</td>-->
+<!--                <td class="border px-4 py-2 border-gray-300">${order.totalDue}</td>-->
+<!--                <td class="border px-4 py-2 border-gray-300">${order.status}</td>-->
+<!--            `;-->
+<!--            orderList.appendChild(row);-->
+<!--        });-->
+<!--    }-->
+
+<!--    function prevPage() {-->
+<!--        if (currentPage > 1) {-->
+<!--            currentPage&#45;&#45;;-->
+<!--            showPage(currentPage);-->
+<!--        }-->
+<!--    }-->
+
+<!--    function nextPage() {-->
+<!--        if (currentPage * itemsPerPage < orders.length) {-->
+<!--            currentPage++;-->
+<!--            showPage(currentPage);-->
+<!--        }-->
+<!--    }-->
+
+<!--    function showOrderDetails(orderId) {-->
+<!--        selectedOrderId = orderId;-->
+<!--        const order = orders.find(o => o.id === orderId);-->
+
+<!--        document.getElementById('orderDetailSection').classList.remove('hidden');-->
+<!--        document.getElementById('detailId').textContent = order.id;-->
+<!--        document.getElementById('detailCustomer').textContent = order.customer.name;-->
+<!--        document.getElementById('detailOrderAt').textContent = order.orderAt;-->
+<!--        document.getElementById('detailCancelledAt').textContent = order.cancelledAt || 'N/A';-->
+<!--        document.getElementById('detailStatus').textContent = order.status;-->
+<!--        document.getElementById('detailTotalDue').textContent = order.totalDue;-->
+
+<!--        const itemsContainer = document.getElementById('orderItems');-->
+<!--        itemsContainer.innerHTML = '';-->
+<!--        order.items.forEach(item => {-->
+<!--            const itemDiv = document.createElement('div');-->
+<!--            itemDiv.classList.add('border', 'p-4', 'shadow-sm', 'rounded-md');-->
+<!--            itemDiv.innerHTML = `-->
+<!--                <p><strong>Tên sản phẩm:</strong> ${item.productName}</p>-->
+<!--                <p><strong>Số lượng:</strong> ${item.quantity}</p>-->
+<!--                <p><strong>Giá:</strong> ${item.price}</p>-->
+<!--            `;-->
+<!--            itemsContainer.appendChild(itemDiv);-->
+<!--        });-->
+<!--    }-->
+
+<!--    // Initialize page-->
+<!--    showPage(currentPage);-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Selling Products</title>
+    <!-- Thêm link cho Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1>Top Selling Products</h1>
+
+    <!-- Biểu đồ top 10 sản phẩm bán chạy -->
+    <canvas id="topSellingProductsChart" width="400" height="200"></canvas>
+
+    <div>
+        <h3>Top 10 Products by Quantity Sold</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Total Sold</th>
+                <th>Total Revenue</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Lặp qua danh sách sản phẩm bán chạy -->
+            <tr th:each="product : ${topSellingProductsByMonth}">
+                <td th:text="${product.productName}"></td>
+                <td th:text="${product.productQuantity}"></td>
+                <td th:text="${product.productTotalAmount}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Kiểm tra nếu dữ liệu topSellingProductsByMonth không null và có dữ liệu
+    var labels = [[${topSellingProductsByMonth}]].map(product => product.productName);
+    var dataSold = [[${topSellingProductsByMonth}]].map(product => product.productQuantity);
+    var dataRevenue = [[${topSellingProductsByMonth}]].map(product => product.totalAmount);
+
+    // Nếu không có dữ liệu, set giá trị mặc định là mảng rỗng
+    labels = labels.length ? labels : [];
+    dataSold = dataSold.length ? dataSold : [];
+    dataRevenue = dataRevenue.length ? dataRevenue : [];
+
+    // Vẽ biểu đồ bằng Chart.js
+    var ctx = document.getElementById('topSellingProductsChart').getContext('2d');
+    var topSellingProductsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,  // Tên sản phẩm
+            datasets: [{
+                label: 'Total Sold',
+                data: dataSold,  // Số lượng bán ra
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Total Revenue',
+                data: dataRevenue,  // Doanh thu
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>
