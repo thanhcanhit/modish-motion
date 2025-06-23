@@ -6,13 +6,12 @@
 
 ## 👥 Thành viên nhóm
 
-| STT | Họ và tên | Vai trò |
-|-----|-----------|---------|
-| 1 | **Trần Đình Kiên** | Team Leader & Backend Developer |
-| 2 | **Nguyễn Thanh Cảnh** | Frontend Developer & UI/UX |
-| 3 | **Vũ Hải Nam** | Backend Developer & Database |
-| 4 | **Hồ Thị Như Tâm** | Full-stack Developer |
-| 5 | **[Thành viên thứ 5]** | [Vai trò] |
+| STT | Họ và tên |
+|-----|-----------|
+| 1 | **Trần Đình Kiên** | 
+| 2 | **Nguyễn Thanh Cảnh** | 
+| 3 | **Vũ Hải Nam** |
+| 4 | **Hồ Thị Như Tâm** | 
 
 ## 🚀 Công nghệ sử dụng
 
