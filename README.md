@@ -39,6 +39,7 @@
 
 ## ✨ Tính năng chính
 
+
 ### 👤 Quản lý người dùng
 - **Đăng ký/Đăng nhập** với tài khoản local
 - **Đăng nhập bằng Google** (OAuth2)
@@ -54,14 +55,21 @@
 - **Giỏ hàng** với tính năng thêm/xóa/cập nhật số lượng
 - **Thanh toán** với nhiều phương thức (Visa, Mastercard, MoMo)
 - **Xác nhận đơn hàng** qua email
-
+### 🏠 Trang chủ
+![Home Page](imagePreview/home.png)
+### 🛍️ Tìm kiếm và danh mục
+![Category Search](imagePreview/categorySearch.png)
+### 📱 Chi tiết sản phẩm
+![Product Detail](imagePreview/productDetail.png)
+*Trang chi tiết sản phẩm với thông tin đầy đủ*
 ### 🛒 Quản lý giỏ hàng
 - Thêm sản phẩm vào giỏ hàng
 - Cập nhật số lượng sản phẩm
 - Xóa sản phẩm khỏi giỏ hàng
 - Tính tổng tiền tự động
 - Lưu trữ giỏ hàng trong session
-
+### 🛒 Giỏ hàng
+![Shopping Cart](imagePreview/cart.png)
 ### 📦 Quản lý đơn hàng
 - **Tạo đơn hàng** từ giỏ hàng
 - **Xác nhận đơn hàng** qua email
@@ -69,6 +77,11 @@
 - **Lịch sử đơn hàng** của người dùng
 - **Quản lý đơn hàng** cho admin
 
+### 📦 Đặt hàng
+![Order Product](imagePreview/OrderProduct2.png)
+
+### 👨‍💼 Quản lý đơn hàng (Admin)
+![Manager Order](imagePreview/ManagerOrder.png)
 ### 🎨 Giao diện người dùng
 - **Responsive design** - Tương thích mobile, tablet, desktop
 - **Giao diện hiện đại** với Tailwind CSS
@@ -77,6 +90,8 @@
 - **Modal popup** cho chi tiết sản phẩm
 - **Loading states** và animations
 
+### 🔐 Đăng nhập
+![Login Page](imagePreview/login.png)
 ### 🔐 Bảo mật
 - **Spring Security** với authentication và authorization
 - **BCrypt** mã hóa mật khẩu
