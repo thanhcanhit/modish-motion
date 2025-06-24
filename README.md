@@ -80,7 +80,7 @@
 ### 📦 Đặt hàng
 ![Order Product](imagePreview/OrderProduct2.png)
 
-### 👨‍💼 Quản lý đơn hàng (Admin)
+### 👨‍💼 Quản lý đơn hàng 
 ![Manager Order](imagePreview/ManagerOrder.png)
 ### 🎨 Giao diện người dùng
 - **Responsive design** - Tương thích mobile, tablet, desktop
